@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- saved from url=(0069)file:///Users/alexpshenya/Downloads/armabudproject_manager_v35_1.html -->
-<html lang="uk"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>АрмаБуд — Менеджер проектів</title>
-<link href="./АрмаБуд — Менеджер проектів_files/css2" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0a1628;
@@ -163,7 +163,7 @@ td:hover .edit-hint{opacity:1}
 }
 </style>
 </head>
-<body><div class="app">
+<div class="app">
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-icon">AB</div>
@@ -174,462 +174,78 @@ td:hover .edit-hint{opacity:1}
   </div>
   <nav class="sidebar-nav">
     <div class="nav-label">Головне</div>
-    <button class="nav-item" onclick="navigate(&#39;dashboard&#39;)" id="nav-dashboard">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>Дашборд
+    <button class="nav-item active" onclick="navigate('dashboard')" id="nav-dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Дашборд
     </button>
-    <button class="nav-item" onclick="navigate(&#39;projects&#39;)" id="nav-projects">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18M3 12h18M3 17h18"></path></svg>Проекти
+    <button class="nav-item" onclick="navigate('projects')" id="nav-projects">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18M3 12h18M3 17h18"/></svg>Проекти
     </button>
     <div class="nav-label">Довідники</div>
-    <button class="nav-item" onclick="navigate(&#39;executors&#39;)" id="nav-executors">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="7" r="4"></circle><path d="M2 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path><path d="M19 7v6m-3-3h6"></path></svg>Виконавці
+    <button class="nav-item" onclick="navigate('executors')" id="nav-executors">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M19 7v6m-3-3h6"/></svg>Виконавці
     </button>
-    <button class="nav-item" onclick="navigate(&#39;workload&#39;)" id="nav-workload">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="6" height="18" rx="1"></rect><rect x="9" y="8" width="6" height="13" rx="1"></rect><rect x="16" y="5" width="6" height="16" rx="1"></rect></svg>Завантаженість
+    <button class="nav-item" onclick="navigate('workload')" id="nav-workload">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="6" height="18" rx="1"/><rect x="9" y="8" width="6" height="13" rx="1"/><rect x="16" y="5" width="6" height="16" rx="1"/></svg>Завантаженість
     </button>
-    <button class="nav-item active" onclick="navigate(&#39;tasks&#39;)" id="nav-tasks">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>Задачі
+    <button class="nav-item" onclick="navigate('tasks')" id="nav-tasks">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Задачі
     </button>
     <div class="nav-label">Експорт</div>
     <button class="nav-item" onclick="exportExcel()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>Аналітика Excel
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>Аналітика Excel
     </button>
     <div class="nav-label">Дані</div>
     <button class="nav-item" onclick="exportData()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Резерв JSON
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Резерв JSON
     </button>
-    <button class="nav-item" onclick="document.getElementById(&#39;import-file&#39;).click()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>Імпорт JSON
+    <button class="nav-item" onclick="document.getElementById('import-file').click()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Імпорт JSON
     </button>
     <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
   </nav>
-  <div class="sidebar-footer">© 2026 Armabudproject.com</div>
+  <div class="sidebar-footer">
+    <div id="sync-status" style="margin-bottom:4px;font-size:10px">⟳ Завантаження...</div>
+    © 2026 Armabudproject.com
+  </div>
 </aside>
 
 <main class="main">
 
 <!-- Dashboard -->
-<div class="page" id="page-dashboard">
+<div class="page active" id="page-dashboard">
   <div class="page-header">
     <div><div class="page-title">Огляд</div><div class="page-sub">Зведена аналітика по всіх проектах</div></div>
-    <button class="btn primary" onclick="navigate(&#39;projects&#39;);openModal(&#39;new-project&#39;)">+ Новий проект</button>
+    <button class="btn primary" onclick="navigate('projects');openModal('new-project')">+ Новий проект</button>
   </div>
-  <div class="metrics" id="dash-metrics">
-    <div class="metric"><div class="metric-label">Проектів</div><div class="metric-value blue">13</div></div>
-    <div class="metric"><div class="metric-label">Загальний дохід</div><div class="metric-value blue">2&nbsp;779&nbsp;014 ₴</div></div>
-    <div class="metric"><div class="metric-label">Витрати (план)</div><div class="metric-value">736&nbsp;800 ₴</div></div>
-    <div class="metric"><div class="metric-label">Виплачено факт</div><div class="metric-value amber">175&nbsp;000 ₴</div></div>
-    <div class="metric"><div class="metric-label">Податки ЄП</div><div class="metric-value amber">166&nbsp;741 ₴</div></div>
-    <div class="metric"><div class="metric-label">Прибуток</div><div class="metric-value green">1&nbsp;875&nbsp;474 ₴</div></div>
-  </div>
+  <div class="metrics" id="dash-metrics"></div>
   <div class="card">
     <div class="card-head"><span class="card-title">Всі проекти</span></div>
-    <div class="tbl-wrap"><table id="dash-table">
-    <thead><tr><th>Проект</th><th>Замовник</th><th>Дохід</th><th>Кредит</th><th>Виплачено</th><th>До виплати</th><th>Податок</th><th>Дебет</th><th>Прибуток</th><th>Маржа</th></tr></thead>
-    <tbody><tr onclick="navigate(&#39;detail&#39;,&#39;r19&#39;)" style="cursor:pointer">
-      <td><strong>АН - Буча, Вокзальна 101</strong></td>
-      <td style="color:var(--text2)">ДРР</td>
-      <td class="mono" style="color:var(--accent)">73&nbsp;692 ₴</td>
-      <td class="mono">0 ₴</td>
-      <td class="mono" style="color:var(--amber)">0 ₴</td>
-      <td class="mono" style="color:var(--green)">0 ₴</td>
-      <td class="mono" style="color:var(--amber)">4&nbsp;422 ₴</td>
-      <td class="mono" style="color:var(--accent)">73&nbsp;692 ₴</td>
-      <td class="mono" style="color:var(--green)">69&nbsp;270 ₴</td>
-      <td><span class="badge green">94%</span></td>
-    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r20&#39;)" style="cursor:pointer">
-      <td><strong>АН - Ворзель, Курортна 37</strong></td>
-      <td style="color:var(--text2)">ДРР</td>
-      <td class="mono" style="color:var(--accent)">241&nbsp;368 ₴</td>
-      <td class="mono">0 ₴</td>
-      <td class="mono" style="color:var(--amber)">0 ₴</td>
-      <td class="mono" style="color:var(--green)">0 ₴</td>
-      <td class="mono" style="color:var(--amber)">14&nbsp;482 ₴</td>
-      <td class="mono" style="color:var(--accent)">241&nbsp;368 ₴</td>
-      <td class="mono" style="color:var(--green)">226&nbsp;886 ₴</td>
-      <td><span class="badge green">94%</span></td>
-    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r21&#39;)" style="cursor:pointer">
-      <td><strong>АН - Буча, Яблунська 17</strong></td>
-      <td style="color:var(--text2)">Агенція Відновлення</td>
-      <td class="mono" style="color:var(--accent)">19&nbsp;580 ₴</td>
-      <td class="mono">0 ₴</td>
-      <td class="mono" style="color:var(--amber)">0 ₴</td>
-      <td class="mono" style="color:var(--green)">0 ₴</td>
-      <td class="mono" style="color:var(--amber)">1&nbsp;175 ₴</td>
-      <td class="mono" style="color:var(--accent)">19&nbsp;580 ₴</td>
-      <td class="mono" style="color:var(--green)">18&nbsp;405 ₴</td>
-      <td><span class="badge green">94%</span></td>
-    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r22&#39;)" style="cursor:pointer">
-      <td><strong>АН -Бучанський КДЦ - поліклініка (Полева,21)</strong></td>
-      <td style="color:var(--text2)">Бучанський КДЦ</td>
-      <td class="mono" style="color:var(--accent)">64&nbsp;080 ₴</td>
-      <td class="mono">0 ₴</td>
-      <td class="mono" style="color:var(--amber)">0 ₴</td>
-      <td class="mono" style="color:var(--green)">0 ₴</td>
-      <td class="mono" style="color:var(--amber)">3&nbsp;845 ₴</td>
-      <td class="mono" style="color:var(--accent)">35&nbsp;600 ₴</td>
-      <td class="mono" style="color:var(--green)">60&nbsp;235 ₴</td>
-      <td><span class="badge green">94%</span></td>
-    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r23&#39;)" style="cursor:pointer">
-      <td><strong>ЕВМ Котедж Білогородка</strong></td>
-      <td style="color:var(--text2)">ЕВМ</td>
-      <td class="mono" style="color:var(--accent)">429&nbsp;650 ₴</td>
-      <td class="mono">25&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">0 ₴</td>
-      <td class="mono" style="color:var(--red)">25&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">25&nbsp;779 ₴</td>
-      <td class="mono" style="color:var(--accent)">429&nbsp;650 ₴</td>
-      <td class="mono" style="color:var(--green)">378&nbsp;871 ₴</td>
-      <td><span class="badge green">88%</span></td>
-    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r24&#39;)" style="cursor:pointer">
-      <td><strong>ЕВМ-МАФ Континент</strong></td>
-      <td style="color:var(--text2)">ЕВМ</td>
-      <td class="mono" style="color:var(--accent)">98&nbsp;000 ₴</td>
-      <td class="mono">98&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">59&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--red)">39&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">5&nbsp;880 ₴</td>
-      <td class="mono" style="color:var(--accent)">72&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--red)">-5&nbsp;880 ₴</td>
-      <td><span class="badge red">-6%</span></td>
-    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r25&#39;)" style="cursor:pointer">
-      <td><strong>ЕВМ-МАФ Новус</strong></td>
-      <td style="color:var(--text2)">ЕВМ</td>
-      <td class="mono" style="color:var(--accent)">74&nbsp;000 ₴</td>
-      <td class="mono">74&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">49&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--red)">25&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">4&nbsp;440 ₴</td>
-      <td class="mono" style="color:var(--accent)">21&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--red)">-4&nbsp;440 ₴</td>
-      <td><span class="badge red">-6%</span></td>
-    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r26&#39;)" style="cursor:pointer">
-      <td><strong>КП - Буча, Яблунська 17</strong></td>
-      <td style="color:var(--text2)">Агенція Відновлення</td>
-      <td class="mono" style="color:var(--accent)">564&nbsp;256 ₴</td>
-      <td class="mono">114&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">14&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--red)">100&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">33&nbsp;855 ₴</td>
-      <td class="mono" style="color:var(--accent)">564&nbsp;256 ₴</td>
-      <td class="mono" style="color:var(--green)">416&nbsp;401 ₴</td>
-      <td><span class="badge green">74%</span></td>
-    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r27&#39;)" style="cursor:pointer">
-      <td><strong>РП -ПЧ №15 ДСНС</strong></td>
-      <td style="color:var(--text2)">ДСНС №15</td>
-      <td class="mono" style="color:var(--accent)">145&nbsp;000 ₴</td>
-      <td class="mono">47&nbsp;800 ₴</td>
-      <td class="mono" style="color:var(--amber)">0 ₴</td>
-      <td class="mono" style="color:var(--red)">47&nbsp;800 ₴</td>
-      <td class="mono" style="color:var(--amber)">8&nbsp;700 ₴</td>
-      <td class="mono" style="color:var(--accent)">145&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--green)">88&nbsp;500 ₴</td>
-      <td><span class="badge green">61%</span></td>
-    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r28&#39;)" style="cursor:pointer">
-      <td><strong>РП -Бучанський КДЦ - поліклініка (Полева,21)</strong></td>
-      <td style="color:var(--text2)">Бучанський КДЦ</td>
-      <td class="mono" style="color:var(--accent)">352&nbsp;150 ₴</td>
-      <td class="mono">103&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">53&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--red)">50&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">21&nbsp;129 ₴</td>
-      <td class="mono" style="color:var(--accent)">352&nbsp;150 ₴</td>
-      <td class="mono" style="color:var(--green)">228&nbsp;021 ₴</td>
-      <td><span class="badge green">65%</span></td>
-    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r29&#39;)" style="cursor:pointer">
-      <td><strong>РП- Каховська 62А</strong></td>
-      <td style="color:var(--text2)">Дніпровська РДА</td>
-      <td class="mono" style="color:var(--accent)">192&nbsp;211 ₴</td>
-      <td class="mono">80&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">0 ₴</td>
-      <td class="mono" style="color:var(--red)">80&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">11&nbsp;533 ₴</td>
-      <td class="mono" style="color:var(--accent)">192&nbsp;211 ₴</td>
-      <td class="mono" style="color:var(--green)">100&nbsp;679 ₴</td>
-      <td><span class="badge green">52%</span></td>
-    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r30&#39;)" style="cursor:pointer">
-      <td><strong>РП-Соборності,17</strong></td>
-      <td style="color:var(--text2)">Дніпровська РДА</td>
-      <td class="mono" style="color:var(--accent)">380&nbsp;027 ₴</td>
-      <td class="mono">160&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">0 ₴</td>
-      <td class="mono" style="color:var(--red)">160&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">22&nbsp;802 ₴</td>
-      <td class="mono" style="color:var(--accent)">380&nbsp;027 ₴</td>
-      <td class="mono" style="color:var(--green)">197&nbsp;225 ₴</td>
-      <td><span class="badge green">52%</span></td>
-    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;x1780681085450yw1p&#39;)" style="cursor:pointer">
-      <td><strong>РП-Софіївсько-Борщагівський ліцей</strong></td>
-      <td style="color:var(--text2)">Софіївсько-Борщагівський ліцей</td>
-      <td class="mono" style="color:var(--accent)">145&nbsp;000 ₴</td>
-      <td class="mono">35&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">0 ₴</td>
-      <td class="mono" style="color:var(--red)">35&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">8&nbsp;700 ₴</td>
-      <td class="mono" style="color:var(--accent)">145&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--green)">101&nbsp;300 ₴</td>
-      <td><span class="badge green">70%</span></td>
-    </tr>
-    <tr class="total-row"><td colspan="2">Разом</td>
-    <td class="mono">2&nbsp;779&nbsp;014 ₴</td>
-    <td class="mono">736&nbsp;800 ₴</td>
-    <td class="mono" style="color:var(--amber)">175&nbsp;000 ₴</td>
-    <td class="mono" style="color:var(--red)">561&nbsp;800 ₴</td>
-    <td class="mono">166&nbsp;741 ₴</td>
-    <td class="mono" style="color:var(--accent)">2&nbsp;671&nbsp;534 ₴</td>
-    <td class="mono" style="color:var(--green)">1&nbsp;875&nbsp;474 ₴</td>
-    <td>67%</td>
-    </tr></tbody></table></div>
+    <div class="tbl-wrap"><table id="dash-table"></table></div>
   </div>
 </div>
 
 <!-- Projects list -->
 <div class="page" id="page-projects">
   <div class="page-header">
-    <div style="flex:1"><div class="page-title">Проекти</div><div class="page-sub" id="projects-count">13 з 13 проектів</div></div>
-    <button class="btn primary" onclick="openModal(&#39;new-project&#39;)">+ Новий проект</button>
+    <div style="flex:1"><div class="page-title">Проекти</div><div class="page-sub" id="projects-count"></div></div>
+    <button class="btn primary" onclick="openModal('new-project')">+ Новий проект</button>
   </div>
   <!-- Filter & search bar -->
   <div class="filter-bar">
     <input class="search-input" id="proj-search" placeholder="🔍 Пошук проекту або замовника..." oninput="renderProjects()">
-    <button class="filter-btn active" data-status="all" onclick="setFilter(&#39;all&#39;)">Всі</button>
-    <button class="filter-btn" data-status="active" onclick="setFilter(&#39;active&#39;)">В роботі</button>
-    <button class="filter-btn" data-status="pause" onclick="setFilter(&#39;pause&#39;)">Пауза</button>
-    <button class="filter-btn" data-status="done" onclick="setFilter(&#39;done&#39;)">Завершено</button>
-    <button class="filter-btn" data-status="archive" onclick="setFilter(&#39;archive&#39;)">Архів</button>
+    <button class="filter-btn active" data-status="all" onclick="setFilter('all')">Всі</button>
+    <button class="filter-btn" data-status="active" onclick="setFilter('active')">В роботі</button>
+    <button class="filter-btn" data-status="pause" onclick="setFilter('pause')">Пауза</button>
+    <button class="filter-btn" data-status="done" onclick="setFilter('done')">Завершено</button>
+    <button class="filter-btn" data-status="archive" onclick="setFilter('archive')">Архів</button>
   </div>
-  <div id="projects-grid">
-  <div class="card">
-  <div class="tbl-wrap"><table>
-    <thead><tr>
-      <th>Проект / Замовник</th>
-      <th>Статус</th>
-      <th>Дедлайн</th>
-      <th>Дохід</th>
-      <th>Витрати</th>
-      <th>Виплачено</th>
-      <th>Прибуток</th>
-      <th>Маржа</th>
-      <th>Розділи</th>
-    </tr></thead>
-    <tbody><tr onclick="navigate(&#39;detail&#39;,&#39;r19&#39;)" style="cursor:pointer" class="">
-        <td>
-          <div style="font-weight:600">АН - Буча, Вокзальна 101</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">ДРР</div>
-        </td>
-        <td><span class="badge green">В роботі</span></td>
-        <td></td>
-        <td class="mono" style="color:var(--accent)">73&nbsp;692 ₴</td>
-        <td class="mono">0 ₴</td>
-        <td>
-          <div class="mono" style="color:var(--amber)">0 ₴</div>
-          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
-        </td>
-        <td class="mono" style="color:var(--green)">69&nbsp;270 ₴</td>
-        <td><span class="badge green">94%</span></td>
-        <td style="color:var(--text2);font-size:13px">0/1</td>
-      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r20&#39;)" style="cursor:pointer" class="">
-        <td>
-          <div style="font-weight:600">АН - Ворзель, Курортна 37</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">ДРР</div>
-        </td>
-        <td><span class="badge green">В роботі</span></td>
-        <td></td>
-        <td class="mono" style="color:var(--accent)">241&nbsp;368 ₴</td>
-        <td class="mono">0 ₴</td>
-        <td>
-          <div class="mono" style="color:var(--amber)">0 ₴</div>
-          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
-        </td>
-        <td class="mono" style="color:var(--green)">226&nbsp;886 ₴</td>
-        <td><span class="badge green">94%</span></td>
-        <td style="color:var(--text2);font-size:13px">0/1</td>
-      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r21&#39;)" style="cursor:pointer" class="">
-        <td>
-          <div style="font-weight:600">АН - Буча, Яблунська 17</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">Агенція Відновлення</div>
-        </td>
-        <td><span class="badge green">В роботі</span></td>
-        <td></td>
-        <td class="mono" style="color:var(--accent)">19&nbsp;580 ₴</td>
-        <td class="mono">0 ₴</td>
-        <td>
-          <div class="mono" style="color:var(--amber)">0 ₴</div>
-          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
-        </td>
-        <td class="mono" style="color:var(--green)">18&nbsp;405 ₴</td>
-        <td><span class="badge green">94%</span></td>
-        <td style="color:var(--text2);font-size:13px">0/1</td>
-      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r22&#39;)" style="cursor:pointer" class="">
-        <td>
-          <div style="font-weight:600">АН -Бучанський КДЦ - поліклініка (Полева,21)</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">Бучанський КДЦ</div>
-        </td>
-        <td><span class="badge green">В роботі</span></td>
-        <td></td>
-        <td class="mono" style="color:var(--accent)">64&nbsp;080 ₴</td>
-        <td class="mono">0 ₴</td>
-        <td>
-          <div class="mono" style="color:var(--amber)">0 ₴</div>
-          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
-        </td>
-        <td class="mono" style="color:var(--green)">60&nbsp;235 ₴</td>
-        <td><span class="badge green">94%</span></td>
-        <td style="color:var(--text2);font-size:13px">0/1</td>
-      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r23&#39;)" style="cursor:pointer" class="">
-        <td>
-          <div style="font-weight:600">ЕВМ Котедж Білогородка</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">ЕВМ</div>
-        </td>
-        <td><span class="badge green">В роботі</span></td>
-        <td></td>
-        <td class="mono" style="color:var(--accent)">429&nbsp;650 ₴</td>
-        <td class="mono">25&nbsp;000 ₴</td>
-        <td>
-          <div class="mono" style="color:var(--amber)">0 ₴</div>
-          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
-        </td>
-        <td class="mono" style="color:var(--green)">378&nbsp;871 ₴</td>
-        <td><span class="badge green">88%</span></td>
-        <td style="color:var(--text2);font-size:13px">0/3</td>
-      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r24&#39;)" style="cursor:pointer" class="">
-        <td>
-          <div style="font-weight:600">ЕВМ-МАФ Континент</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">ЕВМ</div>
-        </td>
-        <td><span class="badge green">В роботі</span></td>
-        <td></td>
-        <td class="mono" style="color:var(--accent)">98&nbsp;000 ₴</td>
-        <td class="mono">98&nbsp;000 ₴</td>
-        <td>
-          <div class="mono" style="color:var(--amber)">59&nbsp;000 ₴</div>
-          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:60%"></div></div>
-        </td>
-        <td class="mono" style="color:var(--red)">-5&nbsp;880 ₴</td>
-        <td><span class="badge red">-6%</span></td>
-        <td style="color:var(--text2);font-size:13px">2/3</td>
-      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r25&#39;)" style="cursor:pointer" class="">
-        <td>
-          <div style="font-weight:600">ЕВМ-МАФ Новус</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">ЕВМ</div>
-        </td>
-        <td><span class="badge green">В роботі</span></td>
-        <td></td>
-        <td class="mono" style="color:var(--accent)">74&nbsp;000 ₴</td>
-        <td class="mono">74&nbsp;000 ₴</td>
-        <td>
-          <div class="mono" style="color:var(--amber)">49&nbsp;000 ₴</div>
-          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:66%"></div></div>
-        </td>
-        <td class="mono" style="color:var(--red)">-4&nbsp;440 ₴</td>
-        <td><span class="badge red">-6%</span></td>
-        <td style="color:var(--text2);font-size:13px">1/2</td>
-      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r26&#39;)" style="cursor:pointer" class="">
-        <td>
-          <div style="font-weight:600">КП - Буча, Яблунська 17</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">Агенція Відновлення</div>
-        </td>
-        <td><span class="badge green">В роботі</span></td>
-        <td></td>
-        <td class="mono" style="color:var(--accent)">564&nbsp;256 ₴</td>
-        <td class="mono">114&nbsp;000 ₴</td>
-        <td>
-          <div class="mono" style="color:var(--amber)">14&nbsp;000 ₴</div>
-          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:12%"></div></div>
-        </td>
-        <td class="mono" style="color:var(--green)">416&nbsp;401 ₴</td>
-        <td><span class="badge green">74%</span></td>
-        <td style="color:var(--text2);font-size:13px">1/6</td>
-      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r27&#39;)" style="cursor:pointer" class="">
-        <td>
-          <div style="font-weight:600">РП -ПЧ №15 ДСНС</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">ДСНС №15</div>
-        </td>
-        <td><span class="badge green">В роботі</span></td>
-        <td></td>
-        <td class="mono" style="color:var(--accent)">145&nbsp;000 ₴</td>
-        <td class="mono">47&nbsp;800 ₴</td>
-        <td>
-          <div class="mono" style="color:var(--amber)">0 ₴</div>
-          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
-        </td>
-        <td class="mono" style="color:var(--green)">88&nbsp;500 ₴</td>
-        <td><span class="badge green">61%</span></td>
-        <td style="color:var(--text2);font-size:13px">2/3</td>
-      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r28&#39;)" style="cursor:pointer" class="">
-        <td>
-          <div style="font-weight:600">РП -Бучанський КДЦ - поліклініка (Полева,21)</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">Бучанський КДЦ</div>
-        </td>
-        <td><span class="badge green">В роботі</span></td>
-        <td></td>
-        <td class="mono" style="color:var(--accent)">352&nbsp;150 ₴</td>
-        <td class="mono">103&nbsp;000 ₴</td>
-        <td>
-          <div class="mono" style="color:var(--amber)">53&nbsp;000 ₴</div>
-          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:51%"></div></div>
-        </td>
-        <td class="mono" style="color:var(--green)">228&nbsp;021 ₴</td>
-        <td><span class="badge green">65%</span></td>
-        <td style="color:var(--text2);font-size:13px">3/5</td>
-      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r29&#39;)" style="cursor:pointer" class="">
-        <td>
-          <div style="font-weight:600">РП- Каховська 62А</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">Дніпровська РДА</div>
-        </td>
-        <td><span class="badge green">В роботі</span></td>
-        <td></td>
-        <td class="mono" style="color:var(--accent)">192&nbsp;211 ₴</td>
-        <td class="mono">80&nbsp;000 ₴</td>
-        <td>
-          <div class="mono" style="color:var(--amber)">0 ₴</div>
-          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
-        </td>
-        <td class="mono" style="color:var(--green)">100&nbsp;679 ₴</td>
-        <td><span class="badge green">52%</span></td>
-        <td style="color:var(--text2);font-size:13px">0/6</td>
-      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r30&#39;)" style="cursor:pointer" class="">
-        <td>
-          <div style="font-weight:600">РП-Соборності,17</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">Дніпровська РДА</div>
-        </td>
-        <td><span class="badge green">В роботі</span></td>
-        <td></td>
-        <td class="mono" style="color:var(--accent)">380&nbsp;027 ₴</td>
-        <td class="mono">160&nbsp;000 ₴</td>
-        <td>
-          <div class="mono" style="color:var(--amber)">0 ₴</div>
-          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
-        </td>
-        <td class="mono" style="color:var(--green)">197&nbsp;225 ₴</td>
-        <td><span class="badge green">52%</span></td>
-        <td style="color:var(--text2);font-size:13px">0/7</td>
-      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;x1780681085450yw1p&#39;)" style="cursor:pointer" class="">
-        <td>
-          <div style="font-weight:600">РП-Софіївсько-Борщагівський ліцей</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">Софіївсько-Борщагівський ліцей</div>
-        </td>
-        <td><span class="badge amber">Пауза</span></td>
-        <td></td>
-        <td class="mono" style="color:var(--accent)">145&nbsp;000 ₴</td>
-        <td class="mono">35&nbsp;000 ₴</td>
-        <td>
-          <div class="mono" style="color:var(--amber)">0 ₴</div>
-          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
-        </td>
-        <td class="mono" style="color:var(--green)">101&nbsp;300 ₴</td>
-        <td><span class="badge green">70%</span></td>
-        <td style="color:var(--text2);font-size:13px">0/2</td>
-      </tr>
-    </tbody>
-  </table></div>
-  </div></div>
+  <div id="projects-grid"></div>
 </div>
 
 <!-- Project detail -->
 <div class="page" id="page-detail">
   <div class="detail-back">
-    <button class="btn sm" onclick="navigate(&#39;projects&#39;)">← Назад</button>
+    <button class="btn sm" onclick="navigate('projects')">← Назад</button>
     <div class="breadcrumb">Проекти › <span id="detail-breadcrumb"></span></div>
   </div>
   <div class="page-header">
@@ -645,7 +261,7 @@ td:hover .edit-hint{opacity:1}
       <div class="card-head" style="background:rgba(255,149,0,0.08);border-bottom-color:rgba(255,149,0,0.25)">
         <span class="card-title" style="color:var(--amber)">✅ Задачі проекту</span>
         <div style="display:flex;gap:6px">
-          <button class="btn sm" onclick="openModal(&#39;add-task&#39;)" style="background:var(--amber);color:#000;border-color:var(--amber);font-weight:700">+ Задача</button>
+          <button class="btn sm" onclick="openModal('add-task')" style="background:var(--amber);color:#000;border-color:var(--amber);font-weight:700">+ Задача</button>
           <button class="btn sm" onclick="toggleProjectTasks()">✕ Закрити</button>
         </div>
       </div>
@@ -663,7 +279,7 @@ td:hover .edit-hint{opacity:1}
   <div class="card">
     <div class="card-head">
       <span class="card-title">💰 Оплати від замовника</span>
-      <button class="btn sm primary" onclick="openModal(&#39;add-advance&#39;)">+ Оплата</button>
+      <button class="btn sm primary" onclick="openModal('add-advance')">+ Оплата</button>
     </div>
     <div class="tbl-wrap"><table id="advances-table"></table></div>
   </div>
@@ -673,8 +289,8 @@ td:hover .edit-hint{opacity:1}
     <div class="card-head">
       <span class="card-title">📋 Розділи проекту та виконавці</span>
       <div style="display:flex;gap:8px">
-        <button class="btn sm" onclick="openModal(&#39;templates&#39;)">📦 Шаблон</button>
-        <button class="btn sm primary" onclick="openModal(&#39;add-section&#39;)">+ Розділ</button>
+        <button class="btn sm" onclick="openModal('templates')">📦 Шаблон</button>
+        <button class="btn sm primary" onclick="openModal('add-section')">+ Розділ</button>
       </div>
     </div>
     <div class="tbl-wrap"><table id="sections-table"></table></div>
@@ -688,26 +304,30 @@ td:hover .edit-hint{opacity:1}
 </div>
 
 <!-- Tasks page -->
-<div class="page active" id="page-tasks">
+<div class="page" id="page-tasks">
   <div class="page-header">
     <div><div class="page-title">Задачі</div><div class="page-sub">Всі задачі по проектах</div></div>
     <button class="btn" onclick="exportTasksExcel()" style="border-color:rgba(0,230,118,0.4);color:var(--green);background:rgba(0,230,118,0.08)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Excel
     </button>
-    <button class="btn primary" onclick="openModal(&#39;add-task&#39;)">+ Задача</button>
+    <button class="btn primary" onclick="openModal('add-task')">+ Задача</button>
   </div>
   <div class="filter-bar">
-    <select class="search-input" id="tasks-filter-proj" onchange="renderTasksPage()" style="min-width:200px"><option value="">Всі проекти</option><option value="r19">АН - Буча, Вокзальна 101</option><option value="r20">АН - Ворзель, Курортна 37</option><option value="r21">АН - Буча, Яблунська 17</option><option value="r22">АН -Бучанський КДЦ - поліклініка (Полева,21)</option><option value="r23">ЕВМ Котедж Білогородка</option><option value="r24">ЕВМ-МАФ Континент</option><option value="r25">ЕВМ-МАФ Новус</option><option value="r26">КП - Буча, Яблунська 17</option><option value="r27">РП -ПЧ №15 ДСНС</option><option value="r28">РП -Бучанський КДЦ - поліклініка (Полева,21)</option><option value="r29">РП- Каховська 62А</option><option value="r30">РП-Соборності,17</option><option value="x1780681085450yw1p">РП-Софіївсько-Борщагівський ліцей</option></select>
-    <select class="search-input" id="tasks-filter-exec" onchange="renderTasksPage()" style="min-width:180px"><option value="">Всі виконавці</option><option value="r1">Світлана Шевчук</option><option value="r2">Віктор Свобода</option><option value="r3">Володя Береза</option><option value="r4">Ларіса Гурінчук</option><option value="r5">РембудКонсалтинг (Інна)</option><option value="r6">Менеджер ЕДРБ</option><option value="r7">Роман Компані</option><option value="r8">Хоменко ГАП (Наташа)</option><option value="r9">GreenBuild Дмитро</option><option value="r10">Виталик Кучер (ОблГаз)</option><option value="r11">ЕТР Дмитро</option><option value="r12">ФОП Соловйов С.</option><option value="r13">Евроформат Алексей</option><option value="r14">Дмитро Жовтуха</option><option value="r15">Друкарня ФОП</option><option value="r16">Сергей</option><option value="r17">Виталик Кучер (Газ)</option><option value="r18">Рман Тацюе (Львів)</option><option value="x17806805325593b7p">ФОП Синьків Сергій</option><option value="x1780680671536cvqw">Аня Данілова</option><option value="x1780775253081itrz">ПАД</option></select>
-    <button class="filter-btn active" data-ts="all" onclick="setTaskFilter(&#39;all&#39;)">Всі</button>
-    <button class="filter-btn" data-ts="todo" onclick="setTaskFilter(&#39;todo&#39;)">Не почато</button>
-    <button class="filter-btn" data-ts="progress" onclick="setTaskFilter(&#39;progress&#39;)">В роботі</button>
-    <button class="filter-btn" data-ts="done" onclick="setTaskFilter(&#39;done&#39;)">Виконано</button>
-    <button class="filter-btn" data-ts="overdue" onclick="setTaskFilter(&#39;overdue&#39;)">⚠ Прострочені</button>
+    <select class="search-input" id="tasks-filter-proj" onchange="renderTasksPage()" style="min-width:200px">
+      <option value="">Всі проекти</option>
+    </select>
+    <select class="search-input" id="tasks-filter-exec" onchange="renderTasksPage()" style="min-width:180px">
+      <option value="">Всі виконавці</option>
+    </select>
+    <button class="filter-btn active" data-ts="all" onclick="setTaskFilter('all')">Всі</button>
+    <button class="filter-btn" data-ts="todo" onclick="setTaskFilter('todo')">Не почато</button>
+    <button class="filter-btn" data-ts="progress" onclick="setTaskFilter('progress')">В роботі</button>
+    <button class="filter-btn" data-ts="done" onclick="setTaskFilter('done')">Виконано</button>
+    <button class="filter-btn" data-ts="overdue" onclick="setTaskFilter('overdue')">⚠ Прострочені</button>
   </div>
   <div class="card">
-    <div class="tbl-wrap"><table id="all-tasks-table"><thead><tr><th>Задача</th><th>Проект</th><th>Виконавець</th><th>Строк</th><th>Пріоритет</th><th>Статус</th><th></th></tr></thead><tbody><tr class=""><td><div style="font-weight:600;">Надати проект в форматі PDF для друку</div></td><td style="cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r27&#39;)">РП -ПЧ №15 ДСНС</td><td style="font-size:12px;color:var(--text2)">Світлана Шевчук</td><td><span class="badge amber">⏰ 3д</span></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(0)" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal(0)">✕</button></td></tr><tr class=""><td><div style="font-weight:600;">Привести у відповідність журнал АН</div></td><td style="cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r19&#39;)">АН - Буча, Вокзальна 101</td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><span style="font-size:11px;color:var(--text3)">15.06.2026</span></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge gray">Не почато</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(1)" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal(1)">✕</button></td></tr><tr class=""><td><div style="font-weight:600;">перевірити журнал АН обовязково</div></td><td style="cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r19&#39;)">АН - Буча, Вокзальна 101</td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><span style="font-size:11px;color:var(--text3)">20.06.2026</span></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(2)" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal(2)">✕</button></td></tr><tr class=""><td><div style="font-weight:600;">Подати лист на оренду</div></td><td style="cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r25&#39;)">ЕВМ-МАФ Новус</td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><span class="badge amber">⏰ 3д</span></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(3)" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal(3)">✕</button></td></tr><tr class=""><td><div style="font-weight:600;">Підготувати Акти виконаних робіт</div></td><td style="cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r27&#39;)">РП -ПЧ №15 ДСНС</td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><span class="badge amber">4д</span></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(4)" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal(4)">✕</button></td></tr><tr class=""><td><div style="font-weight:600;">Надрукувати проект у 4-х примірниках</div></td><td style="cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r27&#39;)">РП -ПЧ №15 ДСНС</td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><span class="badge amber">5д</span></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(5)" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal(5)">✕</button></td></tr><tr class=""><td><div style="font-weight:600;">Привести у відповідність дурнал АН</div></td><td style="cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r20&#39;)">АН - Ворзель, Курортна 37</td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><span style="font-size:11px;color:var(--text3)">15.06.2026</span></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(6)" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal(6)">✕</button></td></tr></tbody></table></div>
+    <div class="tbl-wrap"><table id="all-tasks-table"></table></div>
   </div>
 </div>
 
@@ -723,7 +343,7 @@ td:hover .edit-hint{opacity:1}
 <div class="page" id="page-executors">
   <div class="page-header">
     <div style="flex:1"><div class="page-title">Виконавці</div><div class="page-sub">Субпідрядники та співробітники</div></div>
-    <button class="btn primary" onclick="openModal(&#39;new-executor&#39;)">+ Виконавець</button>
+    <button class="btn primary" onclick="openModal('new-executor')">+ Виконавець</button>
   </div>
   <div id="executors-cards"></div>
 </div>
@@ -731,7 +351,7 @@ td:hover .edit-hint{opacity:1}
 <!-- Executor detail -->
 <div class="page" id="page-executor-detail">
   <div class="detail-back">
-    <button class="btn sm" onclick="navigate(&#39;executors&#39;)">← Назад</button>
+    <button class="btn sm" onclick="navigate('executors')">← Назад</button>
     <div class="breadcrumb">Виконавці › <span id="ex-detail-breadcrumb"></span></div>
   </div>
   <!-- Profile header -->
@@ -862,7 +482,7 @@ td:hover .edit-hint{opacity:1}
   <div class="modal-title" id="modal-executor-title">Новий виконавець</div>
   <input type="hidden" id="edit-executor-id">
   <div class="form-row2">
-    <div class="form-group"><label class="form-label">ПІБ *</label><input class="form-input" id="ex-name" placeholder="Прізвище Ім&#39;я"></div>
+    <div class="form-group"><label class="form-label">ПІБ *</label><input class="form-input" id="ex-name" placeholder="Прізвище Ім'я"></div>
     <div class="form-group"><label class="form-label">Спеціальність / роль</label><input class="form-input" id="ex-role" placeholder="напр. Конструктор"></div>
   </div>
   <div class="form-row2">
@@ -876,17 +496,17 @@ td:hover .edit-hint{opacity:1}
 </div>
 
 <!-- Task modal -->
-<div class="modal" id="modal-add-task" style="display: none;">
-  <div class="modal-title" id="modal-task-title">Редагувати задачу</div>
-  <input type="hidden" id="edit-task-idx" value="2">
+<div class="modal" id="modal-add-task" style="display:none">
+  <div class="modal-title" id="modal-task-title">Нова задача</div>
+  <input type="hidden" id="edit-task-idx">
   <input type="hidden" id="edit-task-pid">
   <div class="form-group"><label class="form-label">Проект *</label>
-    <select class="form-input" id="task-project"><option value="">— оберіть проект —</option><option value="r19" selected="">АН - Буча, Вокзальна 101</option><option value="r20">АН - Ворзель, Курортна 37</option><option value="r21">АН - Буча, Яблунська 17</option><option value="r22">АН -Бучанський КДЦ - поліклініка (Полева,21)</option><option value="r23">ЕВМ Котедж Білогородка</option><option value="r24">ЕВМ-МАФ Континент</option><option value="r25">ЕВМ-МАФ Новус</option><option value="r26">КП - Буча, Яблунська 17</option><option value="r27">РП -ПЧ №15 ДСНС</option><option value="r28">РП -Бучанський КДЦ - поліклініка (Полева,21)</option><option value="r29">РП- Каховська 62А</option><option value="r30">РП-Соборності,17</option><option value="x1780681085450yw1p">РП-Софіївсько-Борщагівський ліцей</option></select>
+    <select class="form-input" id="task-project"><option value="">— оберіть проект —</option></select>
   </div>
   <div class="form-group"><label class="form-label">Задача *</label><input class="form-input" id="task-name" placeholder="Опис задачі"></div>
   <div class="form-row2">
     <div class="form-group"><label class="form-label">Виконавець</label>
-      <select class="form-input" id="task-executor"><option value="">— не призначено —</option><option value="r1">Світлана Шевчук (ГАП)</option><option value="r2">Віктор Свобода (Конструктор)</option><option value="r3">Володя Береза (Архітектор)</option><option value="r4">Ларіса Гурінчук (Кошторисник)</option><option value="r5">РембудКонсалтинг (Інна) (Експертиза проекту)</option><option value="r6">Менеджер ЕДРБ (Система ЕДРБ)</option><option value="r7">Роман Компані (ГАП)</option><option value="r8">Хоменко ГАП (Наташа) (Паспорт привязки)</option><option value="r9">GreenBuild Дмитро (Дендроплан/Озеленення)</option><option value="r10">Виталик Кучер (ОблГаз) (Газофікація)</option><option value="r11">ЕТР Дмитро (ЕТР)</option><option value="r12">ФОП Соловйов С. (СКС)</option><option value="r13">Евроформат Алексей (Ліфти)</option><option value="r14">Дмитро Жовтуха (Технагляд/ПОС)</option><option value="r15">Друкарня ФОП (Друк проектів)</option><option value="r16">Сергей (Автополив)</option><option value="r17">Виталик Кучер (Газ) (Газофікація)</option><option value="r18">Рман Тацюе (Львів) (КР)</option><option value="x17806805325593b7p">ФОП Синьків Сергій (Геодезія)</option><option value="x1780680671536cvqw">Аня Данілова (Менеджер ЕДРБ)</option><option value="x1780775253081itrz" selected="">ПАД (CEO)</option></select>
+      <select class="form-input" id="task-executor"><option value="">— не призначено —</option></select>
     </div>
     <div class="form-group"><label class="form-label">Статус</label>
       <select class="form-input" id="task-status">
@@ -932,17 +552,66 @@ td:hover .edit-hint{opacity:1}
 </div>
 
 <script>
-const LS='armabudproject_v2';
-let state={projects:[],executors:[]};
-let curPid=null;
+// ── FIREBASE CONFIG ──
+const FB_URL='https://armabudproject-d1573-default-rtdb.europe-west1.firebasedatabase.app';
 
-function load(){
+const LS='armabudproject_v2';
+let state={projects:[],executors:[],tasks:[]};
+let curPid=null;
+let fbSaveTimer=null;
+
+// Показуємо статус синхронізації
+function showSyncStatus(msg,color){
+  let el=document.getElementById('sync-status');
+  if(!el)return;
+  el.textContent=msg;
+  el.style.color=color||'var(--text2)';
+}
+
+async function load(){
+  showSyncStatus('⟳ Завантаження...','var(--accent)');
+  try{
+    const r=await fetch(FB_URL+'/data.json');
+    if(r.ok){
+      const data=await r.json();
+      if(data){
+        state=data;
+        if(!state.executors)state.executors=[];
+        if(!state.projects)state.projects=[];
+        if(!state.tasks)state.tasks=[];
+        showSyncStatus('✓ Синхронізовано','var(--green)');
+        return;
+      }
+    }
+  }catch(e){}
+  // Якщо Firebase недоступний — завантажуємо з localStorage
   try{const r=localStorage.getItem(LS);if(r)state=JSON.parse(r);}catch(e){}
   if(!state.executors)state.executors=[];
   if(!state.projects)state.projects=[];
   if(!state.tasks)state.tasks=[];
+  showSyncStatus('⚠ Офлайн режим','var(--amber)');
 }
-function save(){localStorage.setItem(LS,JSON.stringify(state));}
+
+function save(){
+  // Зберігаємо локально одразу
+  localStorage.setItem(LS,JSON.stringify(state));
+  // Firebase — з debounce щоб не спамити
+  showSyncStatus('⟳ Збереження...','var(--accent)');
+  clearTimeout(fbSaveTimer);
+  fbSaveTimer=setTimeout(async()=>{
+    try{
+      const r=await fetch(FB_URL+'/data.json',{
+        method:'PUT',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(state)
+      });
+      if(r.ok)showSyncStatus('✓ Збережено','var(--green)');
+      else showSyncStatus('⚠ Помилка збереження','var(--red)');
+    }catch(e){
+      showSyncStatus('⚠ Офлайн','var(--amber)');
+    }
+  },800);
+}
 function uid(){return 'x'+Date.now()+Math.random().toString(36).slice(2,6);}
 function fmt(n){return new Intl.NumberFormat('uk-UA').format(Math.round(+n||0))+' ₴';}
 function fmtD(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('uk-UA');}catch(e){return d;}}
@@ -2154,7 +1823,7 @@ function importData(event){
   reader.readAsText(file);event.target.value='';
 }
 
-load();navigate('dashboard');
+load().then(()=>navigate('dashboard'));
 
 // ═══════════════════════════════════════════════════
 // Вбудований генератор XLSX (без зовнішніх залежностей)
@@ -2496,4 +2165,3 @@ function exportTasksExcel(){
   XLSXGen.download(data,`АрмаБуд_задачі_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 </script>
-</body></html>
