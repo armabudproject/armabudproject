@@ -1,0 +1,2499 @@
+<!DOCTYPE html>
+<!-- saved from url=(0069)file:///Users/alexpshenya/Downloads/armabudproject_manager_v35_1.html -->
+<html lang="uk"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>АрмаБуд — Менеджер проектів</title>
+<link href="./АрмаБуд — Менеджер проектів_files/css2" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a1628;
+  --bg2:#0d1f3c;
+  --bg3:#112244;
+  --bg4:#1a3060;
+  --border:rgba(0,180,255,0.12);
+  --border2:rgba(0,180,255,0.22);
+  --text:#e8f4ff;
+  --text2:#7eb8d8;
+  --text3:#3a6080;
+  --accent:#00c8ff;
+  --accent2:#0099cc;
+  --as:rgba(0,200,255,0.12);
+  --green:#00e676;
+  --gs:rgba(0,230,118,0.13);
+  --red:#ff4444;
+  --rs:rgba(255,68,68,0.13);
+  --amber:#ffc107;
+  --ambs:rgba(255,193,7,0.13);
+  --purple:#c77dff;
+  --r:8px;
+  --rsm:6px;
+  --font:'DM Sans',sans-serif;
+  --mono:'DM Sans',sans-serif;
+  --sh:0 2px 12px rgba(0,0,0,0.4);
+  --sh2:0 0 24px rgba(0,200,255,0.08);
+  --glow:0 0 12px rgba(0,200,255,0.25);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.app{display:flex;min-height:100vh}
+.sidebar{width:210px;background:#050e1c;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:10}
+.main{margin-left:210px;flex:1;padding:18px 22px;min-height:100vh}
+.sidebar-logo{padding:16px 14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#0066ff);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#000;flex-shrink:0}
+.logo-name{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--accent);text-transform:uppercase}
+.logo-sub{font-size:9px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-top:1px}
+.sidebar-nav{padding:8px 6px;flex:1;overflow-y:auto}
+.nav-label{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:0 8px;margin-bottom:3px;margin-top:12px}
+.nav-label:first-child{margin-top:2px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--rsm);cursor:pointer;color:var(--text2);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;transition:all .15s;margin-bottom:1px;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:rgba(0,200,255,0.15);color:var(--accent);border-left:2px solid var(--accent);padding-left:8px}
+.nav-item svg{width:13px;height:13px;flex-shrink:0}
+.sidebar-footer{padding:10px 14px;border-top:1px solid var(--border);font-size:9px;color:var(--text3);letter-spacing:.05em;text-transform:uppercase}
+.page{display:none}.page.active{display:block}
+.page-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.page-title{font-size:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.page-sub{font-size:10px;color:var(--text2);margin-top:2px;text-transform:uppercase;letter-spacing:.04em}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:7px;margin-bottom:12px}
+.metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;position:relative;overflow:hidden}
+.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+.metric-label{font-size:9px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.metric-value{font-size:18px;font-weight:700;letter-spacing:-.3px;line-height:1.1}
+.metric-value.green{color:var(--green)}.metric-value.red{color:var(--red)}.metric-value.blue{color:var(--accent)}.metric-value.amber{color:var(--amber)}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:9px;overflow:hidden}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:8px 13px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:6px;background:var(--bg3)}
+.card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:7px 11px;background:var(--bg3);color:var(--text2);font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:7px 11px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(0,200,255,0.05)}
+.total-row td{font-weight:700;background:var(--bg3);border-top:1px solid var(--border2);color:var(--accent)}
+.mono{font-family:var(--mono)}
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.badge.green{background:var(--gs);color:var(--green);border:1px solid rgba(0,230,118,0.3)}
+.badge.red{background:var(--rs);color:var(--red);border:1px solid rgba(255,68,68,0.3)}
+.badge.amber{background:var(--ambs);color:var(--amber);border:1px solid rgba(255,193,7,0.3)}
+.badge.blue{background:var(--as);color:var(--accent);border:1px solid rgba(0,200,255,0.3)}
+.badge.gray{background:rgba(255,255,255,0.05);color:var(--text2);border:1px solid var(--border)}
+.badge.purple{background:rgba(199,125,255,0.12);color:var(--purple);border:1px solid rgba(199,125,255,0.3)}
+.filter-bar{display:flex;gap:5px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.filter-btn{padding:4px 11px;border-radius:3px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:10px;font-weight:700;font-family:var(--font);transition:all .15s;text-transform:uppercase;letter-spacing:.05em}
+.filter-btn:hover{background:var(--bg4);color:var(--text)}
+.filter-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.search-input{padding:5px 11px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:11px;font-family:var(--font);outline:none;min-width:200px}
+.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,200,255,0.15)}
+.search-input::placeholder{color:var(--text3)}
+.overdue td{background:rgba(255,68,68,0.06)!important}
+.overdue td:first-child{border-left:2px solid var(--red)}
+.wl-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-top:3px;width:80px}
+.wl-fill{height:100%;border-radius:2px;background:var(--green)}
+.wl-fill.warn{background:var(--amber)}.wl-fill.over{background:var(--red)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;font-size:11px;font-weight:700;font-family:var(--font);transition:all .15s;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
+.btn:hover{background:var(--bg4);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700}
+.btn.primary:hover{background:#00aadd}
+.btn.success{background:var(--gs);border-color:rgba(0,230,118,0.3);color:var(--green)}
+.btn.danger{background:var(--rs);border-color:rgba(255,68,68,0.3);color:var(--red)}
+.btn.sm{padding:3px 9px;font-size:10px}
+.btn svg{width:12px;height:12px}
+.form-group{margin-bottom:11px}
+.form-label{display:block;font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+.form-input{width:100%;padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);color:var(--text);font-size:12px;font-family:var(--font);outline:none;transition:all .15s}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,200,255,0.12)}
+.form-input::placeholder{color:var(--text3)}
+select.form-input{appearance:none;cursor:pointer}
+.form-row2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.overlay{position:fixed;inset:0;background:rgba(0,5,20,0.85);backdrop-filter:blur(6px);z-index:100;display:none;align-items:center;justify-content:center}
+.overlay.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:22px;width:min(540px,95vw);max-height:92vh;overflow-y:auto;animation:popIn .2s ease;box-shadow:0 0 40px rgba(0,200,255,0.1)}
+@keyframes popIn{from{transform:scale(.96) translateY(6px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-title{font-size:13px;font-weight:700;margin-bottom:14px;letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
+.modal-footer{display:flex;gap:7px;justify-content:flex-end;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.detail-back{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.breadcrumb{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:4px;text-transform:uppercase;letter-spacing:.05em}
+.breadcrumb span{color:var(--text2)}
+.avatar{width:24px;height:24px;border-radius:4px;background:var(--as);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;border:1px solid var(--border2)}
+.avatar.green{background:var(--gs);color:var(--green)}
+.empty{text-align:center;padding:36px 20px;color:var(--text3)}
+.empty p{font-size:11px;margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em}
+.ex-card{background:var(--bg3);border-radius:var(--rsm);padding:7px 9px;min-width:170px;border:1px solid var(--border)}
+.ex-card-name{font-size:11px;font-weight:700;margin-bottom:1px;color:var(--text)}
+.ex-card-role{font-size:9px;color:var(--text2);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.ex-card-contacts{display:flex;flex-direction:column;gap:1px}
+.ex-card-contact{font-size:10px;color:var(--text2);display:flex;align-items:center;gap:3px}
+.pay-bar-wrap{margin-top:3px}
+.pay-bar{height:3px;background:var(--bg4);border-radius:1px;overflow:hidden}
+.pay-bar-fill{height:100%;border-radius:1px;background:var(--green)}
+.pay-bar-fill.partial{background:var(--amber)}
+.progress-bar{height:3px;background:var(--bg4);border-radius:1px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;border-radius:1px;background:var(--green);transition:width .3s}
+.progress-fill.amber{background:var(--amber)}
+.section-sep{height:1px;background:var(--border);margin:12px 0}
+.info-row{display:flex;gap:5px;align-items:baseline;margin-bottom:3px}
+.info-key{font-size:9px;color:var(--text3);min-width:120px;text-transform:uppercase;letter-spacing:.05em}
+.info-val{font-size:12px;color:var(--text)}
+.mono{font-family:var(--mono)}
+td .edit-hint{opacity:0;font-size:9px;color:var(--accent);margin-left:3px;transition:opacity .15s}
+td:hover .edit-hint{opacity:1}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.project-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px;cursor:pointer;transition:all .2s}
+.project-card:hover{border-color:var(--border2);box-shadow:var(--glow)}
+.pc-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:9px}
+.pc-name{font-size:12px;font-weight:700;letter-spacing:0;color:var(--text)}
+.pc-client{font-size:9px;color:var(--text3);margin-top:1px;text-transform:uppercase;letter-spacing:.04em}
+.pc-metrics{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:7px}
+.pc-metric{background:var(--bg3);border-radius:var(--rsm);padding:7px 9px;border:1px solid var(--border)}
+.pc-metric-l{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;font-weight:600}
+.pc-metric-v{font-size:12px;font-weight:700}
+@media(max-width:768px){
+  .sidebar{width:100%;height:auto;position:relative}
+  .main{margin-left:0;padding:10px}
+  .sidebar-nav{display:flex;flex-wrap:wrap;gap:3px;padding:6px}
+  .nav-label{display:none}.sidebar-footer{display:none}
+  .form-row2,.form-row3{grid-template-columns:1fr}
+  .projects-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body><div class="app">
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">AB</div>
+    <div>
+      <div class="logo-name">АрмаБуд</div>
+      <div class="logo-sub">project manager v4.0</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Головне</div>
+    <button class="nav-item" onclick="navigate(&#39;dashboard&#39;)" id="nav-dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>Дашборд
+    </button>
+    <button class="nav-item" onclick="navigate(&#39;projects&#39;)" id="nav-projects">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18M3 12h18M3 17h18"></path></svg>Проекти
+    </button>
+    <div class="nav-label">Довідники</div>
+    <button class="nav-item" onclick="navigate(&#39;executors&#39;)" id="nav-executors">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="7" r="4"></circle><path d="M2 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path><path d="M19 7v6m-3-3h6"></path></svg>Виконавці
+    </button>
+    <button class="nav-item" onclick="navigate(&#39;workload&#39;)" id="nav-workload">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="6" height="18" rx="1"></rect><rect x="9" y="8" width="6" height="13" rx="1"></rect><rect x="16" y="5" width="6" height="16" rx="1"></rect></svg>Завантаженість
+    </button>
+    <button class="nav-item active" onclick="navigate(&#39;tasks&#39;)" id="nav-tasks">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>Задачі
+    </button>
+    <div class="nav-label">Експорт</div>
+    <button class="nav-item" onclick="exportExcel()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>Аналітика Excel
+    </button>
+    <div class="nav-label">Дані</div>
+    <button class="nav-item" onclick="exportData()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Резерв JSON
+    </button>
+    <button class="nav-item" onclick="document.getElementById(&#39;import-file&#39;).click()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>Імпорт JSON
+    </button>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+  </nav>
+  <div class="sidebar-footer">© 2026 Armabudproject.com</div>
+</aside>
+
+<main class="main">
+
+<!-- Dashboard -->
+<div class="page" id="page-dashboard">
+  <div class="page-header">
+    <div><div class="page-title">Огляд</div><div class="page-sub">Зведена аналітика по всіх проектах</div></div>
+    <button class="btn primary" onclick="navigate(&#39;projects&#39;);openModal(&#39;new-project&#39;)">+ Новий проект</button>
+  </div>
+  <div class="metrics" id="dash-metrics">
+    <div class="metric"><div class="metric-label">Проектів</div><div class="metric-value blue">13</div></div>
+    <div class="metric"><div class="metric-label">Загальний дохід</div><div class="metric-value blue">2&nbsp;779&nbsp;014 ₴</div></div>
+    <div class="metric"><div class="metric-label">Витрати (план)</div><div class="metric-value">736&nbsp;800 ₴</div></div>
+    <div class="metric"><div class="metric-label">Виплачено факт</div><div class="metric-value amber">175&nbsp;000 ₴</div></div>
+    <div class="metric"><div class="metric-label">Податки ЄП</div><div class="metric-value amber">166&nbsp;741 ₴</div></div>
+    <div class="metric"><div class="metric-label">Прибуток</div><div class="metric-value green">1&nbsp;875&nbsp;474 ₴</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><span class="card-title">Всі проекти</span></div>
+    <div class="tbl-wrap"><table id="dash-table">
+    <thead><tr><th>Проект</th><th>Замовник</th><th>Дохід</th><th>Кредит</th><th>Виплачено</th><th>До виплати</th><th>Податок</th><th>Дебет</th><th>Прибуток</th><th>Маржа</th></tr></thead>
+    <tbody><tr onclick="navigate(&#39;detail&#39;,&#39;r19&#39;)" style="cursor:pointer">
+      <td><strong>АН - Буча, Вокзальна 101</strong></td>
+      <td style="color:var(--text2)">ДРР</td>
+      <td class="mono" style="color:var(--accent)">73&nbsp;692 ₴</td>
+      <td class="mono">0 ₴</td>
+      <td class="mono" style="color:var(--amber)">0 ₴</td>
+      <td class="mono" style="color:var(--green)">0 ₴</td>
+      <td class="mono" style="color:var(--amber)">4&nbsp;422 ₴</td>
+      <td class="mono" style="color:var(--accent)">73&nbsp;692 ₴</td>
+      <td class="mono" style="color:var(--green)">69&nbsp;270 ₴</td>
+      <td><span class="badge green">94%</span></td>
+    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r20&#39;)" style="cursor:pointer">
+      <td><strong>АН - Ворзель, Курортна 37</strong></td>
+      <td style="color:var(--text2)">ДРР</td>
+      <td class="mono" style="color:var(--accent)">241&nbsp;368 ₴</td>
+      <td class="mono">0 ₴</td>
+      <td class="mono" style="color:var(--amber)">0 ₴</td>
+      <td class="mono" style="color:var(--green)">0 ₴</td>
+      <td class="mono" style="color:var(--amber)">14&nbsp;482 ₴</td>
+      <td class="mono" style="color:var(--accent)">241&nbsp;368 ₴</td>
+      <td class="mono" style="color:var(--green)">226&nbsp;886 ₴</td>
+      <td><span class="badge green">94%</span></td>
+    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r21&#39;)" style="cursor:pointer">
+      <td><strong>АН - Буча, Яблунська 17</strong></td>
+      <td style="color:var(--text2)">Агенція Відновлення</td>
+      <td class="mono" style="color:var(--accent)">19&nbsp;580 ₴</td>
+      <td class="mono">0 ₴</td>
+      <td class="mono" style="color:var(--amber)">0 ₴</td>
+      <td class="mono" style="color:var(--green)">0 ₴</td>
+      <td class="mono" style="color:var(--amber)">1&nbsp;175 ₴</td>
+      <td class="mono" style="color:var(--accent)">19&nbsp;580 ₴</td>
+      <td class="mono" style="color:var(--green)">18&nbsp;405 ₴</td>
+      <td><span class="badge green">94%</span></td>
+    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r22&#39;)" style="cursor:pointer">
+      <td><strong>АН -Бучанський КДЦ - поліклініка (Полева,21)</strong></td>
+      <td style="color:var(--text2)">Бучанський КДЦ</td>
+      <td class="mono" style="color:var(--accent)">64&nbsp;080 ₴</td>
+      <td class="mono">0 ₴</td>
+      <td class="mono" style="color:var(--amber)">0 ₴</td>
+      <td class="mono" style="color:var(--green)">0 ₴</td>
+      <td class="mono" style="color:var(--amber)">3&nbsp;845 ₴</td>
+      <td class="mono" style="color:var(--accent)">35&nbsp;600 ₴</td>
+      <td class="mono" style="color:var(--green)">60&nbsp;235 ₴</td>
+      <td><span class="badge green">94%</span></td>
+    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r23&#39;)" style="cursor:pointer">
+      <td><strong>ЕВМ Котедж Білогородка</strong></td>
+      <td style="color:var(--text2)">ЕВМ</td>
+      <td class="mono" style="color:var(--accent)">429&nbsp;650 ₴</td>
+      <td class="mono">25&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">0 ₴</td>
+      <td class="mono" style="color:var(--red)">25&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">25&nbsp;779 ₴</td>
+      <td class="mono" style="color:var(--accent)">429&nbsp;650 ₴</td>
+      <td class="mono" style="color:var(--green)">378&nbsp;871 ₴</td>
+      <td><span class="badge green">88%</span></td>
+    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r24&#39;)" style="cursor:pointer">
+      <td><strong>ЕВМ-МАФ Континент</strong></td>
+      <td style="color:var(--text2)">ЕВМ</td>
+      <td class="mono" style="color:var(--accent)">98&nbsp;000 ₴</td>
+      <td class="mono">98&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">59&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--red)">39&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">5&nbsp;880 ₴</td>
+      <td class="mono" style="color:var(--accent)">72&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--red)">-5&nbsp;880 ₴</td>
+      <td><span class="badge red">-6%</span></td>
+    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r25&#39;)" style="cursor:pointer">
+      <td><strong>ЕВМ-МАФ Новус</strong></td>
+      <td style="color:var(--text2)">ЕВМ</td>
+      <td class="mono" style="color:var(--accent)">74&nbsp;000 ₴</td>
+      <td class="mono">74&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">49&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--red)">25&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">4&nbsp;440 ₴</td>
+      <td class="mono" style="color:var(--accent)">21&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--red)">-4&nbsp;440 ₴</td>
+      <td><span class="badge red">-6%</span></td>
+    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r26&#39;)" style="cursor:pointer">
+      <td><strong>КП - Буча, Яблунська 17</strong></td>
+      <td style="color:var(--text2)">Агенція Відновлення</td>
+      <td class="mono" style="color:var(--accent)">564&nbsp;256 ₴</td>
+      <td class="mono">114&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">14&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--red)">100&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">33&nbsp;855 ₴</td>
+      <td class="mono" style="color:var(--accent)">564&nbsp;256 ₴</td>
+      <td class="mono" style="color:var(--green)">416&nbsp;401 ₴</td>
+      <td><span class="badge green">74%</span></td>
+    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r27&#39;)" style="cursor:pointer">
+      <td><strong>РП -ПЧ №15 ДСНС</strong></td>
+      <td style="color:var(--text2)">ДСНС №15</td>
+      <td class="mono" style="color:var(--accent)">145&nbsp;000 ₴</td>
+      <td class="mono">47&nbsp;800 ₴</td>
+      <td class="mono" style="color:var(--amber)">0 ₴</td>
+      <td class="mono" style="color:var(--red)">47&nbsp;800 ₴</td>
+      <td class="mono" style="color:var(--amber)">8&nbsp;700 ₴</td>
+      <td class="mono" style="color:var(--accent)">145&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--green)">88&nbsp;500 ₴</td>
+      <td><span class="badge green">61%</span></td>
+    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r28&#39;)" style="cursor:pointer">
+      <td><strong>РП -Бучанський КДЦ - поліклініка (Полева,21)</strong></td>
+      <td style="color:var(--text2)">Бучанський КДЦ</td>
+      <td class="mono" style="color:var(--accent)">352&nbsp;150 ₴</td>
+      <td class="mono">103&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">53&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--red)">50&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">21&nbsp;129 ₴</td>
+      <td class="mono" style="color:var(--accent)">352&nbsp;150 ₴</td>
+      <td class="mono" style="color:var(--green)">228&nbsp;021 ₴</td>
+      <td><span class="badge green">65%</span></td>
+    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r29&#39;)" style="cursor:pointer">
+      <td><strong>РП- Каховська 62А</strong></td>
+      <td style="color:var(--text2)">Дніпровська РДА</td>
+      <td class="mono" style="color:var(--accent)">192&nbsp;211 ₴</td>
+      <td class="mono">80&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">0 ₴</td>
+      <td class="mono" style="color:var(--red)">80&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">11&nbsp;533 ₴</td>
+      <td class="mono" style="color:var(--accent)">192&nbsp;211 ₴</td>
+      <td class="mono" style="color:var(--green)">100&nbsp;679 ₴</td>
+      <td><span class="badge green">52%</span></td>
+    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r30&#39;)" style="cursor:pointer">
+      <td><strong>РП-Соборності,17</strong></td>
+      <td style="color:var(--text2)">Дніпровська РДА</td>
+      <td class="mono" style="color:var(--accent)">380&nbsp;027 ₴</td>
+      <td class="mono">160&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">0 ₴</td>
+      <td class="mono" style="color:var(--red)">160&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">22&nbsp;802 ₴</td>
+      <td class="mono" style="color:var(--accent)">380&nbsp;027 ₴</td>
+      <td class="mono" style="color:var(--green)">197&nbsp;225 ₴</td>
+      <td><span class="badge green">52%</span></td>
+    </tr><tr onclick="navigate(&#39;detail&#39;,&#39;x1780681085450yw1p&#39;)" style="cursor:pointer">
+      <td><strong>РП-Софіївсько-Борщагівський ліцей</strong></td>
+      <td style="color:var(--text2)">Софіївсько-Борщагівський ліцей</td>
+      <td class="mono" style="color:var(--accent)">145&nbsp;000 ₴</td>
+      <td class="mono">35&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">0 ₴</td>
+      <td class="mono" style="color:var(--red)">35&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--amber)">8&nbsp;700 ₴</td>
+      <td class="mono" style="color:var(--accent)">145&nbsp;000 ₴</td>
+      <td class="mono" style="color:var(--green)">101&nbsp;300 ₴</td>
+      <td><span class="badge green">70%</span></td>
+    </tr>
+    <tr class="total-row"><td colspan="2">Разом</td>
+    <td class="mono">2&nbsp;779&nbsp;014 ₴</td>
+    <td class="mono">736&nbsp;800 ₴</td>
+    <td class="mono" style="color:var(--amber)">175&nbsp;000 ₴</td>
+    <td class="mono" style="color:var(--red)">561&nbsp;800 ₴</td>
+    <td class="mono">166&nbsp;741 ₴</td>
+    <td class="mono" style="color:var(--accent)">2&nbsp;671&nbsp;534 ₴</td>
+    <td class="mono" style="color:var(--green)">1&nbsp;875&nbsp;474 ₴</td>
+    <td>67%</td>
+    </tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- Projects list -->
+<div class="page" id="page-projects">
+  <div class="page-header">
+    <div style="flex:1"><div class="page-title">Проекти</div><div class="page-sub" id="projects-count">13 з 13 проектів</div></div>
+    <button class="btn primary" onclick="openModal(&#39;new-project&#39;)">+ Новий проект</button>
+  </div>
+  <!-- Filter & search bar -->
+  <div class="filter-bar">
+    <input class="search-input" id="proj-search" placeholder="🔍 Пошук проекту або замовника..." oninput="renderProjects()">
+    <button class="filter-btn active" data-status="all" onclick="setFilter(&#39;all&#39;)">Всі</button>
+    <button class="filter-btn" data-status="active" onclick="setFilter(&#39;active&#39;)">В роботі</button>
+    <button class="filter-btn" data-status="pause" onclick="setFilter(&#39;pause&#39;)">Пауза</button>
+    <button class="filter-btn" data-status="done" onclick="setFilter(&#39;done&#39;)">Завершено</button>
+    <button class="filter-btn" data-status="archive" onclick="setFilter(&#39;archive&#39;)">Архів</button>
+  </div>
+  <div id="projects-grid">
+  <div class="card">
+  <div class="tbl-wrap"><table>
+    <thead><tr>
+      <th>Проект / Замовник</th>
+      <th>Статус</th>
+      <th>Дедлайн</th>
+      <th>Дохід</th>
+      <th>Витрати</th>
+      <th>Виплачено</th>
+      <th>Прибуток</th>
+      <th>Маржа</th>
+      <th>Розділи</th>
+    </tr></thead>
+    <tbody><tr onclick="navigate(&#39;detail&#39;,&#39;r19&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">АН - Буча, Вокзальна 101</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">ДРР</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:var(--accent)">73&nbsp;692 ₴</td>
+        <td class="mono">0 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">69&nbsp;270 ₴</td>
+        <td><span class="badge green">94%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/1</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r20&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">АН - Ворзель, Курортна 37</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">ДРР</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:var(--accent)">241&nbsp;368 ₴</td>
+        <td class="mono">0 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">226&nbsp;886 ₴</td>
+        <td><span class="badge green">94%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/1</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r21&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">АН - Буча, Яблунська 17</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Агенція Відновлення</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:var(--accent)">19&nbsp;580 ₴</td>
+        <td class="mono">0 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">18&nbsp;405 ₴</td>
+        <td><span class="badge green">94%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/1</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r22&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">АН -Бучанський КДЦ - поліклініка (Полева,21)</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Бучанський КДЦ</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:var(--accent)">64&nbsp;080 ₴</td>
+        <td class="mono">0 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">60&nbsp;235 ₴</td>
+        <td><span class="badge green">94%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/1</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r23&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">ЕВМ Котедж Білогородка</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">ЕВМ</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:var(--accent)">429&nbsp;650 ₴</td>
+        <td class="mono">25&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">378&nbsp;871 ₴</td>
+        <td><span class="badge green">88%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/3</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r24&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">ЕВМ-МАФ Континент</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">ЕВМ</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:var(--accent)">98&nbsp;000 ₴</td>
+        <td class="mono">98&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">59&nbsp;000 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:60%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--red)">-5&nbsp;880 ₴</td>
+        <td><span class="badge red">-6%</span></td>
+        <td style="color:var(--text2);font-size:13px">2/3</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r25&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">ЕВМ-МАФ Новус</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">ЕВМ</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:var(--accent)">74&nbsp;000 ₴</td>
+        <td class="mono">74&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">49&nbsp;000 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:66%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--red)">-4&nbsp;440 ₴</td>
+        <td><span class="badge red">-6%</span></td>
+        <td style="color:var(--text2);font-size:13px">1/2</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r26&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">КП - Буча, Яблунська 17</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Агенція Відновлення</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:var(--accent)">564&nbsp;256 ₴</td>
+        <td class="mono">114&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">14&nbsp;000 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:12%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">416&nbsp;401 ₴</td>
+        <td><span class="badge green">74%</span></td>
+        <td style="color:var(--text2);font-size:13px">1/6</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r27&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">РП -ПЧ №15 ДСНС</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">ДСНС №15</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:var(--accent)">145&nbsp;000 ₴</td>
+        <td class="mono">47&nbsp;800 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">88&nbsp;500 ₴</td>
+        <td><span class="badge green">61%</span></td>
+        <td style="color:var(--text2);font-size:13px">2/3</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r28&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">РП -Бучанський КДЦ - поліклініка (Полева,21)</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Бучанський КДЦ</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:var(--accent)">352&nbsp;150 ₴</td>
+        <td class="mono">103&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">53&nbsp;000 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:51%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">228&nbsp;021 ₴</td>
+        <td><span class="badge green">65%</span></td>
+        <td style="color:var(--text2);font-size:13px">3/5</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r29&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">РП- Каховська 62А</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Дніпровська РДА</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:var(--accent)">192&nbsp;211 ₴</td>
+        <td class="mono">80&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">100&nbsp;679 ₴</td>
+        <td><span class="badge green">52%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/6</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r30&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">РП-Соборності,17</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Дніпровська РДА</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:var(--accent)">380&nbsp;027 ₴</td>
+        <td class="mono">160&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">197&nbsp;225 ₴</td>
+        <td><span class="badge green">52%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/7</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;x1780681085450yw1p&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">РП-Софіївсько-Борщагівський ліцей</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Софіївсько-Борщагівський ліцей</div>
+        </td>
+        <td><span class="badge amber">Пауза</span></td>
+        <td></td>
+        <td class="mono" style="color:var(--accent)">145&nbsp;000 ₴</td>
+        <td class="mono">35&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">101&nbsp;300 ₴</td>
+        <td><span class="badge green">70%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/2</td>
+      </tr>
+    </tbody>
+  </table></div>
+  </div></div>
+</div>
+
+<!-- Project detail -->
+<div class="page" id="page-detail">
+  <div class="detail-back">
+    <button class="btn sm" onclick="navigate(&#39;projects&#39;)">← Назад</button>
+    <div class="breadcrumb">Проекти › <span id="detail-breadcrumb"></span></div>
+  </div>
+  <div class="page-header">
+    <div style="flex:1"><div class="page-title" id="detail-name"></div><div class="page-sub" id="detail-sub"></div></div>
+    <div id="detail-links" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    <button class="btn sm" onclick="editCurrentProject()">✎ Редагувати</button>
+    <button class="btn sm danger" onclick="deleteCurrentProject()">Видалити</button>
+  </div>
+
+  <!-- Project tasks panel (toggle) -->
+  <div id="project-tasks-panel-wrap" style="display:none;margin-bottom:14px">
+    <div class="card" style="border-color:rgba(255,149,0,0.3)">
+      <div class="card-head" style="background:rgba(255,149,0,0.08);border-bottom-color:rgba(255,149,0,0.25)">
+        <span class="card-title" style="color:var(--amber)">✅ Задачі проекту</span>
+        <div style="display:flex;gap:6px">
+          <button class="btn sm" onclick="openModal(&#39;add-task&#39;)" style="background:var(--amber);color:#000;border-color:var(--amber);font-weight:700">+ Задача</button>
+          <button class="btn sm" onclick="toggleProjectTasks()">✕ Закрити</button>
+        </div>
+      </div>
+      <div id="project-tasks-panel"></div>
+    </div>
+  </div>
+
+  <!-- P&L metrics -->
+  <div class="metrics" id="detail-metrics"></div>
+
+  <!-- Extra costs block -->
+  <div id="extra-costs-block"></div>
+
+  <!-- Advances -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">💰 Оплати від замовника</span>
+      <button class="btn sm primary" onclick="openModal(&#39;add-advance&#39;)">+ Оплата</button>
+    </div>
+    <div class="tbl-wrap"><table id="advances-table"></table></div>
+  </div>
+
+  <!-- Sections with executor cards -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">📋 Розділи проекту та виконавці</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn sm" onclick="openModal(&#39;templates&#39;)">📦 Шаблон</button>
+        <button class="btn sm primary" onclick="openModal(&#39;add-section&#39;)">+ Розділ</button>
+      </div>
+    </div>
+    <div class="tbl-wrap"><table id="sections-table"></table></div>
+  </div>
+
+  <!-- Payments summary per executor -->
+  <div class="card">
+    <div class="card-head"><span class="card-title">👥 Розрахунки з виконавцями</span></div>
+    <div id="executor-payments"></div>
+  </div>
+</div>
+
+<!-- Tasks page -->
+<div class="page active" id="page-tasks">
+  <div class="page-header">
+    <div><div class="page-title">Задачі</div><div class="page-sub">Всі задачі по проектах</div></div>
+    <button class="btn" onclick="exportTasksExcel()" style="border-color:rgba(0,230,118,0.4);color:var(--green);background:rgba(0,230,118,0.08)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      Excel
+    </button>
+    <button class="btn primary" onclick="openModal(&#39;add-task&#39;)">+ Задача</button>
+  </div>
+  <div class="filter-bar">
+    <select class="search-input" id="tasks-filter-proj" onchange="renderTasksPage()" style="min-width:200px"><option value="">Всі проекти</option><option value="r19">АН - Буча, Вокзальна 101</option><option value="r20">АН - Ворзель, Курортна 37</option><option value="r21">АН - Буча, Яблунська 17</option><option value="r22">АН -Бучанський КДЦ - поліклініка (Полева,21)</option><option value="r23">ЕВМ Котедж Білогородка</option><option value="r24">ЕВМ-МАФ Континент</option><option value="r25">ЕВМ-МАФ Новус</option><option value="r26">КП - Буча, Яблунська 17</option><option value="r27">РП -ПЧ №15 ДСНС</option><option value="r28">РП -Бучанський КДЦ - поліклініка (Полева,21)</option><option value="r29">РП- Каховська 62А</option><option value="r30">РП-Соборності,17</option><option value="x1780681085450yw1p">РП-Софіївсько-Борщагівський ліцей</option></select>
+    <select class="search-input" id="tasks-filter-exec" onchange="renderTasksPage()" style="min-width:180px"><option value="">Всі виконавці</option><option value="r1">Світлана Шевчук</option><option value="r2">Віктор Свобода</option><option value="r3">Володя Береза</option><option value="r4">Ларіса Гурінчук</option><option value="r5">РембудКонсалтинг (Інна)</option><option value="r6">Менеджер ЕДРБ</option><option value="r7">Роман Компані</option><option value="r8">Хоменко ГАП (Наташа)</option><option value="r9">GreenBuild Дмитро</option><option value="r10">Виталик Кучер (ОблГаз)</option><option value="r11">ЕТР Дмитро</option><option value="r12">ФОП Соловйов С.</option><option value="r13">Евроформат Алексей</option><option value="r14">Дмитро Жовтуха</option><option value="r15">Друкарня ФОП</option><option value="r16">Сергей</option><option value="r17">Виталик Кучер (Газ)</option><option value="r18">Рман Тацюе (Львів)</option><option value="x17806805325593b7p">ФОП Синьків Сергій</option><option value="x1780680671536cvqw">Аня Данілова</option><option value="x1780775253081itrz">ПАД</option></select>
+    <button class="filter-btn active" data-ts="all" onclick="setTaskFilter(&#39;all&#39;)">Всі</button>
+    <button class="filter-btn" data-ts="todo" onclick="setTaskFilter(&#39;todo&#39;)">Не почато</button>
+    <button class="filter-btn" data-ts="progress" onclick="setTaskFilter(&#39;progress&#39;)">В роботі</button>
+    <button class="filter-btn" data-ts="done" onclick="setTaskFilter(&#39;done&#39;)">Виконано</button>
+    <button class="filter-btn" data-ts="overdue" onclick="setTaskFilter(&#39;overdue&#39;)">⚠ Прострочені</button>
+  </div>
+  <div class="card">
+    <div class="tbl-wrap"><table id="all-tasks-table"><thead><tr><th>Задача</th><th>Проект</th><th>Виконавець</th><th>Строк</th><th>Пріоритет</th><th>Статус</th><th></th></tr></thead><tbody><tr class=""><td><div style="font-weight:600;">Надати проект в форматі PDF для друку</div></td><td style="cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r27&#39;)">РП -ПЧ №15 ДСНС</td><td style="font-size:12px;color:var(--text2)">Світлана Шевчук</td><td><span class="badge amber">⏰ 3д</span></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(0)" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal(0)">✕</button></td></tr><tr class=""><td><div style="font-weight:600;">Привести у відповідність журнал АН</div></td><td style="cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r19&#39;)">АН - Буча, Вокзальна 101</td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><span style="font-size:11px;color:var(--text3)">15.06.2026</span></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge gray">Не почато</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(1)" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal(1)">✕</button></td></tr><tr class=""><td><div style="font-weight:600;">перевірити журнал АН обовязково</div></td><td style="cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r19&#39;)">АН - Буча, Вокзальна 101</td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><span style="font-size:11px;color:var(--text3)">20.06.2026</span></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(2)" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal(2)">✕</button></td></tr><tr class=""><td><div style="font-weight:600;">Подати лист на оренду</div></td><td style="cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r25&#39;)">ЕВМ-МАФ Новус</td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><span class="badge amber">⏰ 3д</span></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(3)" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal(3)">✕</button></td></tr><tr class=""><td><div style="font-weight:600;">Підготувати Акти виконаних робіт</div></td><td style="cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r27&#39;)">РП -ПЧ №15 ДСНС</td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><span class="badge amber">4д</span></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(4)" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal(4)">✕</button></td></tr><tr class=""><td><div style="font-weight:600;">Надрукувати проект у 4-х примірниках</div></td><td style="cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r27&#39;)">РП -ПЧ №15 ДСНС</td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><span class="badge amber">5д</span></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(5)" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal(5)">✕</button></td></tr><tr class=""><td><div style="font-weight:600;">Привести у відповідність дурнал АН</div></td><td style="cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r20&#39;)">АН - Ворзель, Курортна 37</td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><span style="font-size:11px;color:var(--text3)">15.06.2026</span></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(6)" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal(6)">✕</button></td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- Workload page -->
+<div class="page" id="page-workload">
+  <div class="page-header">
+    <div><div class="page-title">Завантаженість</div><div class="page-sub">Скільки активних розділів веде кожен виконавець</div></div>
+  </div>
+  <div id="workload-content"></div>
+</div>
+
+<!-- Executors list -->
+<div class="page" id="page-executors">
+  <div class="page-header">
+    <div style="flex:1"><div class="page-title">Виконавці</div><div class="page-sub">Субпідрядники та співробітники</div></div>
+    <button class="btn primary" onclick="openModal(&#39;new-executor&#39;)">+ Виконавець</button>
+  </div>
+  <div id="executors-cards"></div>
+</div>
+
+<!-- Executor detail -->
+<div class="page" id="page-executor-detail">
+  <div class="detail-back">
+    <button class="btn sm" onclick="navigate(&#39;executors&#39;)">← Назад</button>
+    <div class="breadcrumb">Виконавці › <span id="ex-detail-breadcrumb"></span></div>
+  </div>
+  <!-- Profile header -->
+  <div style="display:flex;align-items:center;gap:20px;margin-bottom:28px;flex-wrap:wrap">
+    <div id="ex-detail-avatar" style="width:64px;height:64px;border-radius:50%;background:var(--as);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;flex-shrink:0"></div>
+    <div style="flex:1">
+      <div style="font-size:24px;font-weight:700;letter-spacing:-.5px" id="ex-detail-name"></div>
+      <div style="font-size:14px;color:var(--text2);margin-top:2px" id="ex-detail-role"></div>
+      <div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap" id="ex-detail-contacts"></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn sm" onclick="openEditExCurrent()">✎ Редагувати</button>
+      <button class="btn sm danger" onclick="delExCurrent()">Видалити</button>
+    </div>
+  </div>
+  <!-- Summary metrics -->
+  <div class="metrics" id="ex-detail-metrics"></div>
+  <!-- Projects table -->
+  <div class="card">
+    <div class="card-head"><span class="card-title">Проекти виконавця</span></div>
+    <div class="tbl-wrap"><table id="ex-detail-projects"></table></div>
+  </div>
+  <!-- Payment history -->
+  <div class="card">
+    <div class="card-head"><span class="card-title">Історія виплат</span></div>
+    <div class="tbl-wrap"><table id="ex-detail-payments"></table></div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+<div class="overlay" id="overlay" onclick="closeOverlay(event)">
+
+<!-- Project modal -->
+<div class="modal" id="modal-new-project" style="display:none">
+  <div class="modal-title" id="modal-project-title">Новий проект</div>
+  <input type="hidden" id="edit-project-id">
+  <div class="form-group"><label class="form-label">Назва проекту *</label><input class="form-input" id="p-name" placeholder="напр. КП Макаренко — два будинки"></div>
+  <div class="form-row2">
+    <div class="form-group"><label class="form-label">Замовник</label><input class="form-input" id="p-client" placeholder="ПІБ або назва"></div>
+    <div class="form-group"><label class="form-label">Статус проекту</label>
+      <select class="form-input" id="p-status">
+        <option value="active">🟢 В роботі</option>
+        <option value="pause">🟡 Пауза</option>
+        <option value="done">✅ Завершено</option>
+        <option value="archive">🗄 Архів</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-row2">
+    <div class="form-group"><label class="form-label">Дата договору</label><input class="form-input" type="date" id="p-date"></div>
+    <div class="form-group"><label class="form-label">Дедлайн здачі проекту</label><input class="form-input" type="date" id="p-deadline"></div>
+  </div>
+  <div class="form-row2">
+    <div class="form-group"><label class="form-label">Вартість договору, грн *</label><input class="form-input" type="number" id="p-revenue" placeholder="0"></div>
+    <div class="form-group"><label class="form-label">Ставка податку, %</label><input class="form-input" type="number" id="p-tax" value="6" min="0" max="100"></div>
+  </div>
+  <div class="form-group"><label class="form-label">Адреса об'єкта</label><input class="form-input" id="p-addr" placeholder="вул., місто"></div>
+  <div style="font-size:10px;font-weight:700;color:var(--accent);margin-bottom:8px;margin-top:4px;text-transform:uppercase;letter-spacing:.07em">Посилання</div>
+  <div class="form-group"><label class="form-label">📁 Google Drive — папка проекту</label><input class="form-input" id="p-drive" placeholder="https://drive.google.com/drive/folders/..."></div>
+  <div class="form-group"><label class="form-label">💬 Google Chat — чат проекту</label><input class="form-input" id="p-gchat" placeholder="https://chat.google.com/room/..."></div>
+  <div class="form-group"><label class="form-label">✈️ Telegram — канал або чат</label><input class="form-input" id="p-tg" placeholder="https://t.me/... або @username"></div>
+  <div class="form-group"><label class="form-label">Примітки</label><textarea class="form-input" id="p-notes" rows="2" placeholder="Додаткова інформація"></textarea></div>
+  <div class="modal-footer">
+    <button class="btn" onclick="closeModal()">Скасувати</button>
+    <button class="btn primary" onclick="saveProject()">Зберегти</button>
+  </div>
+</div>
+
+<!-- Advance modal -->
+<div class="modal" id="modal-add-advance" style="display:none">
+  <div class="modal-title">Оплата від замовника</div>
+  <input type="hidden" id="edit-advance-idx">
+  <div class="form-row2">
+    <div class="form-group"><label class="form-label">Дата</label><input class="form-input" type="date" id="adv-date"></div>
+    <div class="form-group"><label class="form-label">Сума, грн *</label><input class="form-input" type="number" id="adv-amount" placeholder="0"></div>
+  </div>
+  <div class="form-group"><label class="form-label">Примітка</label><input class="form-input" id="adv-note" placeholder="напр. 50% передоплата"></div>
+  <div class="modal-footer">
+    <button class="btn" onclick="closeModal()">Скасувати</button>
+    <button class="btn primary" onclick="saveAdvance()">Зберегти</button>
+  </div>
+</div>
+
+<!-- Section modal -->
+<div class="modal" id="modal-add-section" style="display:none">
+  <div class="modal-title" id="modal-section-title">Розділ проекту</div>
+  <input type="hidden" id="edit-section-idx">
+  <div class="form-group"><label class="form-label">Назва розділу *</label><input class="form-input" id="sec-name" placeholder="напр. АР — Архітектурні рішення"></div>
+  <div class="form-row2">
+    <div class="form-group"><label class="form-label">Виконавець</label>
+      <select class="form-input" id="sec-executor"><option value="">— не призначено —</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Статус</label>
+      <select class="form-input" id="sec-status">
+        <option value="todo">Не почато</option>
+        <option value="progress">В роботі</option>
+        <option value="done">Готово</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-row2">
+    <div class="form-group"><label class="form-label">Договірна вартість, грн</label><input class="form-input" type="number" id="sec-cost" placeholder="0"></div>
+    <div class="form-group"><label class="form-label">Виплачено виконавцю, грн</label><input class="form-input" type="number" id="sec-paid" placeholder="0"></div>
+  </div>
+  <div class="form-group"><label class="form-label">Дедлайн розділу</label><input class="form-input" type="date" id="sec-deadline"></div>
+  <div class="form-group"><label class="form-label">Примітка</label><input class="form-input" id="sec-note" placeholder="Додаткова інформація"></div>
+  <div class="modal-footer">
+    <button class="btn" onclick="closeModal()">Скасувати</button>
+    <button class="btn primary" onclick="saveSection()">Зберегти</button>
+  </div>
+</div>
+
+<!-- Templates modal -->
+<div class="modal" id="modal-templates" style="display:none">
+  <div class="modal-title">Шаблони розділів</div>
+  <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Оберіть шаблон — розділи додадуться автоматично. Вартість можна заповнити після.</div>
+  <div id="templates-list"></div>
+  <div class="modal-footer">
+    <button class="btn" onclick="closeModal()">Закрити</button>
+  </div>
+</div>
+
+<!-- Executor modal -->
+<div class="modal" id="modal-new-executor" style="display:none">
+  <div class="modal-title" id="modal-executor-title">Новий виконавець</div>
+  <input type="hidden" id="edit-executor-id">
+  <div class="form-row2">
+    <div class="form-group"><label class="form-label">ПІБ *</label><input class="form-input" id="ex-name" placeholder="Прізвище Ім&#39;я"></div>
+    <div class="form-group"><label class="form-label">Спеціальність / роль</label><input class="form-input" id="ex-role" placeholder="напр. Конструктор"></div>
+  </div>
+  <div class="form-row2">
+    <div class="form-group"><label class="form-label">Телефон</label><input class="form-input" type="tel" id="ex-phone" placeholder="+380 XX XXX XXXX"></div>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="ex-email" placeholder="email@..."></div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" onclick="closeModal()">Скасувати</button>
+    <button class="btn primary" onclick="saveExecutor()">Зберегти</button>
+  </div>
+</div>
+
+<!-- Task modal -->
+<div class="modal" id="modal-add-task" style="display: none;">
+  <div class="modal-title" id="modal-task-title">Редагувати задачу</div>
+  <input type="hidden" id="edit-task-idx" value="2">
+  <input type="hidden" id="edit-task-pid">
+  <div class="form-group"><label class="form-label">Проект *</label>
+    <select class="form-input" id="task-project"><option value="">— оберіть проект —</option><option value="r19" selected="">АН - Буча, Вокзальна 101</option><option value="r20">АН - Ворзель, Курортна 37</option><option value="r21">АН - Буча, Яблунська 17</option><option value="r22">АН -Бучанський КДЦ - поліклініка (Полева,21)</option><option value="r23">ЕВМ Котедж Білогородка</option><option value="r24">ЕВМ-МАФ Континент</option><option value="r25">ЕВМ-МАФ Новус</option><option value="r26">КП - Буча, Яблунська 17</option><option value="r27">РП -ПЧ №15 ДСНС</option><option value="r28">РП -Бучанський КДЦ - поліклініка (Полева,21)</option><option value="r29">РП- Каховська 62А</option><option value="r30">РП-Соборності,17</option><option value="x1780681085450yw1p">РП-Софіївсько-Борщагівський ліцей</option></select>
+  </div>
+  <div class="form-group"><label class="form-label">Задача *</label><input class="form-input" id="task-name" placeholder="Опис задачі"></div>
+  <div class="form-row2">
+    <div class="form-group"><label class="form-label">Виконавець</label>
+      <select class="form-input" id="task-executor"><option value="">— не призначено —</option><option value="r1">Світлана Шевчук (ГАП)</option><option value="r2">Віктор Свобода (Конструктор)</option><option value="r3">Володя Береза (Архітектор)</option><option value="r4">Ларіса Гурінчук (Кошторисник)</option><option value="r5">РембудКонсалтинг (Інна) (Експертиза проекту)</option><option value="r6">Менеджер ЕДРБ (Система ЕДРБ)</option><option value="r7">Роман Компані (ГАП)</option><option value="r8">Хоменко ГАП (Наташа) (Паспорт привязки)</option><option value="r9">GreenBuild Дмитро (Дендроплан/Озеленення)</option><option value="r10">Виталик Кучер (ОблГаз) (Газофікація)</option><option value="r11">ЕТР Дмитро (ЕТР)</option><option value="r12">ФОП Соловйов С. (СКС)</option><option value="r13">Евроформат Алексей (Ліфти)</option><option value="r14">Дмитро Жовтуха (Технагляд/ПОС)</option><option value="r15">Друкарня ФОП (Друк проектів)</option><option value="r16">Сергей (Автополив)</option><option value="r17">Виталик Кучер (Газ) (Газофікація)</option><option value="r18">Рман Тацюе (Львів) (КР)</option><option value="x17806805325593b7p">ФОП Синьків Сергій (Геодезія)</option><option value="x1780680671536cvqw">Аня Данілова (Менеджер ЕДРБ)</option><option value="x1780775253081itrz" selected="">ПАД (CEO)</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Статус</label>
+      <select class="form-input" id="task-status">
+        <option value="todo">Не почато</option>
+        <option value="progress">В роботі</option>
+        <option value="done">Виконано</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-row2">
+    <div class="form-group"><label class="form-label">Строк виконання</label><input class="form-input" type="date" id="task-deadline"></div>
+    <div class="form-group"><label class="form-label">Пріоритет</label>
+      <select class="form-input" id="task-priority">
+        <option value="normal">Звичайний</option>
+        <option value="high">Високий</option>
+        <option value="urgent">Терміново</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group"><label class="form-label">Примітка</label><input class="form-input" id="task-note" placeholder="Додаткова інформація"></div>
+  <div class="modal-footer">
+    <button class="btn" onclick="closeModal()">Скасувати</button>
+    <button class="btn primary" onclick="saveTask()">Зберегти</button>
+  </div>
+</div>
+
+<!-- Quick-pay modal -->
+<div class="modal" id="modal-quickpay" style="display:none">
+  <div class="modal-title">Виплата виконавцю</div>
+  <input type="hidden" id="qp-section-idx">
+  <div id="qp-info" style="background:var(--bg3);border-radius:var(--rsm);padding:12px 14px;margin-bottom:16px;font-size:13px"></div>
+  <div class="form-row2">
+    <div class="form-group"><label class="form-label">Сума виплати, грн</label><input class="form-input" type="number" id="qp-amount" placeholder="0"></div>
+    <div class="form-group"><label class="form-label">Дата</label><input class="form-input" type="date" id="qp-date"></div>
+  </div>
+  <div class="form-group"><label class="form-label">Примітка</label><input class="form-input" id="qp-note" placeholder="напр. аванс за АР"></div>
+  <div class="modal-footer">
+    <button class="btn" onclick="closeModal()">Скасувати</button>
+    <button class="btn success" onclick="saveQuickPay()">✓ Записати виплату</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+const LS='armabudproject_v2';
+let state={projects:[],executors:[]};
+let curPid=null;
+
+function load(){
+  try{const r=localStorage.getItem(LS);if(r)state=JSON.parse(r);}catch(e){}
+  if(!state.executors)state.executors=[];
+  if(!state.projects)state.projects=[];
+  if(!state.tasks)state.tasks=[];
+}
+function save(){localStorage.setItem(LS,JSON.stringify(state));}
+function uid(){return 'x'+Date.now()+Math.random().toString(36).slice(2,6);}
+function fmt(n){return new Intl.NumberFormat('uk-UA').format(Math.round(+n||0))+' ₴';}
+function fmtD(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('uk-UA');}catch(e){return d;}}
+function ini(name){return(name||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();}
+
+function calcPnl(p){
+  const rev=+(p.revenue||0);
+  const tax=rev*(+(p.taxRate||6)/100);
+  const secs=p.sections||[];
+  const costs=secs.reduce((a,s)=>a+(+(s.cost)||0),0);
+  const paid=secs.reduce((a,s)=>a+(+(s.paid)||0),0);
+  const extra=(+(p.costExpertise)||0)+(+(p.costPrint)||0)+(+(p.costOther)||0);
+  const adv=(p.advances||[]).reduce((a,x)=>a+(+(x.amount)||0),0);
+  const totalCosts=costs+extra;
+  const net=rev-tax-totalCosts;
+  const margin=rev>0?Math.round(net/rev*100):0;
+  return{rev,tax,costs,extra,totalCosts,paid,net,margin,adv,remaining:rev-adv,toPay:totalCosts-paid};
+}
+
+let curExId=null;
+
+function navigate(page,pid){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pageMap={'dashboard':'dashboard','projects':'projects','detail':'detail','executors':'executors','executor-detail':'executor-detail','workload':'workload','tasks':'tasks'};
+  document.getElementById('page-'+(pageMap[page]||page)).classList.add('active');
+  const navMap={'dashboard':'nav-dashboard','projects':'nav-projects','detail':'nav-projects','executors':'nav-executors','executor-detail':'nav-executors','workload':'nav-workload','tasks':'nav-tasks'};
+  const nav=document.getElementById(navMap[page]);if(nav)nav.classList.add('active');
+  if(page==='dashboard')renderDashboard();
+  else if(page==='projects')renderProjects();
+  else if(page==='executors')renderExecutors();
+  else if(page==='workload')renderWorkload();
+  else if(page==='tasks')renderTasksPage();
+  else if(page==='detail'&&pid){curPid=pid;renderDetail();}
+  else if(page==='executor-detail'&&pid){curExId=pid;renderExecutorDetail();}
+}
+
+// ── FILTER STATE ──
+let activeFilter='all';
+function setFilter(f){
+  activeFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.status===f));
+  renderProjects();
+}
+
+// ── STATUS HELPERS ──
+const STATUS_LABEL={'active':'В роботі','pause':'Пауза','done':'Завершено','archive':'Архів'};
+const STATUS_BADGE={'active':'green','pause':'amber','done':'blue','archive':'gray'};
+function statusBadge(s){const st=s||'active';return`<span class="badge ${STATUS_BADGE[st]}">${STATUS_LABEL[st]||st}</span>`;}
+
+function isOverdue(dateStr){
+  if(!dateStr)return false;
+  return new Date(dateStr)<new Date(new Date().toDateString());
+}
+function daysLeft(dateStr){
+  if(!dateStr)return null;
+  return Math.ceil((new Date(dateStr)-new Date(new Date().toDateString()))/(1000*60*60*24));
+}
+function deadlineBadge(dateStr,status){
+  if(!dateStr||status==='done')return'';
+  const d=daysLeft(dateStr);
+  if(d<0)return`<span class="badge red" title="Прострочено">⚠ ${Math.abs(d)}д тому</span>`;
+  if(d===0)return`<span class="badge red">⚠ Сьогодні</span>`;
+  if(d<=3)return`<span class="badge amber">⏰ ${d}д</span>`;
+  if(d<=7)return`<span class="badge amber">${d}д</span>`;
+  return`<span style="font-size:11px;color:var(--text3)">${fmtD(dateStr)}</span>`;
+}
+function dlBadge(d,s){return deadlineBadge(d,s);}
+
+// ── DASHBOARD ──
+function renderDashboard(){
+  let tR=0,tC=0,tT=0,tN=0,tA=0,tP=0;
+  state.projects.forEach(p=>{const pl=calcPnl(p);tR+=pl.rev;tC+=pl.costs;tT+=pl.tax;tN+=pl.net;tA+=pl.adv;tP+=pl.paid;});
+  document.getElementById('dash-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Проектів</div><div class="metric-value blue">${state.projects.length}</div></div>
+    <div class="metric"><div class="metric-label">Загальний дохід</div><div class="metric-value blue">${fmt(tR)}</div></div>
+    <div class="metric"><div class="metric-label">Витрати (план)</div><div class="metric-value">${fmt(tC)}</div></div>
+    <div class="metric"><div class="metric-label">Виплачено факт</div><div class="metric-value amber">${fmt(tP)}</div></div>
+    <div class="metric"><div class="metric-label">Податки ЄП</div><div class="metric-value amber">${fmt(tT)}</div></div>
+    <div class="metric"><div class="metric-label">Прибуток</div><div class="metric-value ${tN>=0?'green':'red'}">${fmt(tN)}</div></div>
+  `;
+  if(!state.projects.length){document.getElementById('dash-table').innerHTML='<tr><td style="padding:24px;color:var(--text3);text-align:center">Проектів ще немає</td></tr>';return;}
+  let tRemaining=0;
+  state.projects.forEach(p=>{const pl=calcPnl(p);tRemaining+=pl.remaining;});
+  document.getElementById('dash-table').innerHTML=`
+    <thead><tr><th>Проект</th><th>Замовник</th><th>Дохід</th><th>Кредит</th><th>Виплачено</th><th>До виплати</th><th>Податок</th><th>Дебет</th><th>Прибуток</th><th>Маржа</th></tr></thead>
+    <tbody>${state.projects.map(p=>{const pl=calcPnl(p);const mc=pl.net>=0?'green':'red';
+    return`<tr onclick="navigate('detail','${p.id}')" style="cursor:pointer">
+      <td><strong>${p.name}</strong></td>
+      <td style="color:var(--text2)">${p.client||'—'}</td>
+      <td class="mono" style="color:var(--accent)">${fmt(pl.rev)}</td>
+      <td class="mono">${fmt(pl.totalCosts)}</td>
+      <td class="mono" style="color:var(--amber)">${fmt(pl.paid)}</td>
+      <td class="mono" style="color:${pl.toPay>0?'var(--red)':'var(--green)'}">${fmt(pl.toPay)}</td>
+      <td class="mono" style="color:var(--amber)">${fmt(pl.tax)}</td>
+      <td class="mono" style="color:var(--accent)">${fmt(pl.remaining)}</td>
+      <td class="mono" style="color:var(--${mc})">${fmt(pl.net)}</td>
+      <td><span class="badge ${mc}">${pl.margin}%</span></td>
+    </tr>`;}).join('')}
+    <tr class="total-row"><td colspan="2">Разом</td>
+    <td class="mono">${fmt(tR)}</td>
+    <td class="mono">${fmt(tC)}</td>
+    <td class="mono" style="color:var(--amber)">${fmt(tP)}</td>
+    <td class="mono" style="color:${(tC-tP)>0?'var(--red)':'var(--green)'}">${fmt(tC-tP)}</td>
+    <td class="mono">${fmt(tT)}</td>
+    <td class="mono" style="color:var(--accent)">${fmt(tRemaining)}</td>
+    <td class="mono" style="color:${tN>=0?'var(--green)':'var(--red)'}">${fmt(tN)}</td>
+    <td>${tR>0?Math.round(tN/tR*100):0}%</td>
+    </tr></tbody>`;
+}
+
+// ── PROJECTS LIST ──
+function renderProjects(){
+  let ps=state.projects;
+  // фільтр по статусу
+  if(activeFilter!=='all')ps=ps.filter(p=>(p.status||'active')===activeFilter);
+  // пошук
+  const q=(document.getElementById('proj-search')||{}).value||'';
+  if(q.trim())ps=ps.filter(p=>{
+    const s=q.toLowerCase();
+    return(p.name||'').toLowerCase().includes(s)||(p.client||'').toLowerCase().includes(s)||(p.address||'').toLowerCase().includes(s);
+  });
+  const total=state.projects.length;
+  document.getElementById('projects-count').textContent=`${ps.length} з ${total} проект${total===1?'':'ів'}`;
+  if(!ps.length){
+    document.getElementById('projects-grid').innerHTML=`<div class="empty"><p>${state.projects.length?'Нічого не знайдено':'Проектів ще немає'}</p>${!state.projects.length?'<button class="btn primary" onclick="openModal(\'new-project\')">Створити перший проект</button>':''}</div>`;
+    return;
+  }
+  const today=new Date(new Date().toDateString());
+  document.getElementById('projects-grid').innerHTML=`
+  <div class="card">
+  <div class="tbl-wrap"><table>
+    <thead><tr>
+      <th>Проект / Замовник</th>
+      <th>Статус</th>
+      <th>Дедлайн</th>
+      <th>Дохід</th>
+      <th>Витрати</th>
+      <th>Виплачено</th>
+      <th>Прибуток</th>
+      <th>Маржа</th>
+      <th>Розділи</th>
+    </tr></thead>
+    <tbody>${ps.map(p=>{
+      const pl=calcPnl(p);const mc=pl.net>=0?'green':'red';
+      const payPct=pl.costs>0?Math.min(100,Math.round(pl.paid/pl.costs*100)):0;
+      const sc=(p.sections||[]).length;const dc=(p.sections||[]).filter(s=>s.status==='done').length;
+      const od=p.deadline&&isOverdue(p.deadline)&&(p.status||'active')==='active';
+      return`<tr onclick="navigate('detail','${p.id}')" style="cursor:pointer" class="${od?'overdue':''}">
+        <td>
+          <div style="font-weight:600">${p.name}</div>
+          ${p.client?`<div style="font-size:11px;color:var(--text3);margin-top:2px">${p.client}${p.address?' · '+p.address:''}</div>`:''}
+        </td>
+        <td>${statusBadge(p.status)}</td>
+        <td>${deadlineBadge(p.deadline,p.status)}</td>
+        <td class="mono" style="color:var(--accent)">${fmt(pl.rev)}</td>
+        <td class="mono">${fmt(pl.totalCosts)}</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">${fmt(pl.paid)}</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill ${payPct<100?'partial':''}" style="width:${payPct}%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--${mc})">${fmt(pl.net)}</td>
+        <td><span class="badge ${mc}">${pl.margin}%</span></td>
+        <td style="color:var(--text2);font-size:13px">${dc}/${sc}</td>
+      </tr>`;}).join('')}
+    </tbody>
+  </table></div>
+  </div>`;
+}
+
+// ── DETAIL ──
+function renderDetail(){
+  const p=state.projects.find(x=>x.id===curPid);if(!p){navigate('projects');return;}
+  const pl=calcPnl(p);const mc=pl.net>=0?'green':'red';
+  document.getElementById('detail-breadcrumb').textContent=p.name;
+  document.getElementById('detail-name').textContent=p.name;
+  document.getElementById('detail-sub').textContent=[p.client,p.address,p.date?'Договір: '+fmtD(p.date):''].filter(Boolean).join(' · ');
+
+  // Кнопки посилань
+  const links=[];
+  if(p.drive)links.push(`<a href="${p.drive}" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:6px;background:#1a73e8;color:#fff;font-size:13px;font-weight:700;font-family:var(--font);letter-spacing:.03em;border:none">
+    <svg width="16" height="16" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/><path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.75z" fill="#ea4335"/><path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 27h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg>
+    Drive</a>`);
+  if(p.gchat)links.push(`<a href="${p.gchat}" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:6px;background:#00ac47;color:#fff;font-size:13px;font-weight:700;font-family:var(--font);letter-spacing:.03em;border:none">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+    Chat</a>`);
+  if(p.telegram){const tgUrl=p.telegram.startsWith('http')?p.telegram:`https://t.me/${p.telegram.replace('@','')}`;links.push(`<a href="${tgUrl}" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:6px;background:#229ED9;color:#fff;font-size:13px;font-weight:700;font-family:var(--font);letter-spacing:.03em;border:none">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L6.54 14.4l-2.95-.924c-.64-.203-.654-.64.136-.954l11.52-4.44c.537-.194 1.006.131.316.166z"/></svg>
+    Telegram</a>`);}
+
+  // Кнопка задач проекту
+  const projTaskCount=(state.tasks||[]).filter(t=>t.pid===curPid).length;
+  links.push(`<button onclick="toggleProjectTasks('${p.id}')" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:6px;background:#e8820c;color:#fff;font-size:13px;font-weight:700;font-family:var(--font);letter-spacing:.03em;border:none;cursor:pointer">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    Задачі${projTaskCount>0?` (${projTaskCount})`:''}
+  </button>`);  document.getElementById('detail-links').innerHTML=links.join('');
+
+  // Панель задач проекту (прихована за замовчуванням)
+  const projTasks=(state.tasks||[]).filter(t=>t.pid===curPid);
+  const ptEl=document.getElementById('project-tasks-panel');
+  if(ptEl){
+    const PR_COLOR={urgent:'var(--red)',high:'var(--amber)',normal:'var(--text2)'};
+    const PR_LABEL={urgent:'🔴 Терміново',high:'🟡 Високий',normal:'⚪ Звичайний'};
+    const ST_BADGE={todo:'gray',progress:'blue',done:'green'};
+    const ST_LABEL={todo:'Не почато',progress:'В роботі',done:'Виконано'};
+    if(!projTasks.length){
+      ptEl.innerHTML='<div style="padding:20px;text-align:center;color:rgba(255,149,0,0.5);font-size:12px;text-transform:uppercase;letter-spacing:.05em">Задач по цьому проекту ще немає</div>';
+    } else {
+      ptEl.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr>
+          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Задача</th>
+          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Виконавець</th>
+          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Строк</th>
+          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Пріоритет</th>
+          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Статус</th>
+          <th style="padding:9px 14px;background:rgba(255,149,0,0.1);border-bottom:1px solid rgba(255,149,0,0.25)"></th>
+        </tr></thead>
+        <tbody>${projTasks.map(t=>{
+          const globalIdx=(state.tasks||[]).indexOf(t);
+          const ex=state.executors.find(e=>e.id===t.executorId)||null;
+          const st=t.status||'todo';
+          const pr=t.priority||'normal';
+          const od=t.deadline&&isOverdue(t.deadline)&&st!=='done';
+          return`<tr style="background:${od?'rgba(255,68,68,0.06)':'rgba(255,149,0,0.03)'};border-left:2px solid ${od?'var(--red)':'rgba(255,149,0,0.35)'}">
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);font-weight:600;color:var(--text);${st==='done'?'text-decoration:line-through;opacity:.5':''}">${t.name}${t.note?`<div style="font-size:10px;color:var(--text2);font-weight:400;margin-top:2px">${t.note}</div>`:''}</td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);color:var(--text2)">${ex?ex.name:'—'}</td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1)">${deadlineBadge(t.deadline,st)}</td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);font-size:11px;color:${PR_COLOR[pr]}">${PR_LABEL[pr]}</td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1)"><span class="badge ${ST_BADGE[st]}">${ST_LABEL[st]}</span></td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);white-space:nowrap">
+              <button class="btn sm" onclick="editTaskGlobal(${globalIdx})" style="margin-right:4px">Ред.</button>
+              <button class="btn sm danger" onclick="delTaskFromPanel(${globalIdx})">✕</button>
+            </td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>`;
+    }
+  }
+
+  document.getElementById('detail-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Виручка за договором</div><div class="metric-value blue">${fmt(pl.rev)}</div></div>
+    <div class="metric"><div class="metric-label">Податок ${p.taxRate||6}% ЄП</div><div class="metric-value amber">${fmt(pl.tax)}</div></div>
+    <div class="metric"><div class="metric-label">Витрати виконавці</div><div class="metric-value">${fmt(pl.costs)}</div></div>
+    <div class="metric"><div class="metric-label">Виплачено факт</div><div class="metric-value amber">${fmt(pl.paid)}</div></div>
+    <div class="metric"><div class="metric-label">Залишок до виплати</div><div class="metric-value ${pl.toPay>0?'red':'green'}">${fmt(pl.toPay)}</div></div>
+    <div class="metric"><div class="metric-label">Чистий дохід</div><div class="metric-value ${mc}">${fmt(pl.net)}</div></div>
+    <div class="metric"><div class="metric-label">Маржинальність</div><div class="metric-value ${mc}">${pl.margin}%</div></div>
+    <div class="metric"><div class="metric-label">Авансів отримано</div><div class="metric-value">${fmt(pl.adv)}</div></div>
+    <div class="metric"><div class="metric-label">Залишок від замовника</div><div class="metric-value ${pl.remaining>0?'amber':'green'}">${fmt(pl.remaining)}</div></div>
+  `;
+  // Extra costs block
+  const hasExtra=(+(p.costExpertise)||0)+(+(p.costPrint)||0)+(+(p.costOther)||0)>0;
+  const extraBlock=hasExtra?`
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-head"><span class="card-title">📦 Додаткові витрати</span></div>
+      <table><thead><tr><th>Стаття</th><th>Сума</th></tr></thead><tbody>
+        ${+(p.costExpertise||0)?`<tr><td>Експертиза проекту</td><td class="mono">${fmt(p.costExpertise)}</td></tr>`:''}
+        ${+(p.costPrint||0)?`<tr><td>Друк проекту</td><td class="mono">${fmt(p.costPrint)}</td></tr>`:''}
+        ${+(p.costOther||0)?`<tr><td>Інше</td><td class="mono">${fmt(p.costOther)}</td></tr>`:''}
+        <tr class="total-row"><td>Разом</td><td class="mono">${fmt(pl.extra)}</td></tr>
+      </tbody></table>
+    </div>`:'';
+  document.getElementById('extra-costs-block').innerHTML=extraBlock;
+
+  // Advances
+  const adv=p.advances||[];
+  document.getElementById('advances-table').innerHTML=adv.length?
+    `<thead><tr><th>Дата</th><th>Сума</th><th>Примітка</th><th></th></tr></thead>
+    <tbody>${adv.map((a,i)=>`<tr>
+      <td>${fmtD(a.date)}</td><td class="mono">${fmt(a.amount)}</td>
+      <td style="color:var(--text2)">${a.note||'—'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn sm" onclick="editAdvance(${i})" style="margin-right:6px">Ред.</button>
+        <button class="btn sm danger" onclick="delAdvance(${i})">✕</button>
+      </td></tr>`).join('')}
+    <tr class="total-row"><td>Разом отримано</td><td class="mono">${fmt(pl.adv)}</td><td colspan="2" style="color:var(--text3)">Залишок: ${fmt(pl.remaining)}</td></tr>
+    </tbody>`
+    :'<tr><td colspan="4" style="padding:20px;text-align:center;color:var(--text3)">Авансів ще не внесено</td></tr>';
+
+  // Sections
+  const secs=p.sections||[];
+  document.getElementById('sections-table').innerHTML=secs.length?
+    `<thead><tr><th>Розділ</th><th style="min-width:200px">Виконавець</th><th>Дедлайн</th><th>Договір</th><th>Виплачено</th><th>Залишок</th><th>Статус</th><th></th></tr></thead>
+    <tbody>${secs.map((s,i)=>{
+      const ex=state.executors.find(e=>e.id===s.executorId)||null;
+      const sc=s.status==='done'?'green':s.status==='progress'?'blue':'gray';
+      const sl=s.status==='done'?'✓ Готово':s.status==='progress'?'● В роботі':'○ Не почато';
+      const remain=(+(s.cost)||0)-(+(s.paid)||0);
+      const payPct=s.cost>0?Math.min(100,Math.round((+(s.paid)||0)/(+(s.cost)||1)*100)):0;
+      const od=s.deadline&&isOverdue(s.deadline)&&s.status!=='done';
+      return`<tr class="${od?'overdue':''}">
+        <td>
+          <strong>${s.name}</strong>
+          ${s.note?`<br><span style="font-size:11px;color:var(--text3)">${s.note}</span>`:''}
+        </td>
+        <td>${ex?`
+          <div class="ex-card">
+            <div class="ex-card-name">${ex.name}</div>
+            <div class="ex-card-role">${ex.role||''}</div>
+            <div class="ex-card-contacts">
+              ${ex.phone?`<div class="ex-card-contact">📞 ${ex.phone}</div>`:''}
+              ${ex.email?`<div class="ex-card-contact">✉ ${ex.email}</div>`:''}
+              ${ex.telegram?`<div class="ex-card-contact">✈ ${ex.telegram}</div>`:''}
+              ${ex.rate?`<div class="ex-card-contact" style="color:var(--accent)">💲 ${ex.rate}</div>`:''}
+            </div>
+          </div>`:`<span style="color:var(--text3);font-size:12px">— не призначено —</span>`}
+        </td>
+        <td>${deadlineBadge(s.deadline,s.status)}</td>
+        <td class="mono">${fmt(s.cost)}</td>
+        <td>
+          <div class="mono" style="color:${+(s.paid||0)>0?'var(--amber)':'var(--text3)'}">${fmt(s.paid||0)}</div>
+          ${s.cost>0?`<div class="pay-bar-wrap">
+            <div class="pay-bar"><div class="pay-bar-fill ${payPct<100?'partial':''}" style="width:${payPct}%"></div></div>
+          </div>`:''}
+        </td>
+        <td class="mono" style="color:${remain>0?'var(--red)':'var(--green)'}">${fmt(remain)}</td>
+        <td><span class="badge ${sc}">${sl}</span></td>
+        <td style="white-space:nowrap">
+          <button class="btn sm success" onclick="openQuickPay(${i})" style="margin-bottom:4px;display:block">💳 Виплата</button>
+          <button class="btn sm" onclick="editSection(${i})" style="margin-right:4px">Ред.</button>
+          <button class="btn sm danger" onclick="delSection(${i})">✕</button>
+        </td>
+      </tr>`;}).join('')}
+    <tr class="total-row">
+      <td colspan="3">Разом</td>
+      <td class="mono">${fmt(secs.reduce((a,s)=>a+(+(s.cost)||0),0))}</td>
+      <td class="mono" style="color:var(--amber)">${fmt(secs.reduce((a,s)=>a+(+(s.paid)||0),0))}</td>
+      <td class="mono" style="color:var(--red)">${fmt(secs.reduce((a,s)=>a+(+(s.cost)||0)-(+(s.paid)||0),0))}</td>
+      <td colspan="2"></td>
+    </tr></tbody>`
+    :'<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--text3)">Розділів ще немає</td></tr>';
+
+  // Executor payments summary
+  renderExecutorPayments(p);
+
+
+  // Tasks
+  renderTasks();
+}
+
+function renderExecutorPayments(p){
+  const secs=p.sections||[];
+  // Групуємо по виконавцям
+  const map={};
+  secs.forEach(s=>{
+    const eid=s.executorId||'__none__';
+    if(!map[eid])map[eid]={sections:[],cost:0,paid:0};
+    map[eid].sections.push(s.name);
+    map[eid].cost+=+(s.cost)||0;
+    map[eid].paid+=+(s.paid)||0;
+  });
+  const eids=Object.keys(map);
+  if(!eids.length){
+    document.getElementById('executor-payments').innerHTML='<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">Додайте розділи з виконавцями</div>';
+    return;
+  }
+  document.getElementById('executor-payments').innerHTML=`
+    <table><thead><tr><th>Виконавець</th><th>Розділи</th><th>Телефон / контакт</th><th>Договір</th><th>Виплачено</th><th>До виплати</th><th>%</th></tr></thead>
+    <tbody>${eids.map(eid=>{
+      const ex=state.executors.find(e=>e.id===eid)||null;
+      const d=map[eid];const rem=d.cost-d.paid;
+      const pct=d.cost>0?Math.min(100,Math.round(d.paid/d.cost*100)):0;
+      const pc=rem>0?'red':'green';
+      return`<tr>
+        <td>${ex?`<div class="contact"><div class="avatar ${pct===100?'green':''}">${ini(ex.name)}</div><div><div style="font-weight:600">${ex.name}</div><div style="font-size:11px;color:var(--text3)">${ex.role||''}</div></div></div>`:'<span style="color:var(--text3)">Без виконавця</span>'}</td>
+        <td style="font-size:12px;color:var(--text2)">${d.sections.join('<br>')}</td>
+        <td style="font-size:12px">${ex?(ex.phone||ex.telegram||ex.email||'—'):'—'}</td>
+        <td class="mono">${fmt(d.cost)}</td>
+        <td class="mono" style="color:var(--amber)">${fmt(d.paid)}</td>
+        <td class="mono" style="color:var(--${pc})">${fmt(rem)}</td>
+        <td><span class="badge ${pct===100?'green':pct>0?'amber':'gray'}">${pct}%</span></td>
+      </tr>`;}).join('')}
+    </tbody></table>`;
+}
+
+// ── EXECUTORS PAGE — таблиця рядками ──
+function renderExecutors(){
+  const exs=state.executors;
+  const el=document.getElementById('executors-cards');
+  if(!exs.length){
+    el.innerHTML=`<div class="empty"><p>Виконавців ще немає</p><button class="btn primary" onclick="openModal('new-executor')">Додати виконавця</button></div>`;
+    return;
+  }
+  el.innerHTML=`
+  <div class="card">
+  <div class="tbl-wrap"><table>
+    <thead><tr>
+      <th>Виконавець</th>
+      <th>Роль</th>
+      <th>Проектів</th>
+      <th>Розділів</th>
+      <th>Сума договорів</th>
+      <th>Виплачено</th>
+      <th>До виплати</th>
+      <th>%</th>
+    </tr></thead>
+    <tbody>${exs.map(e=>{
+      const d=getExStats(e.id);
+      const remain=d.cost-d.paid;
+      const pct=d.cost>0?Math.min(100,Math.round(d.paid/d.cost*100)):0;
+      return`<tr onclick="navigate('executor-detail','${e.id}')" style="cursor:pointer">
+        <td>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--as);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${ini(e.name)}</div>
+            <div>
+              <div style="font-weight:600">${e.name}</div>
+              ${e.phone||e.telegram?`<div style="font-size:11px;color:var(--text3)">${e.phone||e.telegram||''}</div>`:''}
+            </div>
+          </div>
+        </td>
+        <td style="color:var(--text2)">${e.role||'—'}</td>
+        <td style="text-align:center">${d.projectCount}</td>
+        <td style="text-align:center">${d.sectionCount}</td>
+        <td class="mono">${fmt(d.cost)}</td>
+        <td class="mono" style="color:var(--amber)">${fmt(d.paid)}</td>
+        <td class="mono" style="color:${remain>0?'var(--red)':'var(--green)'}">${fmt(remain)}</td>
+        <td><span class="badge ${pct===100?'green':pct>0?'amber':'gray'}">${pct}%</span></td>
+      </tr>`;}).join('')}
+    </tbody>
+  </table></div>
+  </div>`;
+}
+
+function getExStats(eid){
+  let cost=0,paid=0,sectionCount=0,projectCount=0;
+  const projects=[];
+  state.projects.forEach(p=>{
+    const secs=(p.sections||[]).filter(s=>s.executorId===eid);
+    if(secs.length){
+      projectCount++;
+      projects.push(p.id);
+      secs.forEach(s=>{cost+=+(s.cost)||0;paid+=+(s.paid)||0;sectionCount++;});
+    }
+  });
+  return{cost,paid,sectionCount,projectCount,projects};
+}
+
+// ── WORKLOAD ──
+function renderWorkload(){
+  const el=document.getElementById('workload-content');
+  if(!state.executors.length){
+    el.innerHTML='<div class="empty"><p>Виконавців ще немає</p></div>';return;
+  }
+  // Збираємо активні розділи (не done) по виконавцях
+  const wl={};
+  state.executors.forEach(e=>{wl[e.id]={ex:e,active:[],done:[],overdue:[]};});
+  state.projects.forEach(p=>{
+    if((p.status||'active')==='archive')return;
+    (p.sections||[]).forEach(s=>{
+      if(!s.executorId||!wl[s.executorId])return;
+      const entry={section:s.name,project:p.name,pid:p.id,deadline:s.deadline,status:s.status};
+      if(s.status==='done')wl[s.executorId].done.push(entry);
+      else{
+        wl[s.executorId].active.push(entry);
+        if(s.deadline&&isOverdue(s.deadline))wl[s.executorId].overdue.push(entry);
+      }
+    });
+  });
+  const MAX_LOAD=5; // більше 5 активних — перевантажений
+  el.innerHTML=`
+  <div class="card">
+  <div class="tbl-wrap"><table>
+    <thead><tr>
+      <th>Виконавець</th>
+      <th>Роль</th>
+      <th>Активних розділів</th>
+      <th>Завантаженість</th>
+      <th>Прострочено ⚠</th>
+      <th>Завершено</th>
+      <th>Активні розділи</th>
+    </tr></thead>
+    <tbody>${state.executors.map(e=>{
+      const w=wl[e.id];
+      const n=w.active.length;
+      const pct=Math.min(100,Math.round(n/MAX_LOAD*100));
+      const wlColor=n===0?'var(--text3)':n<=2?'var(--green)':n<=4?'var(--amber)':'var(--red)';
+      const wlLabel=n===0?'Вільний':n<=2?'Нормально':n<=4?'Зайнятий':'⚠ Перевантажений';
+      return`<tr onclick="navigate('executor-detail','${e.id}')" style="cursor:pointer">
+        <td>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--as);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${ini(e.name)}</div>
+            <span style="font-weight:600">${e.name}</span>
+          </div>
+        </td>
+        <td style="color:var(--text2)">${e.role||'—'}</td>
+        <td style="text-align:center;font-weight:600;color:${wlColor}">${n}</td>
+        <td>
+          <div style="font-size:12px;color:${wlColor};margin-bottom:3px">${wlLabel}</div>
+          <div class="wl-bar"><div class="wl-fill ${n>4?'over':n>2?'warn':''}" style="width:${pct}%"></div></div>
+        </td>
+        <td style="text-align:center;color:${w.overdue.length>0?'var(--red)':'var(--text3)'}">
+          ${w.overdue.length>0?`<span class="badge red">⚠ ${w.overdue.length}</span>`:'—'}
+        </td>
+        <td style="text-align:center;color:var(--text2)">${w.done.length}</td>
+        <td style="font-size:12px;color:var(--text2)">
+          ${w.active.length?w.active.map(a=>`<div style="margin-bottom:2px">
+            <span style="color:var(--text)">${a.section}</span>
+            <span style="color:var(--text3)"> · ${a.project}</span>
+            ${a.deadline?`<span style="margin-left:4px">${deadlineBadge(a.deadline,a.status)}</span>`:''}
+          </div>`).join(''):'<span style="color:var(--text3)">Немає активних завдань</span>'}
+        </td>
+      </tr>`;}).join('')}
+    </tbody>
+  </table></div>
+  </div>`;
+}
+
+// ── TEMPLATES ──
+const SECTION_TEMPLATES=[
+  {
+    name:'Повний пакет (АР+КР+інженерія)',
+    sections:[
+      {name:'АР — Архітектурні рішення',status:'todo'},
+      {name:'КР — Конструктивні рішення',status:'todo'},
+      {name:'ОВ — Опалення та вентиляція',status:'todo'},
+      {name:'ВК — Водопостачання та каналізація',status:'todo'},
+      {name:'ЕС — Електропостачання',status:'todo'},
+      {name:'АН — Авторський нагляд',status:'todo'},
+    ]
+  },
+  {
+    name:'Архітектурно-конструктивний',
+    sections:[
+      {name:'АР — Архітектурні рішення',status:'todo'},
+      {name:'КР — Конструктивні рішення',status:'todo'},
+      {name:'АН — Авторський нагляд',status:'todo'},
+    ]
+  },
+  {
+    name:'Капітальний ремонт',
+    sections:[
+      {name:'АР — Архітектурні рішення',status:'todo'},
+      {name:'КР — Конструктивні рішення',status:'todo'},
+      {name:'ОВ — Опалення та вентиляція',status:'todo'},
+      {name:'ВК — Водопостачання та каналізація',status:'todo'},
+      {name:'ЕС — Електропостачання',status:'todo'},
+      {name:'Л — Ліфтове обладнання',status:'todo'},
+      {name:'ПОС — Проект організації будівництва',status:'todo'},
+      {name:'АН — Авторський нагляд',status:'todo'},
+    ]
+  },
+  {
+    name:'Інженерні розділи',
+    sections:[
+      {name:'ОВ — Опалення та вентиляція',status:'todo'},
+      {name:'ВК — Водопостачання та каналізація',status:'todo'},
+      {name:'ЕС — Електропостачання',status:'todo'},
+    ]
+  },
+];
+
+function openTemplatesModal(){
+  document.getElementById('modal-templates').style.display='block';
+  document.getElementById('overlay').classList.add('show');
+  document.querySelectorAll('.modal').forEach(m=>{if(m.id!=='modal-templates')m.style.display='none';});
+  document.getElementById('templates-list').innerHTML=SECTION_TEMPLATES.map((t,i)=>`
+    <div style="border:1px solid var(--border2);border-radius:var(--rsm);padding:14px 16px;margin-bottom:10px">
+      <div style="font-weight:600;margin-bottom:6px">${t.name}</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px">${t.sections.map(s=>s.name).join(' · ')}</div>
+      <button class="btn sm primary" onclick="applyTemplate(${i})">+ Додати ${t.sections.length} розділів</button>
+    </div>`).join('');
+}
+
+function applyTemplate(i){
+  const p=state.projects.find(x=>x.id===curPid);if(!p)return;
+  if(!p.sections)p.sections=[];
+  SECTION_TEMPLATES[i].sections.forEach(s=>{
+    p.sections.push({name:s.name,status:s.status,cost:0,paid:0,executorId:'',note:'',deadline:''});
+  });
+  save();closeModal();renderDetail();
+}
+
+// ── EXECUTOR DETAIL ──
+function renderExecutorDetail(){
+  const e=state.executors.find(x=>x.id===curExId);
+  if(!e){navigate('executors');return;}
+
+  document.getElementById('ex-detail-breadcrumb').textContent=e.name;
+  document.getElementById('ex-detail-avatar').textContent=ini(e.name);
+  document.getElementById('ex-detail-name').textContent=e.name;
+  document.getElementById('ex-detail-role').textContent=e.role||'';
+  document.getElementById('ex-detail-contacts').innerHTML=[
+    e.phone?`<span style="font-size:13px;color:var(--text2)">📞 ${e.phone}</span>`:'',
+    e.email?`<span style="font-size:13px;color:var(--text2)">✉ ${e.email}</span>`:'',
+    e.telegram?`<span style="font-size:13px;color:var(--text2)">✈ ${e.telegram}</span>`:'',
+    e.rate?`<span style="font-size:13px;color:var(--accent)">💲 ${e.rate}</span>`:'',
+    e.note?`<span style="font-size:13px;color:var(--text3)">${e.note}</span>`:'',
+  ].filter(Boolean).join('');
+
+  // Збираємо всі розділи по проектах де є цей виконавець
+  const rows=[];
+  let totCost=0,totPaid=0;
+  state.projects.forEach(p=>{
+    (p.sections||[]).forEach((s,si)=>{
+      if(s.executorId!==curExId)return;
+      const remain=(+(s.cost)||0)-(+(s.paid)||0);
+      totCost+=+(s.cost)||0;
+      totPaid+=+(s.paid)||0;
+      rows.push({p,s,si,remain});
+    });
+  });
+  const totRemain=totCost-totPaid;
+  const pct=totCost>0?Math.min(100,Math.round(totPaid/totCost*100)):0;
+
+  // Кількість проектів (унікальних)
+  const uniqueProjects=new Set(rows.map(r=>r.p.id)).size;
+
+  document.getElementById('ex-detail-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Проектів</div><div class="metric-value blue">${uniqueProjects}</div></div>
+    <div class="metric"><div class="metric-label">Розділів</div><div class="metric-value blue">${rows.length}</div></div>
+    <div class="metric"><div class="metric-label">Сума договорів</div><div class="metric-value">${fmt(totCost)}</div></div>
+    <div class="metric"><div class="metric-label">Виплачено</div><div class="metric-value amber">${fmt(totPaid)}</div></div>
+    <div class="metric"><div class="metric-label">Залишок до виплати</div><div class="metric-value ${totRemain>0?'red':'green'}">${fmt(totRemain)}</div></div>
+    <div class="metric"><div class="metric-label">Виплачено %</div><div class="metric-value ${pct===100?'green':pct>0?'amber':'red'}">${pct}%</div></div>
+  `;
+
+  // Таблиця проектів
+  if(!rows.length){
+    document.getElementById('ex-detail-projects').innerHTML='<tr><td style="padding:24px;text-align:center;color:var(--text3)">Цей виконавець ще не призначений на жоден розділ</td></tr>';
+  } else {
+    // Групуємо по проекту
+    const byProject={};
+    rows.forEach(r=>{
+      if(!byProject[r.p.id])byProject[r.p.id]={p:r.p,rows:[]};
+      byProject[r.p.id].rows.push(r);
+    });
+    let html=`<thead><tr><th>Проект / Замовник</th><th>Розділ</th><th>Статус</th><th>Договір</th><th>Виплачено</th><th>Залишок</th><th></th></tr></thead><tbody>`;
+    Object.values(byProject).forEach(({p,rows:prows})=>{
+      prows.forEach((r,i)=>{
+        const sc=r.s.status==='done'?'green':r.s.status==='progress'?'blue':'gray';
+        const sl=r.s.status==='done'?'✓ Готово':r.s.status==='progress'?'● В роботі':'○ Не почато';
+        const payPct=r.s.cost>0?Math.min(100,Math.round((+(r.s.paid)||0)/(+(r.s.cost)||1)*100)):0;
+        html+=`<tr>
+          ${i===0?`<td rowspan="${prows.length}" style="border-right:1px solid var(--border);vertical-align:top;padding-top:14px">
+            <div style="font-weight:600;cursor:pointer;color:var(--accent)" onclick="navigate('detail','${p.id}')">${p.name}</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">${p.client||''}</div>
+          </td>`:''}
+          <td><strong>${r.s.name}</strong>${r.s.note?`<br><span style="font-size:11px;color:var(--text3)">${r.s.note}</span>`:''}</td>
+          <td><span class="badge ${sc}">${sl}</span></td>
+          <td class="mono">${fmt(r.s.cost)}</td>
+          <td>
+            <div class="mono" style="color:${+(r.s.paid||0)>0?'var(--amber)':'var(--text3)'}">${fmt(r.s.paid||0)}</div>
+            ${r.s.cost>0?`<div class="pay-bar" style="margin-top:4px"><div class="pay-bar-fill ${payPct<100?'partial':''}" style="width:${payPct}%"></div></div>`:''}
+          </td>
+          <td class="mono" style="color:${r.remain>0?'var(--red)':'var(--green)'}">${fmt(r.remain)}</td>
+          <td><button class="btn sm success" onclick="openQuickPayEx('${p.id}',${r.si})">💳 Виплата</button></td>
+        </tr>`;
+      });
+    });
+    html+=`<tr class="total-row"><td colspan="3">Разом</td><td class="mono">${fmt(totCost)}</td><td class="mono" style="color:var(--amber)">${fmt(totPaid)}</td><td class="mono" style="color:${totRemain>0?'var(--red)':'var(--green)'}">${fmt(totRemain)}</td><td></td></tr></tbody>`;
+    document.getElementById('ex-detail-projects').innerHTML=html;
+  }
+
+  // Історія виплат (зі всіх розділів де є payments log)
+  const allPayments=[];
+  rows.forEach(r=>{
+    (r.s.payments||[]).forEach(pay=>{
+      allPayments.push({...pay,project:r.p.name,section:r.s.name});
+    });
+  });
+  allPayments.sort((a,b)=>a.date<b.date?1:-1);
+
+  if(!allPayments.length){
+    document.getElementById('ex-detail-payments').innerHTML='<tr><td style="padding:20px;text-align:center;color:var(--text3)">Виплат ще не зафіксовано. Використовуйте кнопку «💳 Виплата» щоб записувати виплати.</td></tr>';
+  } else {
+    document.getElementById('ex-detail-payments').innerHTML=`
+      <thead><tr><th>Дата</th><th>Проект</th><th>Розділ</th><th>Сума</th><th>Примітка</th></tr></thead>
+      <tbody>${allPayments.map(pay=>`<tr>
+        <td>${fmtD(pay.date)}</td>
+        <td style="color:var(--text2)">${pay.project}</td>
+        <td style="color:var(--text2)">${pay.section}</td>
+        <td class="mono" style="color:var(--amber)">${fmt(pay.amount)}</td>
+        <td style="color:var(--text3)">${pay.note||'—'}</td>
+      </tr>`).join('')}
+      <tr class="total-row"><td colspan="3">Всього виплачено</td><td class="mono" style="color:var(--amber)">${fmt(allPayments.reduce((a,p)=>a+(+(p.amount)||0),0))}</td><td></td></tr>
+      </tbody>`;
+  }
+}
+
+function openEditExCurrent(){openEditEx(curExId);}
+function delExCurrent(){
+  if(!confirm('Видалити виконавця?'))return;
+  state.executors=state.executors.filter(e=>e.id!==curExId);
+  save();navigate('executors');
+}
+
+// Виплата з профілю виконавця
+function openQuickPayEx(pid,si){
+  curPid=pid;
+  openQuickPay(si);
+}
+
+// ── MODALS ──
+function openModal(name){
+  document.getElementById('overlay').classList.add('show');
+  document.querySelectorAll('.modal').forEach(m=>m.style.display='none');
+  if(name==='new-project'){
+    document.getElementById('modal-new-project').style.display='block';
+    document.getElementById('modal-project-title').textContent='Новий проект';
+    document.getElementById('edit-project-id').value='';
+    ['p-name','p-client','p-addr','p-notes'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('p-revenue').value='';
+    document.getElementById('p-tax').value='6';
+    document.getElementById('p-status').value='active';
+    document.getElementById('p-deadline').value='';
+    document.getElementById('p-drive').value='';
+    document.getElementById('p-gchat').value='';
+    document.getElementById('p-tg').value='';
+    document.getElementById('p-date').value=new Date().toISOString().slice(0,10);
+  }else if(name==='templates'){
+    openTemplatesModal();return;
+  }else if(name==='add-advance'){
+    document.getElementById('modal-add-advance').style.display='block';
+    document.getElementById('edit-advance-idx').value='';
+    document.getElementById('adv-date').value=new Date().toISOString().slice(0,10);
+    document.getElementById('adv-amount').value='';
+    document.getElementById('adv-note').value='';
+  }else if(name==='add-section'){
+    document.getElementById('modal-section-title').textContent='Новий розділ';
+    document.getElementById('modal-add-section').style.display='block';
+    document.getElementById('edit-section-idx').value='';
+    document.getElementById('sec-name').value='';
+    document.getElementById('sec-cost').value='';
+    document.getElementById('sec-paid').value='';
+    document.getElementById('sec-note').value='';
+    document.getElementById('sec-deadline').value='';
+    document.getElementById('sec-status').value='todo';
+    fillExSelect('sec-executor','');
+  }else if(name==='add-task'){
+    document.getElementById('modal-task-title').textContent='Нова задача';
+    document.getElementById('modal-add-task').style.display='block';
+    document.getElementById('edit-task-idx').value='';
+    document.getElementById('edit-task-pid').value=curPid||'';
+    document.getElementById('task-name').value='';
+    document.getElementById('task-note').value='';
+    document.getElementById('task-deadline').value='';
+    document.getElementById('task-status').value='todo';
+    document.getElementById('task-priority').value='normal';
+    // Заповнюємо список проектів
+    const projSel=document.getElementById('task-project');
+    projSel.innerHTML='<option value="">— оберіть проект —</option>'+
+      state.projects.map(p=>`<option value="${p.id}" ${p.id===curPid?'selected':''}>${p.name}</option>`).join('');
+    fillExSelect('task-executor','');
+  }else if(name==='new-executor'){
+    document.getElementById('modal-new-executor').style.display='block';
+    document.getElementById('modal-executor-title').textContent='Новий виконавець';
+    document.getElementById('edit-executor-id').value='';
+    ['ex-name','ex-role','ex-phone','ex-email'].forEach(id=>document.getElementById(id).value='');
+  }
+}
+
+function fillExSelect(selId,selected){
+  document.getElementById(selId).innerHTML='<option value="">— не призначено —</option>'+
+    state.executors.map(e=>`<option value="${e.id}" ${e.id===selected?'selected':''}>${e.name}${e.role?' ('+e.role+')':''}</option>`).join('');
+}
+
+function closeOverlay(e){if(e.target===document.getElementById('overlay'))closeModal();}
+function closeModal(){
+  document.getElementById('overlay').classList.remove('show');
+  document.querySelectorAll('.modal').forEach(m=>m.style.display='none');
+}
+
+// ── SAVE ──
+function saveProject(){
+  const name=document.getElementById('p-name').value.trim();
+  if(!name){alert('Введіть назву');return;}
+  const id=document.getElementById('edit-project-id').value;
+  const data={name,client:document.getElementById('p-client').value,
+    revenue:+document.getElementById('p-revenue').value||0,
+    taxRate:+document.getElementById('p-tax').value||6,
+    status:document.getElementById('p-status').value||'active',
+    date:document.getElementById('p-date').value,
+    deadline:document.getElementById('p-deadline').value,
+    address:document.getElementById('p-addr').value,
+    drive:document.getElementById('p-drive').value,
+    gchat:document.getElementById('p-gchat').value,
+    telegram:document.getElementById('p-tg').value,
+    notes:document.getElementById('p-notes').value};
+  if(id){const p=state.projects.find(x=>x.id===id);Object.assign(p,data);}
+  else{data.id=uid();data.advances=[];data.sections=[];state.projects.push(data);curPid=data.id;}
+  save();closeModal();
+  if(id)renderDetail();else navigate('detail',curPid);
+}
+
+function editCurrentProject(){
+  const p=state.projects.find(x=>x.id===curPid);if(!p)return;
+  openModal('new-project');
+  document.getElementById('modal-project-title').textContent='Редагувати проект';
+  document.getElementById('edit-project-id').value=p.id;
+  document.getElementById('p-name').value=p.name||'';
+  document.getElementById('p-client').value=p.client||'';
+  document.getElementById('p-revenue').value=p.revenue||'';
+  document.getElementById('p-tax').value=p.taxRate||6;
+  document.getElementById('p-status').value=p.status||'active';
+  document.getElementById('p-date').value=p.date||'';
+  document.getElementById('p-deadline').value=p.deadline||'';
+  document.getElementById('p-addr').value=p.address||'';
+  document.getElementById('p-drive').value=p.drive||'';
+  document.getElementById('p-gchat').value=p.gchat||'';
+  document.getElementById('p-tg').value=p.telegram||'';
+  document.getElementById('p-notes').value=p.notes||'';
+}
+
+function toggleProjectTasks(){
+  const wrap=document.getElementById('project-tasks-panel-wrap');
+  if(!wrap)return;
+  const isVisible=wrap.style.display!=='none';
+  wrap.style.display=isVisible?'none':'block';
+}
+
+function deleteCurrentProject(){
+  if(!confirm('Видалити проект "'+state.projects.find(x=>x.id===curPid).name+'"?'))return;
+  state.projects=state.projects.filter(x=>x.id!==curPid);
+  save();navigate('projects');
+}
+
+function saveAdvance(){
+  const p=state.projects.find(x=>x.id===curPid);
+  const amount=+document.getElementById('adv-amount').value||0;
+  if(!amount){alert('Введіть суму');return;}
+  const data={date:document.getElementById('adv-date').value,amount,note:document.getElementById('adv-note').value};
+  const idx=document.getElementById('edit-advance-idx').value;
+  if(idx!=='')p.advances[+idx]=data;else p.advances.push(data);
+  save();closeModal();renderDetail();
+}
+
+function editAdvance(i){
+  const p=state.projects.find(x=>x.id===curPid);const a=p.advances[i];
+  openModal('add-advance');
+  document.getElementById('edit-advance-idx').value=i;
+  document.getElementById('adv-date').value=a.date||'';
+  document.getElementById('adv-amount').value=a.amount||'';
+  document.getElementById('adv-note').value=a.note||'';
+}
+
+function delAdvance(i){const p=state.projects.find(x=>x.id===curPid);p.advances.splice(i,1);save();renderDetail();}
+
+function saveSection(){
+  const p=state.projects.find(x=>x.id===curPid);
+  const name=document.getElementById('sec-name').value.trim();
+  if(!name){alert('Введіть назву розділу');return;}
+  const data={name,executorId:document.getElementById('sec-executor').value,
+    cost:+document.getElementById('sec-cost').value||0,
+    paid:+document.getElementById('sec-paid').value||0,
+    status:document.getElementById('sec-status').value,
+    deadline:document.getElementById('sec-deadline').value,
+    note:document.getElementById('sec-note').value};
+  const idx=document.getElementById('edit-section-idx').value;
+  if(idx!=='')p.sections[+idx]=data;else p.sections.push(data);
+  save();closeModal();renderDetail();
+}
+
+function editSection(i){
+  const p=state.projects.find(x=>x.id===curPid);const s=p.sections[i];
+  openModal('add-section');
+  document.getElementById('modal-section-title').textContent='Редагувати розділ';
+  document.getElementById('edit-section-idx').value=i;
+  document.getElementById('sec-name').value=s.name||'';
+  document.getElementById('sec-cost').value=s.cost||'';
+  document.getElementById('sec-paid').value=s.paid||'';
+  document.getElementById('sec-note').value=s.note||'';
+  document.getElementById('sec-deadline').value=s.deadline||'';
+  document.getElementById('sec-status').value=s.status||'todo';
+  fillExSelect('sec-executor',s.executorId);
+}
+
+function delSection(i){const p=state.projects.find(x=>x.id===curPid);p.sections.splice(i,1);save();renderDetail();}
+
+// ── QUICK PAY ──
+function openQuickPay(i){
+  const p=state.projects.find(x=>x.id===curPid);const s=p.sections[i];
+  const ex=state.executors.find(e=>e.id===s.executorId);
+  const remain=(+(s.cost)||0)-(+(s.paid)||0);
+  document.getElementById('modal-quickpay').style.display='block';
+  document.getElementById('overlay').classList.add('show');
+  document.querySelectorAll('.modal').forEach(m=>{if(m.id!=='modal-quickpay')m.style.display='none';});
+  document.getElementById('qp-section-idx').value=i;
+  document.getElementById('qp-amount').value=remain>0?remain:'';
+  document.getElementById('qp-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('qp-note').value='';
+  document.getElementById('qp-info').innerHTML=`
+    <div style="font-weight:600;margin-bottom:6px">${s.name}</div>
+    ${ex?`<div style="color:var(--text2);margin-bottom:4px">Виконавець: ${ex.name}${ex.phone?' · '+ex.phone:''}</div>`:''}
+    <div style="display:flex;gap:20px;font-size:12px">
+      <span>Договір: <strong class="mono">${fmt(s.cost)}</strong></span>
+      <span style="color:var(--amber)">Виплачено: <strong class="mono">${fmt(s.paid||0)}</strong></span>
+      <span style="color:${remain>0?'var(--red)':'var(--green)'}">Залишок: <strong class="mono">${fmt(remain)}</strong></span>
+    </div>`;
+}
+
+function saveQuickPay(){
+  const p=state.projects.find(x=>x.id===curPid);
+  const i=+document.getElementById('qp-section-idx').value;
+  const amount=+document.getElementById('qp-amount').value||0;
+  if(!amount){alert('Введіть суму');return;}
+  p.sections[i].paid=(+(p.sections[i].paid)||0)+amount;
+  // Зберігаємо лог виплат
+  if(!p.sections[i].payments)p.sections[i].payments=[];
+  p.sections[i].payments.push({date:document.getElementById('qp-date').value,amount,note:document.getElementById('qp-note').value});
+  save();closeModal();renderDetail();
+}
+
+// ── EXECUTORS CRUD ──
+function saveExecutor(){
+  const name=document.getElementById('ex-name').value.trim();
+  if(!name){alert('Введіть ПІБ');return;}
+  const data={name,role:document.getElementById('ex-role').value,
+    phone:document.getElementById('ex-phone').value,
+    email:document.getElementById('ex-email').value,
+    telegram:'',rate:'',note:''};
+  const id=document.getElementById('edit-executor-id').value;
+  if(id){const ex=state.executors.find(e=>e.id===id);Object.assign(ex,data);}
+  else{data.id=uid();state.executors.push(data);}
+  save();closeModal();
+  if(curExId&&document.getElementById('page-executor-detail').classList.contains('active'))renderExecutorDetail();
+  else renderExecutors();
+}
+
+function openEditEx(id){
+  const e=state.executors.find(x=>x.id===id);
+  openModal('new-executor');
+  document.getElementById('modal-executor-title').textContent='Редагувати виконавця';
+  document.getElementById('edit-executor-id').value=e.id;
+  document.getElementById('ex-name').value=e.name||'';
+  document.getElementById('ex-role').value=e.role||'';
+  document.getElementById('ex-phone').value=e.phone||'';
+  document.getElementById('ex-email').value=e.email||'';
+}
+
+function delEx(id){
+  if(!confirm('Видалити виконавця?'))return;
+  state.executors=state.executors.filter(e=>e.id!==id);
+  save();renderExecutors();
+}
+
+// ── TASKS PAGE ──
+let activeTaskFilter='all';
+
+function setTaskFilter(f){
+  activeTaskFilter=f;
+  document.querySelectorAll('[data-ts]').forEach(b=>b.classList.toggle('active',b.dataset.ts===f));
+  renderTasksPage();
+}
+
+function renderTasksPage(){
+  var allTasks = state.tasks || [];
+
+  // Fill project filter
+  var pSel = document.getElementById('tasks-filter-proj');
+  if(pSel){
+    var curPVal = pSel.value;
+    var pOpts = '<option value="">Всі проекти</option>';
+    state.projects.forEach(function(p){
+      pOpts += '<option value="'+p.id+'"'+(p.id===curPVal?' selected':'')+'>'+p.name+'</option>';
+    });
+    pSel.innerHTML = pOpts;
+    pSel.value = curPVal;
+    if(pSel.value) allTasks = allTasks.filter(function(t){return t.pid===pSel.value;});
+  }
+
+  // Fill executor filter
+  var sel = document.getElementById('tasks-filter-exec');
+  if(sel){
+    var curVal = sel.value;
+    var opts = '<option value="">Всі виконавці</option>';
+    state.executors.forEach(function(e){
+      opts += '<option value="'+e.id+'"'+(e.id===curVal?' selected':'')+'>'+e.name+'</option>';
+    });
+    sel.innerHTML = opts;
+    sel.value = curVal;
+    if(sel.value) allTasks = allTasks.filter(function(t){return t.executorId===sel.value;});
+  }
+
+  if(activeTaskFilter==='overdue'){
+    allTasks = allTasks.filter(function(t){return t.deadline&&isOverdue(t.deadline)&&t.status!=='done';});
+  } else if(activeTaskFilter!=='all'){
+    allTasks = allTasks.filter(function(t){return t.status===activeTaskFilter;});
+  }
+
+  allTasks.sort(function(a,b){
+    var po={urgent:0,high:1,normal:2};
+    var pa=po[a.priority||'normal'], pb=po[b.priority||'normal'];
+    if(pa!==pb)return pa-pb;
+    if(a.deadline&&b.deadline)return a.deadline<b.deadline?-1:1;
+    if(a.deadline)return-1; if(b.deadline)return 1;
+    return 0;
+  });
+
+  var el = document.getElementById('all-tasks-table');
+  if(!el)return;
+
+  var PR_COLOR = {urgent:'var(--red)',high:'var(--amber)',normal:'var(--text2)'};
+  var PR_LABEL = {urgent:'🔴 Терміново',high:'🟡 Високий',normal:'⚪ Звичайний'};
+  var ST_BADGE = {todo:'gray',progress:'blue',done:'green'};
+  var ST_LABEL = {todo:'Не почато',progress:'В роботі',done:'Виконано'};
+
+  if(!allTasks.length){
+    el.innerHTML='<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text3)">Задач не знайдено</td></tr>';
+    return;
+  }
+
+  var rows = '<thead><tr><th>Задача</th><th>Проект</th><th>Виконавець</th><th>Строк</th><th>Пріоритет</th><th>Статус</th><th></th></tr></thead><tbody>';
+  allTasks.forEach(function(t, i){
+    var proj = state.projects.find(function(p){return p.id===t.pid;})||null;
+    var ex = state.executors.find(function(e){return e.id===t.executorId;})||null;
+    var od = t.deadline&&isOverdue(t.deadline)&&t.status!=='done';
+    var pr = t.priority||'normal';
+    var st = t.status||'todo';
+    var origIdx = (state.tasks||[]).indexOf(t);
+    rows += '<tr class="'+(od?'overdue':'')+'">';
+    rows += '<td><div style="font-weight:600;'+(st==='done'?'text-decoration:line-through;opacity:.5':'')+'">'+t.name+'</div>'+(t.note?'<div style="font-size:11px;color:var(--text2)">'+t.note+'</div>':'')+'</td>';
+    var projId=proj?proj.id:''; var projName=proj?proj.name:'—';
+    rows += '<td style="cursor:pointer;color:var(--accent)" onclick="navigate(\'detail\',\''+projId+'\')">'+(proj?proj.name:'—')+'</td>';
+    rows += '<td style="font-size:12px;color:var(--text2)">'+(ex?ex.name:'—')+'</td>';
+    rows += '<td>'+dlBadge(t.deadline,st)+'</td>';
+    rows += '<td style="font-size:11px;color:'+PR_COLOR[pr]+'">'+PR_LABEL[pr]+'</td>';
+    rows += '<td><span class="badge '+ST_BADGE[st]+'">'+ST_LABEL[st]+'</span></td>';
+    rows += '<td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal('+origIdx+')" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal('+origIdx+')">✕</button></td>';
+    rows += '</tr>';
+  });
+  rows += '</tbody>';
+  el.innerHTML = rows;
+}
+
+function goToTaskEdit(pid,idx){
+  curPid=pid;
+  navigate('detail',pid);
+  setTimeout(()=>editTask(idx),300);
+}
+function renderTasks(){
+  const p=state.projects.find(x=>x.id===curPid);if(!p)return;
+  const tasks=p.tasks||[];
+  const PR_COLOR={'urgent':'var(--red)','high':'var(--amber)','normal':'var(--text2)'};
+  const PR_LABEL={'urgent':'🔴 Терміново','high':'🟡 Високий','normal':'⚪ Звичайний'};
+  const ST_BADGE={'todo':'gray','progress':'blue','done':'green'};
+  const ST_LABEL={'todo':'Не почато','progress':'В роботі','done':'Виконано'};
+
+  document.getElementById('tasks-table').innerHTML=tasks.length?`
+    <thead><tr><th>Задача</th><th>Виконавець</th><th>Строк</th><th>Пріоритет</th><th>Статус</th><th></th></tr></thead>
+    <tbody>${tasks.map((t,i)=>{
+      const ex=state.executors.find(e=>e.id===t.executorId)||null;
+      const od=t.deadline&&isOverdue(t.deadline)&&t.status!=='done';
+      return`<tr class="${od?'overdue':''}">
+        <td>
+          <div style="font-weight:600;${t.status==='done'?'text-decoration:line-through;opacity:.5':''}">${t.name}</div>
+          ${t.note?`<div style="font-size:11px;color:var(--text2)">${t.note}</div>`:''}
+        </td>
+        <td style="font-size:12px;color:var(--text2)">${ex?ex.name:'—'}</td>
+        <td>${dlBadge(t.deadline,t.status)}</td>
+        <td style="font-size:11px;color:${PR_COLOR[t.priority||'normal']}">${PR_LABEL[t.priority||'normal']}</td>
+        <td><span class="badge ${ST_BADGE[t.status]}">${ST_LABEL[t.status]}</span></td>
+        <td style="white-space:nowrap">
+          <button class="btn sm" onclick="editTask(${i})" style="margin-right:4px">Ред.</button>
+          <button class="btn sm danger" onclick="delTask(${i})">✕</button>
+        </td>
+      </tr>`;}).join('')}
+    </tbody>`
+    :'<tr><td colspan="6" style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Задач ще немає — натисніть «+ Задача»</td></tr>';
+}
+
+function saveTask(){
+  var pid = document.getElementById('task-project').value;
+  var name = document.getElementById('task-name').value.trim();
+  if(!pid){alert('Оберіть проект');return;}
+  if(!name){alert('Введіть назву задачі');return;}
+  var task = {
+    id: uid(),
+    pid: pid,
+    name: name,
+    executorId: document.getElementById('task-executor').value||'',
+    status: document.getElementById('task-status').value||'todo',
+    deadline: document.getElementById('task-deadline').value||'',
+    priority: document.getElementById('task-priority').value||'normal',
+    note: document.getElementById('task-note').value||''
+  };
+  var idx = document.getElementById('edit-task-idx').value;
+  if(!state.tasks)state.tasks=[];
+  if(idx!==''){
+    state.tasks[+idx]=task;
+  } else {
+    state.tasks.push(task);
+  }
+  save();
+  closeModal();
+
+  // Відправка повідомлення на email виконавцю
+  sendTaskEmail(task, idx!=='');
+
+  const wrap=document.getElementById('project-tasks-panel-wrap');
+  const panelWasOpen=wrap&&wrap.style.display!=='none';
+  if(panelWasOpen&&document.getElementById('page-detail').classList.contains('active')){
+    renderDetail();
+    if(wrap)wrap.style.display='block';
+  } else {
+    navigate('tasks');
+  }
+}
+
+function sendTaskEmail(task, isEdit){
+  var ex=state.executors.find(function(e){return e.id===task.executorId;});
+  if(!ex||!ex.email)return;
+
+  var proj=state.projects.find(function(p){return p.id===task.pid;})||null;
+  var PR_LABEL={urgent:'Терміново',high:'Високий',normal:'Звичайний'};
+  var ST_LABEL={todo:'Не почато',progress:'В роботі',done:'Виконано'};
+
+  var subject=encodeURIComponent((isEdit?'[Оновлення задачі] ':'[Нова задача] ')+task.name);
+  var body=encodeURIComponent(
+    (isEdit?'Задачу оновлено':'Вам призначено нову задачу')+'\n\n'+
+    'Задача: '+task.name+'\n'+
+    'Проект: '+(proj?proj.name:'—')+'\n'+
+    'Строк виконання: '+(task.deadline||'не вказано')+'\n'+
+    'Пріоритет: '+(PR_LABEL[task.priority||'normal'])+'\n'+
+    'Статус: '+(ST_LABEL[task.status||'todo'])+'\n'+
+    (task.note?'Примітка: '+task.note+'\n':'')+
+    '\n— АрмаБуд Проджект\ndata@armabudproject.com'
+  );
+
+  var to=encodeURIComponent(ex.email);
+  var from=encodeURIComponent('data@armabudproject.com');
+
+  // Відкриваємо Gmail у браузері з заповненим листом
+  var gmailUrl='https://mail.google.com/mail/?view=cm&fs=1&to='+to+'&su='+subject+'&body='+body+'&authuser='+from;
+  window.open(gmailUrl,'_blank');
+}
+
+
+function editTaskGlobal(idx){
+  var t = state.tasks[idx];
+  if(!t)return;
+  document.getElementById('modal-task-title').textContent='Редагувати задачу';
+  document.getElementById('modal-add-task').style.display='block';
+  document.getElementById('overlay').classList.add('show');
+  document.querySelectorAll('.modal').forEach(function(m){if(m.id!=='modal-add-task')m.style.display='none';});
+  document.getElementById('edit-task-idx').value=idx;
+  var projSel=document.getElementById('task-project');
+  projSel.innerHTML='<option value="">— оберіть проект —</option>'+
+    state.projects.map(function(p){return '<option value="'+p.id+'"'+(p.id===t.pid?' selected':'')+'>'+p.name+'</option>';}).join('');
+  document.getElementById('task-name').value=t.name||'';
+  document.getElementById('task-note').value=t.note||'';
+  document.getElementById('task-deadline').value=t.deadline||'';
+  document.getElementById('task-status').value=t.status||'todo';
+  document.getElementById('task-priority').value=t.priority||'normal';
+  fillExSelect('task-executor',t.executorId);
+}
+
+function delTaskFromPanel(idx){
+  if(!confirm('Видалити задачу?'))return;
+  state.tasks.splice(idx,1);
+  save();
+  renderDetail();
+  // Зберігаємо панель відкритою
+  const wrap=document.getElementById('project-tasks-panel-wrap');
+  if(wrap)wrap.style.display='block';
+}
+
+function delTaskGlobal(idx){
+  if(!confirm('Видалити задачу?'))return;
+  state.tasks.splice(idx,1);
+  save();
+  renderTasksPage();
+}
+
+function editTask(i,pid){
+  const p=state.projects.find(x=>x.id===(pid||curPid));if(!p)return;
+  const t=p.tasks[i];if(!t)return;
+  document.getElementById('modal-task-title').textContent='Редагувати задачу';
+  document.getElementById('modal-add-task').style.display='block';
+  document.getElementById('overlay').classList.add('show');
+  document.querySelectorAll('.modal').forEach(m=>{if(m.id!=='modal-add-task')m.style.display='none';});
+  document.getElementById('edit-task-idx').value=i;
+  document.getElementById('edit-task-pid').value=p.id;
+  // Проекти
+  const projSel=document.getElementById('task-project');
+  projSel.innerHTML='<option value="">— оберіть проект —</option>'+
+    state.projects.map(pr=>`<option value="${pr.id}" ${pr.id===p.id?'selected':''}>${pr.name}</option>`).join('');
+  document.getElementById('task-name').value=t.name||'';
+  document.getElementById('task-note').value=t.note||'';
+  document.getElementById('task-deadline').value=t.deadline||'';
+  document.getElementById('task-status').value=t.status||'todo';
+  document.getElementById('task-priority').value=t.priority||'normal';
+  fillExSelect('task-executor',t.executorId);
+}
+
+function delTask(i){
+  const p=state.projects.find(x=>x.id===curPid);
+  p.tasks.splice(i,1);save();renderTasks();
+}
+
+// ── EXPORT / IMPORT ──
+function exportData(){
+  const b=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);
+  a.download='armabudproject_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+}
+
+function importData(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{const data=JSON.parse(e.target.result);
+      if(!confirm('Замінити всі поточні дані?'))return;
+      state=data;save();navigate('dashboard');alert('Імпорт успішний!');
+    }catch(err){alert('Помилка формату JSON');}
+  };
+  reader.readAsText(file);event.target.value='';
+}
+
+load();navigate('dashboard');
+
+// ═══════════════════════════════════════════════════
+// Вбудований генератор XLSX (без зовнішніх залежностей)
+// ═══════════════════════════════════════════════════
+const XLSXGen=(function(){
+  // --- мінімальний ZIP-генератор (Store, без стиснення) ---
+  function crc32(buf){
+    const t=new Uint32Array(256);
+    for(let i=0;i<256;i++){let c=i;for(let j=0;j<8;j++)c=c&1?(0xEDB88320^(c>>>1)):(c>>>1);t[i]=c;}
+    let c=0xFFFFFFFF;
+    for(let i=0;i<buf.length;i++)c=t[(c^buf[i])&0xFF]^(c>>>8);
+    return(c^0xFFFFFFFF)>>>0;
+  }
+  function u8(s){return new TextEncoder().encode(s);}
+  function le2(n){return[n&0xFF,(n>>8)&0xFF];}
+  function le4(n){return[n&0xFF,(n>>8)&0xFF,(n>>16)&0xFF,(n>>24)&0xFF];}
+  function concat(...arrs){
+    const t=[];for(const a of arrs)for(const b of a)t.push(b);
+    return new Uint8Array(t);
+  }
+  function zipEntry(name,data){
+    const nb=u8(name),db=data instanceof Uint8Array?data:u8(data);
+    const crc=crc32(db),sz=db.length;
+    const lh=concat([0x50,0x4B,0x03,0x04,0x14,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00],
+      le4(crc),le4(sz),le4(sz),le2(nb.length),[0x00,0x00],nb,db);
+    const cd=concat([0x50,0x4B,0x01,0x02,0x14,0x00,0x14,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00],
+      le4(crc),le4(sz),le4(sz),le2(nb.length),[0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00],nb);
+    return{lh,cd,lhSize:lh.length};
+  }
+  function buildZip(files){
+    const entries=[];let off=0;
+    for(const[name,data]of files){const e=zipEntry(name,data);e.off=off;entries.push(e);off+=e.lhSize;}
+    const cdOff=off;
+    const cds=concat(...entries.map(e=>e.cd));
+    const cdSize=cds.length;
+    const n=entries.length;
+    const eocd=concat([0x50,0x4B,0x05,0x06,0x00,0x00,0x00,0x00],
+      le2(n),le2(n),le4(cdSize),le4(cdOff),[0x00,0x00]);
+    return concat(...entries.map(e=>e.lh),cds,eocd);
+  }
+
+  // --- XML helpers ---
+  function esc(v){return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+  // --- Спільні стилі ---
+  const STYLES=`<?xml version="1.0" encoding="UTF-8"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+  <fonts count="3">
+    <font><sz val="11"/><name val="Arial"/></font>
+    <font><sz val="11"/><b/><name val="Arial"/></font>
+    <font><sz val="13"/><b/><name val="Arial"/></font>
+  </fonts>
+  <fills count="4">
+    <fill><patternFill patternType="none"/></fill>
+    <fill><patternFill patternType="gray125"/></fill>
+    <fill><patternFill patternType="solid"><fgColor rgb="FF1E3A5F"/></patternFill></fill>
+    <fill><patternFill patternType="solid"><fgColor rgb="FFE8EFF8"/></patternFill></fill>
+  </fills>
+  <borders count="2">
+    <border><left/><right/><top/><bottom/><diagonal/></border>
+    <border><left style="thin"><color rgb="FFCCCCCC"/></left><right style="thin"><color rgb="FFCCCCCC"/></right><top style="thin"><color rgb="FFCCCCCC"/></top><bottom style="thin"><color rgb="FFCCCCCC"/></bottom><diagonal/></border>
+  </borders>
+  <cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
+  <cellXfs count="8">
+    <xf numFmtId="0"  fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"/>
+    <xf numFmtId="0"  fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1"><alignment horizontal="center"/></xf>
+    <xf numFmtId="0"  fontId="1" fillId="3" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1"/>
+    <xf numFmtId="4"  fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyNumberFormat="1"/>
+    <xf numFmtId="10" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyNumberFormat="1"/>
+    <xf numFmtId="0"  fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/>
+    <xf numFmtId="4"  fontId="1" fillId="3" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyNumberFormat="1"/>
+    <xf numFmtId="0"  fontId="0" fillId="0" borderId="0" xfId="0"/>
+  </cellXfs>
+</styleSheet>`;
+  // стилі: 0=normal+border, 1=header(dark), 2=subtotal(light), 3=money, 4=pct, 5=title, 6=money+subtotal, 7=plain
+
+  function cellXml(c,r,val,style){
+    if(val===null||val===undefined||val==='')return`<c r="${c}${r}" s="${style}"/>`;
+    if(typeof val==='number')return`<c r="${c}${r}" t="n" s="${style}"><v>${val}</v></c>`;
+    return`<c r="${c}${r}" t="inlineStr" s="${style}"><is><t>${esc(String(val))}</t></is></c>`;
+  }
+  const COLS='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  function col(i){return i<26?COLS[i]:COLS[Math.floor(i/26)-1]+COLS[i%26];}
+
+  function sheetXml(rows,colWidths,numCols,headerRow,totalRows){
+    const colsXml=colWidths.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('');
+    let rowsXml='';
+    rows.forEach((row,ri)=>{
+      const rn=ri+1;
+      const isHeader=ri===headerRow;
+      const isTotal=totalRows&&totalRows.includes(ri);
+      const isTitle=ri===0;
+      let cells='';
+      for(let ci=0;ci<numCols;ci++){
+        const v=row[ci]??'';
+        let s=0;
+        if(isTitle&&ci===0)s=5;
+        else if(isHeader)s=1;
+        else if(isTotal){s=(typeof v==='number')?6:2;}
+        else if(typeof v==='number'){
+          // процент: якщо значення < 1 і стовпець позначений як pct
+          s=3;
+        }
+        else s=0;
+        cells+=cellXml(col(ci),rn,v,s);
+      }
+      rowsXml+=`<row r="${rn}">${cells}</row>`;
+    });
+    return`<?xml version="1.0" encoding="UTF-8"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+  <cols>${colsXml}</cols>
+  <sheetData>${rowsXml}</sheetData>
+</worksheet>`;
+  }
+
+  // --- відсотковий стиль для конкретних колонок ---
+  function sheetXmlAdvanced(rows,colWidths,numCols,headerRow,totalRows,pctCols,moneyCols){
+    const pctSet=new Set(pctCols||[]);const moneySet=new Set(moneyCols||[]);
+    const colsXml=colWidths.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('');
+    let rowsXml='';
+    rows.forEach((row,ri)=>{
+      const rn=ri+1;
+      const isHeader=ri===headerRow;
+      const isTotal=totalRows&&totalRows.includes(ri);
+      const isTitle=ri===0;
+      let cells='';
+      for(let ci=0;ci<numCols;ci++){
+        const v=row[ci]??'';
+        let s=0;
+        if(isTitle&&ci===0)s=5;
+        else if(isHeader)s=1;
+        else if(isTotal){
+          if(typeof v==='number')s=pctSet.has(ci)?4:6;
+          else s=2;
+        } else if(typeof v==='number'){
+          s=pctSet.has(ci)?4:3;
+        }
+        cells+=cellXml(col(ci),rn,v,s);
+      }
+      rowsXml+=`<row r="${rn}">${cells}</row>`;
+    });
+    return`<?xml version="1.0" encoding="UTF-8"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+  <cols>${colsXml}</cols>
+  <sheetData>${rowsXml}</sheetData>
+</worksheet>`;
+  }
+
+  function workbookXml(sheetNames){
+    const sheets=sheetNames.map((n,i)=>`<sheet name="${esc(n)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('');
+    return`<?xml version="1.0" encoding="UTF-8"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<sheets>${sheets}</sheets></workbook>`;
+  }
+  function workbookRels(n){
+    let r='<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">';
+    for(let i=0;i<n;i++)r+=`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`;
+    r+='<Relationship Id="rIdS" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>';
+    return r+'</Relationships>';
+  }
+  const CT=`<?xml version="1.0" encoding="UTF-8"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+  <Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>
+  SHEET_TYPES
+</Types>`;
+  const RELS=`<?xml version="1.0" encoding="UTF-8"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
+</Relationships>`;
+
+  return{
+    generate(sheets){
+      // sheets=[{name,rows,colWidths,headerRow,totalRows,pctCols}]
+      const n=sheets.length;
+      const sheetTypes=sheets.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('');
+      const files=[
+        ['[Content_Types].xml', CT.replace('SHEET_TYPES',sheetTypes)],
+        ['_rels/.rels', RELS],
+        ['xl/workbook.xml', workbookXml(sheets.map(s=>s.name))],
+        ['xl/_rels/workbook.xml.rels', workbookRels(n)],
+        ['xl/styles.xml', STYLES],
+      ];
+      sheets.forEach((s,i)=>{
+        const numCols=Math.max(...s.rows.map(r=>r.length));
+        const xml=sheetXmlAdvanced(s.rows,s.colWidths||[],numCols,s.headerRow??3,s.totalRows,s.pctCols,[]);
+        files.push([`xl/worksheets/sheet${i+1}.xml`,xml]);
+      });
+      return buildZip(files);
+    },
+    download(data,fname){
+      const blob=new Blob([data],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+      const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname;a.click();
+    }
+  };
+})();
+
+// ── EXCEL EXPORT ──
+function exportExcel(){
+  if(!state.projects.length&&!state.executors.length){alert('Немає даних для експорту');return;}
+  const date=new Date().toLocaleDateString('uk-UA');
+
+  // ── Лист 1: Проекти ──
+  const projRows=[
+    ['АрмаБуд Проджект — Аналітика проектів'],
+    [`Дата: ${date}`],
+    [],
+    ['Проект','Замовник','Адреса','Дата','Виручка (грн)','Податок (грн)','Витрати виконавці','Експертиза','Друк','Інше','Всього витрати','Виплачено','До виплати','Чистий дохід','Маржа %','Авансів','Залишок від замовника','Розділів','Готово'],
+  ];
+  let tR=0,tT=0,tC=0,tP=0,tN=0,tA=0;
+  state.projects.forEach(p=>{
+    const pl=calcPnl(p);
+    tR+=pl.rev;tT+=pl.tax;tC+=pl.costs;tP+=pl.paid;tN+=pl.net;tA+=pl.adv;
+    const sc=(p.sections||[]).length,dc=(p.sections||[]).filter(s=>s.status==='done').length;
+    projRows.push([p.name,p.client||'',p.address||'',p.date||'',
+      pl.rev,pl.tax,pl.costs,+(p.costExpertise)||0,+(p.costPrint)||0,+(p.costOther)||0,
+      pl.totalCosts,pl.paid,pl.toPay,pl.net,pl.margin/100,pl.adv,pl.remaining,sc,dc]);
+  });
+  projRows.push([]);
+  const totEx=state.projects.reduce((a,p)=>a+(+(p.costExpertise)||0),0);
+  const totPr=state.projects.reduce((a,p)=>a+(+(p.costPrint)||0),0);
+  const totOt=state.projects.reduce((a,p)=>a+(+(p.costOther)||0),0);
+  projRows.push(['РАЗОМ','','','',tR,tT,tC,totEx,totPr,totOt,tC+totEx+totPr+totOt,tP,tC-tP,tN,tR>0?tN/tR:0,tA,state.projects.reduce((a,p)=>a+calcPnl(p).remaining,0),'','']);
+
+  // ── Лист 2: Розділи ──
+  const secRows=[
+    ['АрмаБуд Проджект — Розділи проектів'],
+    [`Дата: ${date}`],[],
+    ['Проект','Замовник','Розділ','Виконавець','Роль','Вартість (грн)','Виплачено (грн)','Залишок (грн)','Статус'],
+  ];
+  state.projects.forEach(p=>{
+    (p.sections||[]).forEach(s=>{
+      const ex=state.executors.find(e=>e.id===s.executorId)||null;
+      const cost=+(s.cost)||0,paid=+(s.paid)||0;
+      const sl=s.status==='done'?'Готово':s.status==='progress'?'В роботі':'Не почато';
+      secRows.push([p.name,p.client||'',s.name,ex?ex.name:'',ex?ex.role||'':'',cost,paid,cost-paid,sl]);
+    });
+  });
+
+  // ── Лист 3: Виконавці ──
+  const exRows=[
+    ['АрмаБуд Проджект — Розрахунки з виконавцями'],
+    [`Дата: ${date}`],[],
+    ['Виконавець','Роль','Телефон','Email / Telegram','Проектів','Розділів','Сума договорів (грн)','Виплачено (грн)','Залишок (грн)','%'],
+  ];
+  let etC=0,etP=0;
+  state.executors.forEach(e=>{
+    const st=getExStats(e.id);etC+=st.cost;etP+=st.paid;
+    exRows.push([e.name,e.role||'',e.phone||'',[e.email,e.telegram].filter(Boolean).join(' / ')||'',
+      st.projectCount,st.sectionCount,st.cost,st.paid,st.cost-st.paid,st.cost>0?st.paid/st.cost:0]);
+  });
+  exRows.push([]);
+  exRows.push(['РАЗОМ','','','','','',etC,etP,etC-etP,etC>0?etP/etC:0]);
+
+  // ── Лист 4: Аванси ──
+  const advRows=[
+    ['АрмаБуд Проджект — Аванси від замовників'],
+    [`Дата: ${date}`],[],
+    ['Проект','Замовник','Дата авансу','Сума (грн)','Примітка'],
+  ];
+  state.projects.forEach(p=>{
+    (p.advances||[]).forEach(a=>{advRows.push([p.name,p.client||'',a.date||'',+(a.amount)||0,a.note||'']);});
+  });
+
+  // ── Лист 5: Виплати ──
+  const payRows=[
+    ['АрмаБуд Проджект — Виплати виконавцям'],
+    [`Дата: ${date}`],[],
+    ['Дата','Виконавець','Роль','Проект','Розділ','Сума (грн)','Примітка'],
+  ];
+  const allPays=[];
+  state.projects.forEach(p=>{
+    (p.sections||[]).forEach(s=>{
+      const ex=state.executors.find(e=>e.id===s.executorId)||null;
+      (s.payments||[]).forEach(pay=>{
+        allPays.push({date:pay.date||'',exName:ex?ex.name:'',exRole:ex?ex.role||'':'',
+          project:p.name,section:s.name,amount:+(pay.amount)||0,note:pay.note||''});
+      });
+    });
+  });
+  allPays.sort((a,b)=>a.date<b.date?1:-1);
+  allPays.forEach(r=>{payRows.push([r.date,r.exName,r.exRole,r.project,r.section,r.amount,r.note]);});
+  if(allPays.length){payRows.push([]);payRows.push(['','','','','РАЗОМ',allPays.reduce((a,r)=>a+r.amount,0),'']);}
+
+  // ── Лист 6: Задачі ──
+  const taskRows=[
+    ['АрмаБуд Проджект — Задачі'],
+    [`Дата: ${date}`],[],
+    ['Проект','Задача','Виконавець','Строк виконання','Пріоритет','Статус','Примітка'],
+  ];
+  const PR_LABEL_XL={urgent:'Терміново',high:'Високий',normal:'Звичайний'};
+  const ST_LABEL_XL={todo:'Не почато',progress:'В роботі',done:'Виконано'};
+  (state.tasks||[]).forEach(t=>{
+    const proj=state.projects.find(p=>p.id===t.pid)||null;
+    const ex=state.executors.find(e=>e.id===t.executorId)||null;
+    taskRows.push([
+      proj?proj.name:'',
+      t.name||'',
+      ex?ex.name:'',
+      t.deadline||'',
+      PR_LABEL_XL[t.priority||'normal'],
+      ST_LABEL_XL[t.status||'todo'],
+      t.note||''
+    ]);
+  });
+
+  const data=XLSXGen.generate([
+    {name:'Проекти',    rows:projRows, colWidths:[28,18,22,12,14,12,15,13,11,11,14,13,13,14,9,13,18,8,7],  headerRow:3, totalRows:[projRows.length-1], pctCols:[14]},
+    {name:'Розділи',   rows:secRows,  colWidths:[28,18,28,20,16,14,14,13,11], headerRow:3, totalRows:[]},
+    {name:'Виконавці', rows:exRows,   colWidths:[22,16,16,22,9,9,16,15,15,9], headerRow:3, totalRows:[exRows.length-1], pctCols:[9]},
+    {name:'Аванси',    rows:advRows,  colWidths:[28,18,13,15,28], headerRow:3, totalRows:[]},
+    {name:'Виплати',   rows:payRows,  colWidths:[13,20,16,26,26,14,26], headerRow:3, totalRows:allPays.length?[payRows.length-1]:[]},
+    {name:'Задачі',    rows:taskRows, colWidths:[28,32,20,14,13,13,28], headerRow:3, totalRows:[]},
+  ]);
+  XLSXGen.download(data,`АрмаБуд_аналітика_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+function exportTasksExcel(){
+  if(!(state.tasks||[]).length){alert('Задач ще немає');return;}
+  const date=new Date().toLocaleDateString('uk-UA');
+  const PR_LABEL_XL={urgent:'Терміново',high:'Високий',normal:'Звичайний'};
+  const ST_LABEL_XL={todo:'Не почато',progress:'В роботі',done:'Виконано'};
+  const rows=[
+    ['АрмаБуд Проджект — Задачі'],
+    [`Дата: ${date}`],[],
+    ['Проект','Задача','Виконавець','Строк виконання','Пріоритет','Статус','Примітка'],
+  ];
+  (state.tasks||[]).forEach(t=>{
+    const proj=state.projects.find(p=>p.id===t.pid)||null;
+    const ex=state.executors.find(e=>e.id===t.executorId)||null;
+    rows.push([proj?proj.name:'',t.name||'',ex?ex.name:'',t.deadline||'',
+      PR_LABEL_XL[t.priority||'normal'],ST_LABEL_XL[t.status||'todo'],t.note||'']);
+  });
+  const data=XLSXGen.generate([
+    {name:'Задачі',rows,colWidths:[28,32,20,14,13,13,28],headerRow:3,totalRows:[]}
+  ]);
+  XLSXGen.download(data,`АрмаБуд_задачі_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+</script>
+</body></html>
