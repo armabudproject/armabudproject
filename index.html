@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>АрмаБуд — Менеджер проектів</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0a1628;
@@ -13,23 +13,23 @@
   --bg4:#1a3060;
   --border:rgba(0,180,255,0.12);
   --border2:rgba(0,180,255,0.22);
-  --text:#e8f4ff;
-  --text2:#7eb8d8;
-  --text3:#3a6080;
-  --accent:#00c8ff;
-  --accent2:#0099cc;
-  --as:rgba(0,200,255,0.12);
-  --green:#00e676;
-  --gs:rgba(0,230,118,0.13);
-  --red:#ff4444;
-  --rs:rgba(255,68,68,0.13);
-  --amber:#ffc107;
-  --ambs:rgba(255,193,7,0.13);
+  --text:#e8dcc8;
+  --text2:#a89880;
+  --text3:#5a4a38;
+  --accent:#f0b429;
+  --accent2:#d4941a;
+  --as:rgba(240,180,41,0.12);
+  --green:#4caf7d;
+  --gs:rgba(76,175,125,0.13);
+  --red:#f05454;
+  --rs:rgba(240,84,84,0.13);
+  --amber:#f0b429;
+  --ambs:rgba(240,180,41,0.13);
   --purple:#c77dff;
   --r:8px;
   --rsm:6px;
-  --font:'DM Sans',sans-serif;
-  --mono:'DM Sans',sans-serif;
+  --font:'Plus Jakarta Sans',sans-serif;
+  --mono:'Plus Jakarta Sans',sans-serif;
   --sh:0 2px 12px rgba(0,0,0,0.4);
   --sh2:0 0 24px rgba(0,200,255,0.08);
   --glow:0 0 12px rgba(0,200,255,0.25);
@@ -40,7 +40,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sidebar{width:210px;background:#050e1c;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:10}
 .main{margin-left:210px;flex:1;padding:18px 22px;min-height:100vh}
 .sidebar-logo{padding:16px 14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.logo-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#0066ff);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#000;flex-shrink:0}
+.logo-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#b8860b);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#000;flex-shrink:0}
 .logo-name{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--accent);text-transform:uppercase}
 .logo-sub{font-size:9px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-top:1px}
 .sidebar-nav{padding:8px 6px;flex:1;overflow-y:auto}
@@ -48,7 +48,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .nav-label:first-child{margin-top:2px}
 .nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--rsm);cursor:pointer;color:var(--text2);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;transition:all .15s;margin-bottom:1px;border:none;background:none;width:100%;text-align:left}
 .nav-item:hover{background:var(--bg3);color:var(--text)}
-.nav-item.active{background:rgba(0,200,255,0.15);color:var(--accent);border-left:2px solid var(--accent);padding-left:8px}
+.nav-item.active{background:rgba(240,180,41,0.12);color:var(--accent);border-left:2px solid var(--accent);padding-left:8px}
 .nav-item svg{width:13px;height:13px;flex-shrink:0}
 .sidebar-footer{padding:10px 14px;border-top:1px solid var(--border);font-size:9px;color:var(--text3);letter-spacing:.05em;text-transform:uppercase}
 .page{display:none}.page.active{display:block}
@@ -56,8 +56,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .page-title{font-size:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
 .page-sub{font-size:10px;color:var(--text2);margin-top:2px;text-transform:uppercase;letter-spacing:.04em}
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:7px;margin-bottom:12px}
-.metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;position:relative;overflow:hidden}
-.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+.metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;position:relative;overflow:hidden;transition:border-color .15s,background .15s}
+.metric-clickable:hover{border-color:rgba(240,180,41,0.4);background:rgba(240,180,41,0.05);cursor:pointer}
+.metric-clickable.active{border-color:var(--accent);background:rgba(240,180,41,0.08)}
+.metric-panel{background:var(--bg2);border:1px solid rgba(240,180,41,0.3);border-radius:var(--r);margin-bottom:10px;overflow:hidden;grid-column:1/-1;animation:slideDown .2s ease}
+@keyframes slideDown{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),rgba(240,180,41,0.1))}
 .metric-label{font-size:9px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
 .metric-value{font-size:18px;font-weight:700;letter-spacing:-.3px;line-height:1.1}
 .metric-value.green{color:var(--green)}.metric-value.red{color:var(--red)}.metric-value.blue{color:var(--accent)}.metric-value.amber{color:var(--amber)}
@@ -82,7 +86,7 @@ tbody tr:hover td{background:rgba(0,200,255,0.05)}
 .filter-bar{display:flex;gap:5px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
 .filter-btn{padding:4px 11px;border-radius:3px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:10px;font-weight:700;font-family:var(--font);transition:all .15s;text-transform:uppercase;letter-spacing:.05em}
 .filter-btn:hover{background:var(--bg4);color:var(--text)}
-.filter-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.filter-btn.active{background:var(--accent);color:#0a1628;border-color:var(--accent);font-weight:700}
 .search-input{padding:5px 11px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:11px;font-family:var(--font);outline:none;min-width:200px}
 .search-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,200,255,0.15)}
 .search-input::placeholder{color:var(--text3)}
@@ -93,7 +97,7 @@ tbody tr:hover td{background:rgba(0,200,255,0.05)}
 .wl-fill.warn{background:var(--amber)}.wl-fill.over{background:var(--red)}
 .btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;font-size:11px;font-weight:700;font-family:var(--font);transition:all .15s;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
 .btn:hover{background:var(--bg4);color:var(--accent)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#0a1628;font-weight:700}
 .btn.primary:hover{background:#00aadd}
 .btn.success{background:var(--gs);border-color:rgba(0,230,118,0.3);color:var(--green)}
 .btn.danger{background:var(--rs);border-color:rgba(255,68,68,0.3);color:var(--red)}
@@ -195,10 +199,10 @@ td:hover .edit-hint{opacity:1}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>Аналітика Excel
     </button>
     <div class="nav-label">Дані</div>
-    <button class="nav-item" onclick="exportData()">
+    <button class="nav-item" onclick="exportData()" style="color:var(--green)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Резерв JSON
     </button>
-    <button class="nav-item" onclick="document.getElementById('import-file').click()">
+    <button class="nav-item" onclick="document.getElementById('import-file').click()" style="color:var(--red)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Імпорт JSON
     </button>
     <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
@@ -271,6 +275,11 @@ td:hover .edit-hint{opacity:1}
 
   <!-- P&L metrics -->
   <div class="metrics" id="detail-metrics"></div>
+
+  <!-- Metric detail panels -->
+  <div id="metric-panel-costs" class="metric-panel" style="display:none"></div>
+  <div id="metric-panel-paid" class="metric-panel" style="display:none"></div>
+  <div id="metric-panel-topay" class="metric-panel" style="display:none"></div>
 
   <!-- Extra costs block -->
   <div id="extra-costs-block"></div>
@@ -687,7 +696,7 @@ function renderDashboard(){
   state.projects.forEach(p=>{const pl=calcPnl(p);tR+=pl.rev;tC+=pl.costs;tT+=pl.tax;tN+=pl.net;tA+=pl.adv;tP+=pl.paid;});
   document.getElementById('dash-metrics').innerHTML=`
     <div class="metric"><div class="metric-label">Проектів</div><div class="metric-value blue">${state.projects.length}</div></div>
-    <div class="metric"><div class="metric-label">Загальний дохід</div><div class="metric-value blue">${fmt(tR)}</div></div>
+    <div class="metric"><div class="metric-label">Загальний дохід</div><div class="metric-value" style="color:#4a9eff">${fmt(tR)}</div></div>
     <div class="metric"><div class="metric-label">Витрати (план)</div><div class="metric-value">${fmt(tC)}</div></div>
     <div class="metric"><div class="metric-label">Виплачено факт</div><div class="metric-value amber">${fmt(tP)}</div></div>
     <div class="metric"><div class="metric-label">Податки ЄП</div><div class="metric-value amber">${fmt(tT)}</div></div>
@@ -702,7 +711,7 @@ function renderDashboard(){
     return`<tr onclick="navigate('detail','${p.id}')" style="cursor:pointer">
       <td><strong>${p.name}</strong></td>
       <td style="color:var(--text2)">${p.client||'—'}</td>
-      <td class="mono" style="color:var(--accent)">${fmt(pl.rev)}</td>
+      <td class="mono" style="color:#4a9eff">${fmt(pl.rev)}</td>
       <td class="mono">${fmt(pl.totalCosts)}</td>
       <td class="mono" style="color:var(--amber)">${fmt(pl.paid)}</td>
       <td class="mono" style="color:${pl.toPay>0?'var(--red)':'var(--green)'}">${fmt(pl.toPay)}</td>
@@ -767,7 +776,7 @@ function renderProjects(){
         </td>
         <td>${statusBadge(p.status)}</td>
         <td>${deadlineBadge(p.deadline,p.status)}</td>
-        <td class="mono" style="color:var(--accent)">${fmt(pl.rev)}</td>
+        <td class="mono" style="color:#4a9eff">${fmt(pl.rev)}</td>
         <td class="mono">${fmt(pl.totalCosts)}</td>
         <td>
           <div class="mono" style="color:var(--amber)">${fmt(pl.paid)}</div>
@@ -804,7 +813,7 @@ function renderDetail(){
 
   // Кнопка задач проекту
   const projTaskCount=(state.tasks||[]).filter(t=>t.pid===curPid).length;
-  links.push(`<button onclick="toggleProjectTasks('${p.id}')" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:6px;background:#e8820c;color:#fff;font-size:13px;font-weight:700;font-family:var(--font);letter-spacing:.03em;border:none;cursor:pointer">
+  links.push(`<button onclick="toggleProjectTasks('${p.id}')" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:6px;background:var(--accent);color:#0a1628;font-size:13px;font-weight:700;font-family:var(--font);letter-spacing:.03em;border:none;cursor:pointer">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
     Задачі${projTaskCount>0?` (${projTaskCount})`:''}
   </button>`);  document.getElementById('detail-links').innerHTML=links.join('');
@@ -853,16 +862,74 @@ function renderDetail(){
   }
 
   document.getElementById('detail-metrics').innerHTML=`
-    <div class="metric"><div class="metric-label">Виручка за договором</div><div class="metric-value blue">${fmt(pl.rev)}</div></div>
+    <div class="metric"><div class="metric-label">Виручка за договором</div><div class="metric-value" style="color:#4a9eff">${fmt(pl.rev)}</div></div>
     <div class="metric"><div class="metric-label">Податок ${p.taxRate||6}% ЄП</div><div class="metric-value amber">${fmt(pl.tax)}</div></div>
-    <div class="metric"><div class="metric-label">Витрати виконавці</div><div class="metric-value">${fmt(pl.costs)}</div></div>
-    <div class="metric"><div class="metric-label">Виплачено факт</div><div class="metric-value amber">${fmt(pl.paid)}</div></div>
-    <div class="metric"><div class="metric-label">Залишок до виплати</div><div class="metric-value ${pl.toPay>0?'red':'green'}">${fmt(pl.toPay)}</div></div>
+    <div class="metric metric-clickable" onclick="toggleMetricPanel('costs')" style="cursor:pointer" title="Натисніть для деталей"><div class="metric-label">Витрати виконавці <span style="opacity:.5;font-size:9px">▼</span></div><div class="metric-value">${fmt(pl.costs)}</div></div>
+    <div class="metric metric-clickable" onclick="toggleMetricPanel('paid')" style="cursor:pointer" title="Натисніть для деталей"><div class="metric-label">Виплачено факт <span style="opacity:.5;font-size:9px">▼</span></div><div class="metric-value amber">${fmt(pl.paid)}</div></div>
+    <div class="metric metric-clickable" onclick="toggleMetricPanel('topay')" style="cursor:pointer" title="Натисніть для деталей"><div class="metric-label">Залишок до виплати <span style="opacity:.5;font-size:9px">▼</span></div><div class="metric-value ${pl.toPay>0?'red':'green'}">${fmt(pl.toPay)}</div></div>
     <div class="metric"><div class="metric-label">Чистий дохід</div><div class="metric-value ${mc}">${fmt(pl.net)}</div></div>
     <div class="metric"><div class="metric-label">Маржинальність</div><div class="metric-value ${mc}">${pl.margin}%</div></div>
     <div class="metric"><div class="metric-label">Авансів отримано</div><div class="metric-value">${fmt(pl.adv)}</div></div>
     <div class="metric"><div class="metric-label">Залишок від замовника</div><div class="metric-value ${pl.remaining>0?'amber':'green'}">${fmt(pl.remaining)}</div></div>
   `;
+
+  // Metric detail panels
+  const mSecs = p.sections||[];
+  document.getElementById('metric-panel-costs').innerHTML = mSecs.length ? `
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr>
+        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Розділ</th>
+        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Виконавець</th>
+        <th style="text-align:right;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Договір</th>
+      </tr></thead>
+      <tbody>${mSecs.map(s=>{
+        const ex=state.executors.find(e=>e.id===s.executorId);
+        return`<tr>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600">${s.name}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text2)">${ex?ex.name:'—'}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:right;font-weight:700;color:var(--accent)">${fmt(s.cost)}</td>
+        </tr>`;}).join('')}
+        <tr style="background:var(--bg3)"><td colspan="2" style="padding:8px 12px;font-weight:700">Разом</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:var(--accent)">${fmt(pl.costs)}</td></tr>
+      </tbody>
+    </table>` : '<div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Розділів ще немає</div>';
+
+  document.getElementById('metric-panel-paid').innerHTML = mSecs.filter(s=>+(s.paid||0)>0).length ? `
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr>
+        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Розділ</th>
+        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Виконавець</th>
+        <th style="text-align:right;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Виплачено</th>
+      </tr></thead>
+      <tbody>${mSecs.filter(s=>+(s.paid||0)>0).map(s=>{
+        const ex=state.executors.find(e=>e.id===s.executorId);
+        return`<tr>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600">${s.name}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text2)">${ex?ex.name:'—'}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:right;font-weight:700;color:var(--amber)">${fmt(s.paid)}</td>
+        </tr>`;}).join('')}
+        <tr style="background:var(--bg3)"><td colspan="2" style="padding:8px 12px;font-weight:700">Разом</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:var(--amber)">${fmt(pl.paid)}</td></tr>
+      </tbody>
+    </table>` : '<div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Виплат ще не зафіксовано</div>';
+
+  const toPaySecs=mSecs.filter(s=>(+(s.cost||0))-(+(s.paid||0))>0);
+  document.getElementById('metric-panel-topay').innerHTML = toPaySecs.length ? `
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr>
+        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Розділ</th>
+        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Виконавець</th>
+        <th style="text-align:right;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Залишок</th>
+      </tr></thead>
+      <tbody>${toPaySecs.map(s=>{
+        const ex=state.executors.find(e=>e.id===s.executorId);
+        const rem=(+(s.cost||0))-(+(s.paid||0));
+        return`<tr>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600">${s.name}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text2)">${ex?ex.name:'—'}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:right;font-weight:700;color:var(--red)">${fmt(rem)}</td>
+        </tr>`;}).join('')}
+        <tr style="background:var(--bg3)"><td colspan="2" style="padding:8px 12px;font-weight:700">Разом</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:var(--red)">${fmt(pl.toPay)}</td></tr>
+      </tbody>
+    </table>` : '<div style="padding:16px;text-align:center;color:var(--green);font-size:12px">✓ Всі виплати здійснено</div>';
   // Extra costs block
   const hasExtra=(+(p.costExpertise)||0)+(+(p.costPrint)||0)+(+(p.costOther)||0)>0;
   const extraBlock=hasExtra?`
@@ -1414,6 +1481,24 @@ function editCurrentProject(){
   document.getElementById('p-gchat').value=p.gchat||'';
   document.getElementById('p-tg').value=p.telegram||'';
   document.getElementById('p-notes').value=p.notes||'';
+}
+
+function toggleMetricPanel(type){
+  const panels=['costs','paid','topay'];
+  panels.forEach(t=>{
+    const el=document.getElementById('metric-panel-'+t);
+    const isThis=t===type;
+    const isOpen=el.style.display!=='none';
+    if(isThis){
+      el.style.display=isOpen?'none':'block';
+      // Toggle active class on metric card
+      document.querySelectorAll('.metric-clickable').forEach((m,i)=>{
+        if(['costs','paid','topay'][i]===type)m.classList.toggle('active',!isOpen);
+      });
+    } else {
+      el.style.display='none';
+    }
+  });
 }
 
 function toggleProjectTasks(){
