@@ -1676,25 +1676,8 @@ function showExTasks(eid){
     </div>`;
 }
 
-async function connectGoogleCalendar(){
-  try{
-    showSyncStatus('⟳ Підключення до Calendar...','var(--accent)');
-    await gcalAuth();
-    document.getElementById('gcal-btn-label').textContent='✓ Calendar підключено';
-    document.getElementById('nav-gcal').style.color='var(--green)';
-    showSyncStatus('✓ Google Calendar підключено','var(--green)');
-    // Синхронізуємо всі задачі з дедлайном
-    const tasks=(state.tasks||[]).filter(t=>t.deadline&&t.status!=='done');
-    showSyncStatus(`⟳ Синхронізую ${tasks.length} задач...`,'var(--accent)');
-    for(const t of tasks){
-      await syncTaskToCalendar(t);
-      await new Promise(r=>setTimeout(r,300)); // throttle
-    }
-    showSyncStatus(`✓ Синхронізовано ${tasks.length} задач`,'var(--green)');
-  }catch(e){
-    showSyncStatus('⚠ Помилка підключення','var(--red)');
-    console.error(e);
-  }
+function connectGoogleCalendar(){
+  exportTasksToICS();
 }
 
 function deleteCurrentProject(){
