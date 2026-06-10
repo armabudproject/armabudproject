@@ -7,10 +7,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0a1628;
-  --bg2:#0d1f3c;
-  --bg3:#112244;
-  --bg4:#1a3060;
+  --bg:#0f1e35;
+  --bg2:#132440;
+  --bg3:#172a4e;
+  --bg4:#1e3666;
   --border:rgba(0,180,255,0.12);
   --border2:rgba(0,180,255,0.22);
   --text:#e8dcc8;
@@ -37,7 +37,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
 .app{display:flex;min-height:100vh}
-.sidebar{width:210px;background:#050e1c;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:10}
+.sidebar{width:210px;background:#080f1e;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:10}
 .main{margin-left:210px;flex:1;padding:18px 22px;min-height:100vh}
 .sidebar-logo{padding:16px 14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .logo-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#b8860b);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#000;flex-shrink:0}
@@ -700,7 +700,7 @@ function renderDashboard(){
   let tR=0,tC=0,tT=0,tN=0,tA=0,tP=0;
   state.projects.forEach(p=>{const pl=calcPnl(p);tR+=pl.rev;tC+=pl.costs;tT+=pl.tax;tN+=pl.net;tA+=pl.adv;tP+=pl.paid;});
   document.getElementById('dash-metrics').innerHTML=`
-    <div class="metric"><div class="metric-label">Проектів</div><div class="metric-value blue">${state.projects.length}</div></div>
+    <div class="metric"><div class="metric-label">Проектів</div><div class="metric-value" style="color:var(--green)">${state.projects.length}</div></div>
     <div class="metric"><div class="metric-label">Загальний дохід</div><div class="metric-value" style="color:#4a9eff">${fmt(tR)}</div></div>
     <div class="metric"><div class="metric-label">Витрати (план)</div><div class="metric-value">${fmt(tC)}</div></div>
     <div class="metric"><div class="metric-label">Виплачено факт</div><div class="metric-value amber">${fmt(tP)}</div></div>
@@ -1076,6 +1076,7 @@ function renderExecutors(){
       <th>Роль</th>
       <th>Проектів</th>
       <th>Розділів</th>
+      <th>Задачі</th>
       <th>Сума договорів</th>
       <th>Виплачено</th>
       <th>До виплати</th>
@@ -1085,6 +1086,9 @@ function renderExecutors(){
       const d=getExStats(e.id);
       const remain=d.cost-d.paid;
       const pct=d.cost>0?Math.min(100,Math.round(d.paid/d.cost*100)):0;
+      const exTasks=(state.tasks||[]).filter(t=>t.executorId===e.id);
+      const exTasksDone=exTasks.filter(t=>t.status==='done').length;
+      const exTasksOverdue=exTasks.filter(t=>t.deadline&&isOverdue(t.deadline)&&t.status!=='done').length;
       return`<tr onclick="navigate('executor-detail','${e.id}')" style="cursor:pointer">
         <td>
           <div style="display:flex;align-items:center;gap:10px">
@@ -1098,6 +1102,9 @@ function renderExecutors(){
         <td style="color:var(--text2)">${e.role||'—'}</td>
         <td style="text-align:center">${d.projectCount}</td>
         <td style="text-align:center">${d.sectionCount}</td>
+        <td style="text-align:center">
+          ${exTasks.length>0?`<span onclick="showExTasks('${e.id}');event.stopPropagation()" style="cursor:pointer;font-weight:700;color:var(--accent);text-decoration:underline;text-underline-offset:2px">${exTasks.length}</span>${exTasksOverdue>0?` <span class="badge red" style="font-size:9px">⚠${exTasksOverdue}</span>`:''}`:'<span style="color:var(--text3)">—</span>'}
+        </td>
         <td class="mono">${fmt(d.cost)}</td>
         <td class="mono" style="color:var(--amber)">${fmt(d.paid)}</td>
         <td class="mono" style="color:${remain>0?'var(--red)':'var(--green)'}">${fmt(remain)}</td>
@@ -1511,6 +1518,71 @@ function toggleProjectTasks(){
   if(!wrap)return;
   const isVisible=wrap.style.display!=='none';
   wrap.style.display=isVisible?'none':'block';
+}
+
+function showExTasks(eid){
+  const ex=state.executors.find(e=>e.id===eid);
+  if(!ex)return;
+  const tasks=(state.tasks||[]).filter(t=>t.executorId===eid);
+  const PR_COLOR={urgent:'var(--red)',high:'var(--amber)',normal:'var(--text2)'};
+  const PR_LABEL={urgent:'🔴 Терміново',high:'🟡 Високий',normal:'⚪ Звичайний'};
+  const ST_BADGE={todo:'gray',progress:'blue',done:'green'};
+  const ST_LABEL={todo:'Не почато',progress:'В роботі',done:'Виконано'};
+
+  // Сортуємо: виконані вниз
+  const sorted=[...tasks].sort((a,b)=>{
+    if(a.status==='done'&&b.status!=='done')return 1;
+    if(a.status!=='done'&&b.status==='done')return -1;
+    const po={urgent:0,high:1,normal:2};
+    return po[a.priority||'normal']-po[b.priority||'normal'];
+  });
+
+  // Відкриваємо модал
+  document.getElementById('overlay').classList.add('show');
+  document.querySelectorAll('.modal').forEach(m=>m.style.display='none');
+
+  // Динамічно створюємо модал якщо не існує
+  let modal=document.getElementById('modal-ex-tasks');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.className='modal';
+    modal.id='modal-ex-tasks';
+    document.getElementById('overlay').appendChild(modal);
+  }
+  modal.style.display='block';
+  modal.style.maxWidth='700px';
+
+  modal.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div class="modal-title" style="margin-bottom:0">Задачі — ${ex.name}</div>
+      <span style="font-size:11px;color:var(--text2)">${tasks.length} задач</span>
+    </div>
+    ${sorted.length?`
+    <div class="tbl-wrap"><table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr>
+        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Задача</th>
+        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Проект</th>
+        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Дедлайн</th>
+        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Пріоритет</th>
+        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Статус</th>
+      </tr></thead>
+      <tbody>${sorted.map(t=>{
+        const proj=state.projects.find(p=>p.id===t.pid)||null;
+        const od=t.deadline&&isOverdue(t.deadline)&&t.status!=='done';
+        const st=t.status||'todo';
+        const pr=t.priority||'normal';
+        return`<tr style="${t.status==='done'?'opacity:.55':''}${od?';background:rgba(240,84,84,0.06)':''}">
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;${t.status==='done'?'text-decoration:line-through':''}">${t.name}${t.note?`<div style="font-size:10px;color:var(--text2);font-weight:400">${t.note}</div>`:''}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">${proj?proj.name:'—'}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border)">${deadlineBadge(t.deadline,st)}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:${PR_COLOR[pr]}">${PR_LABEL[pr]}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge ${ST_BADGE[st]}">${ST_LABEL[st]}</span></td>
+        </tr>`;}).join('')}
+      </tbody>
+    </table></div>`:'<div style="padding:24px;text-align:center;color:var(--text3)">Задач не знайдено</div>'}
+    <div class="modal-footer">
+      <button class="btn primary" onclick="closeModal()">Закрити</button>
+    </div>`;
 }
 
 function deleteCurrentProject(){
