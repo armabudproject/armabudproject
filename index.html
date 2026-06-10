@@ -2023,6 +2023,16 @@ function saveTask(){
   save();
   closeModal();
 
+  // Якщо нова задача з дедлайном — пропонуємо додати в Google Calendar
+  var isNew = idx === '';
+  if(isNew && task.deadline){
+    setTimeout(function(){
+      if(confirm('📅 Додати «'+task.name+'» в Google Calendar?\n\nДата: '+task.deadline+'\n\nНатисніть «Зберегти» у вікні Calendar що відкриється.')){
+        addToGoogleCalendar(task);
+      }
+    }, 400);
+  }
+
   // Відправка повідомлення на email виконавцю
   sendTaskEmail(task, idx!=='');
 
