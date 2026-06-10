@@ -334,6 +334,11 @@ td:hover .edit-hint{opacity:1}
     <button class="filter-btn" data-ts="progress" onclick="setTaskFilter('progress')">В роботі</button>
     <button class="filter-btn" data-ts="done" onclick="setTaskFilter('done')">Виконано</button>
     <button class="filter-btn" data-ts="overdue" onclick="setTaskFilter('overdue')">⚠ Прострочені</button>
+    <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+      <span style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Групувати:</span>
+      <button class="filter-btn active" id="sort-by-project" onclick="setTaskSort('project')">По проектах</button>
+      <button class="filter-btn" id="sort-by-deadline" onclick="setTaskSort('deadline')">По дедлайну</button>
+    </div>
   </div>
   <div class="card">
     <div class="tbl-wrap"><table id="all-tasks-table"></table></div>
@@ -1635,10 +1640,18 @@ function delEx(id){
 
 // ── TASKS PAGE ──
 let activeTaskFilter='all';
+let taskSort='project'; // 'project' | 'deadline'
 
 function setTaskFilter(f){
   activeTaskFilter=f;
   document.querySelectorAll('[data-ts]').forEach(b=>b.classList.toggle('active',b.dataset.ts===f));
+  renderTasksPage();
+}
+
+function setTaskSort(s){
+  taskSort=s;
+  document.getElementById('sort-by-project').classList.toggle('active',s==='project');
+  document.getElementById('sort-by-deadline').classList.toggle('active',s==='deadline');
   renderTasksPage();
 }
 
@@ -1677,15 +1690,6 @@ function renderTasksPage(){
     allTasks = allTasks.filter(function(t){return t.status===activeTaskFilter;});
   }
 
-  allTasks.sort(function(a,b){
-    var po={urgent:0,high:1,normal:2};
-    var pa=po[a.priority||'normal'], pb=po[b.priority||'normal'];
-    if(pa!==pb)return pa-pb;
-    if(a.deadline&&b.deadline)return a.deadline<b.deadline?-1:1;
-    if(a.deadline)return-1; if(b.deadline)return 1;
-    return 0;
-  });
-
   var el = document.getElementById('all-tasks-table');
   if(!el)return;
 
@@ -1695,31 +1699,100 @@ function renderTasksPage(){
   var ST_LABEL = {todo:'Не почато',progress:'В роботі',done:'Виконано'};
 
   if(!allTasks.length){
-    el.innerHTML='<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text3)">Задач не знайдено</td></tr>';
+    el.innerHTML='<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text3)">Задач не знайдено</td></tr>';
     return;
   }
 
-  var rows = '<thead><tr><th>Задача</th><th>Проект</th><th>Виконавець</th><th>Строк</th><th>Пріоритет</th><th>Статус</th><th></th></tr></thead><tbody>';
-  allTasks.forEach(function(t, i){
-    var proj = state.projects.find(function(p){return p.id===t.pid;})||null;
-    var ex = state.executors.find(function(e){return e.id===t.executorId;})||null;
-    var od = t.deadline&&isOverdue(t.deadline)&&t.status!=='done';
-    var pr = t.priority||'normal';
-    var st = t.status||'todo';
-    var origIdx = (state.tasks||[]).indexOf(t);
-    rows += '<tr class="'+(od?'overdue':'')+'">';
-    rows += '<td><div style="font-weight:600;'+(st==='done'?'text-decoration:line-through;opacity:.5':'')+'">'+t.name+'</div>'+(t.note?'<div style="font-size:11px;color:var(--text2)">'+t.note+'</div>':'')+'</td>';
-    var projId=proj?proj.id:''; var projName=proj?proj.name:'—';
-    rows += '<td style="cursor:pointer;color:var(--accent)" onclick="navigate(\'detail\',\''+projId+'\')">'+(proj?proj.name:'—')+'</td>';
-    rows += '<td style="font-size:12px;color:var(--text2)">'+(ex?ex.name:'—')+'</td>';
-    rows += '<td>'+dlBadge(t.deadline,st)+'</td>';
-    rows += '<td style="font-size:11px;color:'+PR_COLOR[pr]+'">'+PR_LABEL[pr]+'</td>';
-    rows += '<td><span class="badge '+ST_BADGE[st]+'">'+ST_LABEL[st]+'</span></td>';
-    rows += '<td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal('+origIdx+')" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal('+origIdx+')">✕</button></td>';
-    rows += '</tr>';
-  });
+  var rows = '<thead><tr><th>Задача</th><th>Виконавець</th><th>Дедлайн</th><th>Пріоритет</th><th>Статус</th><th></th></tr></thead><tbody>';
+
+  if(taskSort==='project'){
+    // Групуємо по проектах
+    var byProj = {};
+    var projOrder = [];
+    allTasks.forEach(function(t){
+      var pid = t.pid||'_';
+      if(!byProj[pid]){byProj[pid]=[];projOrder.push(pid);}
+      byProj[pid].push(t);
+    });
+    projOrder.forEach(function(pid){
+      var proj = state.projects.find(function(p){return p.id===pid;})||null;
+      var tasks = byProj[pid];
+      tasks.sort(function(a,b){
+        if(a.status==='done'&&b.status!=='done')return 1;
+        if(a.status!=='done'&&b.status==='done')return -1;
+        var po={urgent:0,high:1,normal:2};
+        return (po[a.priority||'normal'])-(po[b.priority||'normal']);
+      });
+      rows += '<tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)">';
+      rows += '<span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(\'detail\',\''+pid+'\')">';
+      rows += '📁 '+(proj?proj.name:'Без проекту')+'</span>';
+      rows += '<span style="font-size:10px;color:var(--text3);margin-left:8px">'+tasks.length+' задач</span></td></tr>';
+      tasks.forEach(function(t){ rows += renderTaskRow(t,PR_COLOR,PR_LABEL,ST_BADGE,ST_LABEL,false); });
+    });
+  } else {
+    // По дедлайну
+    allTasks.sort(function(a,b){
+      if(a.status==='done'&&b.status!=='done')return 1;
+      if(a.status!=='done'&&b.status==='done')return -1;
+      if(!a.deadline&&!b.deadline)return 0;
+      if(!a.deadline)return 1; if(!b.deadline)return -1;
+      return a.deadline<b.deadline?-1:1;
+    });
+    var prevWasDone=false;
+    allTasks.forEach(function(t){
+      if(t.status==='done'&&!prevWasDone){
+        rows+='<tr><td colspan="6" style="padding:6px 14px;background:var(--bg3);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;border-top:1px solid var(--border)">✓ Виконані задачі</td></tr>';
+        prevWasDone=true;
+      }
+      rows += renderTaskRow(t,PR_COLOR,PR_LABEL,ST_BADGE,ST_LABEL,true);
+    });
+  }
+
   rows += '</tbody>';
   el.innerHTML = rows;
+}
+
+function renderTaskRow(t, PR_COLOR, PR_LABEL, ST_BADGE, ST_LABEL, showProj){
+  var proj = state.projects.find(function(p){return p.id===t.pid;})||null;
+  var ex = state.executors.find(function(e){return e.id===t.executorId;})||null;
+  var od = t.deadline&&isOverdue(t.deadline)&&t.status!=='done';
+  var pr = t.priority||'normal';
+  var st = t.status||'todo';
+  var origIdx = (state.tasks||[]).indexOf(t);
+  var isDone = st==='done';
+  var row = '<tr class="'+(od?'overdue':'')+'" style="'+(isDone?'opacity:.55':'')+'">';
+  row += '<td><div style="font-weight:600;'+(isDone?'text-decoration:line-through':'')+'">'+(t.name||'')+'</div>';
+  if(showProj&&proj) row += '<div style="font-size:10px;color:var(--accent);margin-top:2px">📁 '+proj.name+'</div>';
+  if(t.note) row += '<div style="font-size:11px;color:var(--text2)">'+t.note+'</div>';
+  row += '</td>';
+  row += '<td style="font-size:12px;color:var(--text2)">'+(ex?ex.name:'—')+'</td>';
+  row += '<td><input type="date" value="'+(t.deadline||'')+'" onchange="updateTaskDeadline('+origIdx+',this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:'+(od?'var(--red)':'var(--text)')+';font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td>';
+  row += '<td style="font-size:11px;color:'+PR_COLOR[pr]+'">'+PR_LABEL[pr]+'</td>';
+  row += '<td><span class="badge '+ST_BADGE[st]+'">'+ST_LABEL[st]+'</span></td>';
+  row += '<td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal('+origIdx+')" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal('+origIdx+')">✕</button></td>';
+  row += '</tr>';
+  return row;
+}
+
+function updateTaskDeadline(idx, val){
+  if(!state.tasks[idx])return;
+  state.tasks[idx].deadline=val;
+  save();
+  // Надсилаємо email виконавцю про зміну терміну
+  var t=state.tasks[idx];
+  var ex=state.executors.find(function(e){return e.id===t.executorId;});
+  if(!ex||!ex.email)return;
+  var proj=state.projects.find(function(p){return p.id===t.pid;})||null;
+  var subject=encodeURIComponent('[Зміна ТЕРМІНУ ВИКОНАННЯ] '+t.name);
+  var body=encodeURIComponent(
+    'Змінено термін виконання задачі\n\n'+
+    'Задача: '+t.name+'\n'+
+    'Проект: '+(proj?proj.name:'—')+'\n'+
+    'Новий термін виконання: '+(val||'не вказано')+'\n'+
+    '\n— АрмаБуд Проджект\ndata@armabudproject.com'
+  );
+  var gmailUrl='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(ex.email)+'&su='+subject+'&body='+body+'&authuser='+encodeURIComponent('data@armabudproject.com');
+  window.open(gmailUrl,'_blank');
 }
 
 function goToTaskEdit(pid,idx){
