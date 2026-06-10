@@ -198,6 +198,11 @@ td:hover .edit-hint{opacity:1}
     <button class="nav-item" onclick="exportExcel()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>Аналітика Excel
     </button>
+    <div class="nav-label">Інтеграції</div>
+    <button class="nav-item" onclick="connectGoogleCalendar()" id="nav-gcal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span id="gcal-btn-label">Google Calendar</span>
+    </button>
     <div class="nav-label">Дані</div>
     <button class="nav-item" onclick="exportData()" style="color:var(--green)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Резерв JSON
@@ -568,6 +573,92 @@ td:hover .edit-hint{opacity:1}
 <script>
 // ── FIREBASE CONFIG ──
 const FB_URL='https://armabudproject-d1573-default-rtdb.europe-west1.firebasedatabase.app';
+
+// ── GOOGLE CALENDAR — посилання (без OAuth) ──
+function addToGoogleCalendar(task){
+  if(!task.deadline)return;
+  const proj=state.projects.find(p=>p.id===task.pid)||null;
+  const ex=state.executors.find(e=>e.id===task.executorId)||null;
+  const PR={'urgent':'Терміново','high':'Високий','normal':'Звичайний'};
+
+  const title=encodeURIComponent((ex?ex.name+': ':'')+task.name);
+  const date=task.deadline.replace(/-/g,'');
+  // Подія на весь день
+  const dates=date+'/'+date;
+  const details=encodeURIComponent(
+    '📋 Задача: '+task.name+'\n'+
+    '📁 Проект: '+(proj?proj.name:'—')+'\n'+
+    '👤 Виконавець: '+(ex?ex.name:'—')+'\n'+
+    '⚡ Пріоритет: '+(PR[task.priority||'normal'])+'\n'+
+    (task.note?'💬 Примітка: '+task.note+'\n':'')+
+    '\n— АрмаБуд Менеджер'
+  );
+
+  const url=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}/${date}&details=${details}`;
+  window.open(url,'_blank');
+}
+
+function syncTaskToCalendar(task){
+  // Автоматично відкриваємо Calendar тільки якщо є дедлайн
+  if(task.deadline&&task.status!=='done'){
+    addToGoogleCalendar(task);
+  }
+}
+
+function connectGoogleCalendar(){
+  exportTasksToICS();
+}
+
+function exportTasksToICS(){
+  const tasks=(state.tasks||[]).filter(t=>t.deadline&&t.status!=='done');
+  if(!tasks.length){alert('Немає активних задач з дедлайном');return;}
+
+  const PR={'urgent':'Терміново','high':'Високий','normal':'Звичайний'};
+  const now=new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+
+  let ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//АрмаБуд Менеджер//UA\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n';
+
+  tasks.forEach(function(t){
+    const proj=state.projects.find(function(p){return p.id===t.pid;})||null;
+    const ex=state.executors.find(function(e){return e.id===t.executorId;})||null;
+    const date=t.deadline.replace(/-/g,'');
+    const uid=t.id||('task-'+Math.random().toString(36).slice(2))+'@armabudproject';
+    const summary=(ex?ex.name+': ':'')+t.name;
+    const desc=[
+      'Задача: '+t.name,
+      'Проект: '+(proj?proj.name:'—'),
+      'Виконавець: '+(ex?ex.name:'—'),
+      'Пріоритет: '+PR[t.priority||'normal'],
+      t.note?'Примітка: '+t.note:''
+    ].filter(Boolean).join('\\n');
+
+    ics+='BEGIN:VEVENT\r\n';
+    ics+='UID:'+uid+'\r\n';
+    ics+='DTSTAMP:'+now+'\r\n';
+    ics+='DTSTART;VALUE=DATE:'+date+'\r\n';
+    ics+='DTEND;VALUE=DATE:'+date+'\r\n';
+    ics+='SUMMARY:'+summary.replace(/,/g,'\\,')+'\r\n';
+    ics+='DESCRIPTION:'+desc+'\r\n';
+    ics+='BEGIN:VALARM\r\nTRIGGER:-PT24H\r\nACTION:DISPLAY\r\nDESCRIPTION:Нагадування: '+t.name.replace(/,/g,'\\,')+'\r\nEND:VALARM\r\n';
+    ics+='END:VEVENT\r\n';
+  });
+
+  ics+='END:VCALENDAR';
+
+  // Завантажуємо файл
+  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='ArmabudTasks.ics';
+  a.click();
+
+  document.getElementById('gcal-btn-label').textContent='✓ Файл завантажено';
+  document.getElementById('nav-gcal').style.color='var(--green)';
+
+  setTimeout(()=>{
+    alert('Файл ArmabudTasks.ics завантажено!\n\nЩоб імпортувати в Google Calendar:\n1. Відкрий calendar.google.com\n2. Налаштування → Імпорт та експорт\n3. Натисни «Вибрати файл» → ArmabudTasks.ics\n4. «Імпортувати»\n\nВсі '+tasks.length+' задач з\'являться в календарі одразу!');
+  },500);
+}
 
 const LS='armabudproject_v2';
 let state={projects:[],executors:[],tasks:[]};
@@ -1585,6 +1676,27 @@ function showExTasks(eid){
     </div>`;
 }
 
+async function connectGoogleCalendar(){
+  try{
+    showSyncStatus('⟳ Підключення до Calendar...','var(--accent)');
+    await gcalAuth();
+    document.getElementById('gcal-btn-label').textContent='✓ Calendar підключено';
+    document.getElementById('nav-gcal').style.color='var(--green)';
+    showSyncStatus('✓ Google Calendar підключено','var(--green)');
+    // Синхронізуємо всі задачі з дедлайном
+    const tasks=(state.tasks||[]).filter(t=>t.deadline&&t.status!=='done');
+    showSyncStatus(`⟳ Синхронізую ${tasks.length} задач...`,'var(--accent)');
+    for(const t of tasks){
+      await syncTaskToCalendar(t);
+      await new Promise(r=>setTimeout(r,300)); // throttle
+    }
+    showSyncStatus(`✓ Синхронізовано ${tasks.length} задач`,'var(--green)');
+  }catch(e){
+    showSyncStatus('⚠ Помилка підключення','var(--red)');
+    console.error(e);
+  }
+}
+
 function deleteCurrentProject(){
   if(!confirm('Видалити проект "'+state.projects.find(x=>x.id===curPid).name+'"?'))return;
   state.projects=state.projects.filter(x=>x.id!==curPid);
@@ -1841,7 +1953,7 @@ function renderTaskRow(t, PR_COLOR, PR_LABEL, ST_BADGE, ST_LABEL, showProj){
   row += '<td><input type="date" value="'+(t.deadline||'')+'" onchange="updateTaskDeadline('+origIdx+',this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:'+(od?'var(--red)':'var(--text)')+';font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td>';
   row += '<td style="font-size:11px;color:'+PR_COLOR[pr]+'">'+PR_LABEL[pr]+'</td>';
   row += '<td><span class="badge '+ST_BADGE[st]+'">'+ST_LABEL[st]+'</span></td>';
-  row += '<td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal('+origIdx+')" style="margin-right:4px">Ред.</button><button class="btn sm danger" onclick="delTaskGlobal('+origIdx+')">✕</button></td>';
+  row += '<td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal('+origIdx+')" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks['+origIdx+'])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal('+origIdx+')">✕</button></td>';
   row += '</tr>';
   return row;
 }
