@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0186)file:///Users/alexpshenya/Downloads/%D0%90%D1%80%D0%BC%D0%B0%D0%91%D1%83%D0%B4___%D0%9C%D0%B5%D0%BD%D0%B5%D0%B4%D0%B6%D0%B5%D1%80_%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D1%96%D0%B2_10.html -->
+<!-- saved from url=(0186)file:///Users/alexpshenya/Downloads/%D0%90%D1%80%D0%BC%D0%B0%D0%91%D1%83%D0%B4___%D0%9C%D0%B5%D0%BD%D0%B5%D0%B4%D0%B6%D0%B5%D1%80_%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D1%96%D0%B2_16.html -->
 <html lang="uk"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,28 +11,28 @@
   --bg2:#132440;
   --bg3:#172a4e;
   --bg4:#1e3666;
-  --border:rgba(0,180,255,0.12);
-  --border2:rgba(0,180,255,0.22);
+  --border:rgba(240,200,130,0.10);
+  --border2:rgba(240,200,130,0.20);
   --text:#e8dcc8;
-  --text2:#a89880;
-  --text3:#5a4a38;
+  --text2:#bfae90;
+  --text3:#8a7860;
   --accent:#f0b429;
   --accent2:#d4941a;
   --as:rgba(240,180,41,0.12);
-  --green:#4caf7d;
-  --gs:rgba(76,175,125,0.13);
-  --red:#f05454;
-  --rs:rgba(240,84,84,0.13);
-  --amber:#f0b429;
-  --ambs:rgba(240,180,41,0.13);
+  --green:#2fc88a;
+  --gs:rgba(47,200,138,0.14);
+  --red:#ff5b5b;
+  --rs:rgba(255,91,91,0.14);
+  --amber:#f5921e;
+  --ambs:rgba(245,146,30,0.15);
   --purple:#c77dff;
   --r:8px;
   --rsm:6px;
   --font:'Plus Jakarta Sans',sans-serif;
   --mono:'Plus Jakarta Sans',sans-serif;
-  --sh:0 2px 12px rgba(0,0,0,0.4);
-  --sh2:0 0 24px rgba(0,200,255,0.08);
-  --glow:0 0 12px rgba(0,200,255,0.25);
+  --sh:0 2px 14px rgba(0,0,0,0.35);
+  --sh2:0 6px 22px rgba(0,0,0,0.28);
+  --glow:0 0 0 2px rgba(240,180,41,0.22);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
@@ -49,46 +49,62 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--rsm);cursor:pointer;color:var(--text2);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;transition:all .15s;margin-bottom:1px;border:none;background:none;width:100%;text-align:left}
 .nav-item:hover{background:var(--bg3);color:var(--text)}
 .nav-item.active{background:rgba(240,180,41,0.12);color:var(--accent);border-left:2px solid var(--accent);padding-left:8px}
-.nav-item svg{width:13px;height:13px;flex-shrink:0}
+.nav-item svg{width:13px;height:13px;flex-shrink:0;transition:color .15s}
+/* кольорові іконки розділів */
+#nav-dashboard>svg{color:#f0b429}
+#nav-projects>svg{color:#4a9eff}
+#nav-executors>svg{color:#2fc88a}
+#nav-workload>svg{color:#c77dff}
+#nav-tasks>svg{color:#f5921e}
+#nav-plan>svg{color:#2dd4bf}
+#nav-excel>svg{color:#1f9e6a}
+#nav-gcal>svg{color:#4285f4}
 .sidebar-footer{padding:10px 14px;border-top:1px solid var(--border);font-size:9px;color:var(--text3);letter-spacing:.05em;text-transform:uppercase}
 .page{display:none}.page.active{display:block}
 .page-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap;padding-bottom:10px;border-bottom:1px solid var(--border)}
 .page-title{font-size:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
 .page-sub{font-size:10px;color:var(--text2);margin-top:2px;text-transform:uppercase;letter-spacing:.04em}
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:7px;margin-bottom:12px}
-.metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;position:relative;overflow:hidden;transition:border-color .15s,background .15s}
+.metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;position:relative;overflow:hidden;box-shadow:var(--sh);transition:transform .15s,border-color .15s,box-shadow .15s}
+.metric:hover{transform:translateY(-2px);border-color:var(--border2);box-shadow:var(--sh2)}
 .metric-clickable:hover{border-color:rgba(240,180,41,0.4);background:rgba(240,180,41,0.05);cursor:pointer}
 .metric-clickable.active{border-color:var(--accent);background:rgba(240,180,41,0.08)}
 .metric-panel{background:var(--bg2);border:1px solid rgba(240,180,41,0.3);border-radius:var(--r);margin-bottom:10px;overflow:hidden;grid-column:1/-1;animation:slideDown .2s ease}
 @keyframes slideDown{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),rgba(240,180,41,0.1))}
-.metric-label{font-size:9px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
-.metric-value{font-size:18px;font-weight:700;letter-spacing:-.3px;line-height:1.1}
+.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--mc,var(--accent)),transparent 75%)}
+.metric-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px}
+.metric-label{font-size:9px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+.metric-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--mc,var(--accent));background:rgba(255,255,255,0.05);background:color-mix(in srgb,var(--mc,var(--accent)) 14%,transparent)}
+.metric-icon svg{width:14px;height:14px}
+.metric-value{font-size:19px;font-weight:700;letter-spacing:-.3px;line-height:1.1;font-variant-numeric:tabular-nums lining-nums}
 .metric-value.green{color:var(--green)}.metric-value.red{color:var(--red)}.metric-value.blue{color:var(--accent)}.metric-value.amber{color:var(--amber)}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:9px;overflow:hidden}
-.card-head{display:flex;align-items:center;justify-content:space-between;padding:8px 13px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:6px;background:var(--bg3)}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:9px;overflow:hidden;box-shadow:var(--sh)}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:8px 13px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:6px;background:var(--bg3);background:linear-gradient(180deg,var(--bg3),color-mix(in srgb,var(--bg3) 70%,transparent))}
 .card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
 .tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th{text-align:left;padding:7px 11px;background:var(--bg3);color:var(--text2);font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border);white-space:nowrap}
 td{padding:7px 11px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text)}
 tr:last-child td{border-bottom:none}
-tbody tr:hover td{background:rgba(0,200,255,0.05)}
+tbody tr{transition:background .12s}
+tbody tr:hover td{background:rgba(240,180,41,0.06)}
+tbody tr:hover td:first-child{box-shadow:inset 2px 0 0 var(--accent)}
 .total-row td{font-weight:700;background:var(--bg3);border-top:1px solid var(--border2);color:var(--accent)}
-.mono{font-family:var(--mono)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums lining-nums;font-feature-settings:'tnum' 1,'lnum' 1;letter-spacing:0}
 .badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
-.badge.green{background:var(--gs);color:var(--green);border:1px solid rgba(0,230,118,0.3)}
-.badge.red{background:var(--rs);color:var(--red);border:1px solid rgba(255,68,68,0.3)}
-.badge.amber{background:var(--ambs);color:var(--amber);border:1px solid rgba(255,193,7,0.3)}
-.badge.blue{background:var(--as);color:var(--accent);border:1px solid rgba(0,200,255,0.3)}
+.badge.green{background:var(--gs);color:var(--green);border:1px solid rgba(47,200,138,0.35)}
+.badge.red{background:var(--rs);color:var(--red);border:1px solid rgba(255,91,91,0.35)}
+.badge.amber{background:var(--ambs);color:var(--amber);border:1px solid rgba(245,146,30,0.35)}
+.badge.blue{background:var(--as);color:var(--accent);border:1px solid rgba(240,180,41,0.3)}
 .badge.gray{background:rgba(255,255,255,0.05);color:var(--text2);border:1px solid var(--border)}
 .badge.purple{background:rgba(199,125,255,0.12);color:var(--purple);border:1px solid rgba(199,125,255,0.3)}
 .filter-bar{display:flex;gap:5px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
 .filter-btn{padding:4px 11px;border-radius:3px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:10px;font-weight:700;font-family:var(--font);transition:all .15s;text-transform:uppercase;letter-spacing:.05em}
 .filter-btn:hover{background:var(--bg4);color:var(--text)}
 .filter-btn.active{background:var(--accent);color:#0a1628;border-color:var(--accent);font-weight:700}
-.search-input{padding:5px 11px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:11px;font-family:var(--font);outline:none;min-width:200px}
-.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,200,255,0.15)}
+.search-input{padding:5px 11px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:11px;font-family:var(--font);outline:none;min-width:200px;transition:border-color .15s,box-shadow .15s}
+.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,180,41,0.16)}
+.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,180,41,0.16)}
 .search-input::placeholder{color:var(--text3)}
 .overdue td{background:rgba(255,68,68,0.06)!important}
 .overdue td:first-child{border-left:2px solid var(--red)}
@@ -97,8 +113,8 @@ tbody tr:hover td{background:rgba(0,200,255,0.05)}
 .wl-fill.warn{background:var(--amber)}.wl-fill.over{background:var(--red)}
 .btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;font-size:11px;font-weight:700;font-family:var(--font);transition:all .15s;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
 .btn:hover{background:var(--bg4);color:var(--accent)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#0a1628;font-weight:700}
-.btn.primary:hover{background:#00aadd}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#0a1628;font-weight:700;box-shadow:0 2px 10px rgba(240,180,41,0.25)}
+.btn.primary:hover{background:var(--accent2);border-color:var(--accent2);box-shadow:0 4px 16px rgba(240,180,41,0.35)}
 .btn.success{background:var(--gs);border-color:rgba(0,230,118,0.3);color:var(--green)}
 .btn.danger{background:var(--rs);border-color:rgba(255,68,68,0.3);color:var(--red)}
 .btn.sm{padding:3px 9px;font-size:10px}
@@ -106,14 +122,14 @@ tbody tr:hover td{background:rgba(0,200,255,0.05)}
 .form-group{margin-bottom:11px}
 .form-label{display:block;font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
 .form-input{width:100%;padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);color:var(--text);font-size:12px;font-family:var(--font);outline:none;transition:all .15s}
-.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,200,255,0.12)}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,180,41,0.16)}
 .form-input::placeholder{color:var(--text3)}
 select.form-input{appearance:none;cursor:pointer}
 .form-row2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
 .overlay{position:fixed;inset:0;background:rgba(0,5,20,0.85);backdrop-filter:blur(6px);z-index:100;display:none;align-items:center;justify-content:center}
 .overlay.show{display:flex}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:22px;width:min(540px,95vw);max-height:92vh;overflow-y:auto;animation:popIn .2s ease;box-shadow:0 0 40px rgba(0,200,255,0.1)}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:22px;width:min(540px,95vw);max-height:92vh;overflow-y:auto;animation:popIn .2s ease;box-shadow:0 18px 50px rgba(0,0,0,0.5)}
 @keyframes popIn{from{transform:scale(.96) translateY(6px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
 .modal-title{font-size:13px;font-weight:700;margin-bottom:14px;letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
 .modal-footer{display:flex;gap:7px;justify-content:flex-end;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
@@ -180,12 +196,12 @@ body.light{
   --accent:#b87d12;
   --accent2:#9a6a10;
   --as:rgba(184,125,18,0.12);
-  --green:#2e9e6b;
-  --gs:rgba(46,158,107,0.13);
+  --green:#1f9e6a;
+  --gs:rgba(31,158,106,0.13);
   --red:#d83a3a;
   --rs:rgba(216,58,58,0.12);
-  --amber:#c8881a;
-  --ambs:rgba(200,136,26,0.14);
+  --amber:#e07a14;
+  --ambs:rgba(224,122,20,0.14);
   --sh:0 2px 12px rgba(20,40,80,0.08);
   --sh2:0 0 24px rgba(20,40,80,0.05);
   --glow:0 0 12px rgba(184,125,18,0.18);
@@ -214,7 +230,7 @@ th.sortable:hover{color:var(--accent)}
 th.sortable .sort-arrow{opacity:.4;margin-left:2px}
 th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
 .dash-select{padding:5px 11px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:11px;font-family:var(--font);outline:none;cursor:pointer}
-.dash-select:focus{border-color:var(--accent)}
+.dash-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,180,41,0.16)}
 #dash-table th{white-space:normal;vertical-align:bottom;line-height:1.25;padding:7px 8px;text-align:center}
 #dash-table td{padding:7px 8px}
 
@@ -287,7 +303,7 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M9 16l2 2 4-4"></path></svg>План дня
     </button>
     <div class="nav-label">Експорт</div>
-    <button class="nav-item" onclick="exportExcel()">
+    <button class="nav-item" onclick="exportExcel()" id="nav-excel">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>Аналітика Excel
     </button>
     <div class="nav-label">Інтеграції</div>
@@ -324,12 +340,13 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
     <button class="btn primary" onclick="navigate(&#39;projects&#39;);openModal(&#39;new-project&#39;)">+ Новий проект</button>
   </div>
   <div class="metrics" id="dash-metrics">
-    <div class="metric"><div class="metric-label">Проектів</div><div class="metric-value" style="color:var(--green)">16</div></div>
-    <div class="metric"><div class="metric-label">Загальний дохід</div><div class="metric-value" style="color:#4a9eff">3&nbsp;775&nbsp;014 ₴</div></div>
-    <div class="metric"><div class="metric-label">Витрати (план)</div><div class="metric-value">1&nbsp;098&nbsp;800 ₴</div></div>
-    <div class="metric"><div class="metric-label">Виплачено факт</div><div class="metric-value amber">215&nbsp;000 ₴</div></div>
-    <div class="metric"><div class="metric-label">Податки ЄП</div><div class="metric-value amber">209&nbsp;221 ₴</div></div>
-    <div class="metric"><div class="metric-label">Прибуток</div><div class="metric-value green">2&nbsp;466&nbsp;994 ₴</div></div>
+    <div class="metric" style="--mc:var(--accent)"><div class="metric-top"><div class="metric-label">Проектів</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></span></div><div class="metric-value" style="color:var(--green)">16</div></div>
+    <div class="metric" style="--mc:#4a9eff"><div class="metric-top"><div class="metric-label">Загальний дохід</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg></span></div><div class="metric-value" style="color:#4a9eff">3&nbsp;775&nbsp;014 ₴</div></div>
+    <div class="metric" style="--mc:var(--text2)"><div class="metric-top"><div class="metric-label">Витрати (план)</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6v12a2 2 0 0 0 2 2h16V8H5a2 2 0 0 1-2-2z"></path><path d="M3 6a2 2 0 0 1 2-2h12v4"></path><circle cx="16.5" cy="14" r="1.4"></circle></svg></span></div><div class="metric-value">1&nbsp;098&nbsp;800 ₴</div></div>
+    <div class="metric" style="--mc:var(--amber)"><div class="metric-top"><div class="metric-label">Виплачено факт</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M9 12l2 2 4-4"></path></svg></span></div><div class="metric-value amber">215&nbsp;000 ₴</div></div>
+    <div class="metric" style="--mc:var(--purple)"><div class="metric-top"><div class="metric-label">Отримано від замовника</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 11 12 16 17 11"></polyline><line x1="12" y1="4" x2="12" y2="16"></line></svg></span></div><div class="metric-value" style="color:var(--purple)">197&nbsp;480 ₴</div></div>
+    <div class="metric" style="--mc:var(--amber)"><div class="metric-top"><div class="metric-label">Податки ЄП</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"></line><circle cx="7.5" cy="7.5" r="2"></circle><circle cx="16.5" cy="16.5" r="2"></circle></svg></span></div><div class="metric-value amber">183&nbsp;442 ₴</div></div>
+    <div class="metric" style="--mc:var(--green)"><div class="metric-top"><div class="metric-label">Прибуток</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v10M9.5 9.5h3.3a1.85 1.85 0 0 1 0 3.7H10"></path></svg></span></div><div class="metric-value green">2&nbsp;492&nbsp;773 ₴</div></div>
   </div>
   <div id="dash-attention"></div>
   <div class="card">
@@ -432,10 +449,10 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
         <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
       </td>
       <td class="mono" style="color:var(--red)">115&nbsp;000 ₴</td>
-      <td class="mono" style="color:var(--amber)">25&nbsp;779 ₴</td>
+      <td class="mono" style="color:var(--amber)">0 ₴</td>
       <td class="mono" style="color:var(--accent)">379&nbsp;650 ₴</td>
-      <td class="mono" style="color:var(--green)">288&nbsp;871 ₴</td>
-      <td><span class="badge green">67%</span></td>
+      <td class="mono" style="color:var(--green)">314&nbsp;650 ₴</td>
+      <td><span class="badge green">73%</span></td>
     </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r24&#39;)" style="cursor:pointer">
       <td><strong>ЕВМ-МАФ Континент</strong></td>
       <td style="color:var(--text2)">ЕВМ</td>
@@ -607,10 +624,10 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
     <td class="mono">1&nbsp;098&nbsp;800 ₴</td>
     <td class="mono" style="color:var(--amber)">215&nbsp;000 ₴</td>
     <td class="mono" style="color:var(--red)">883&nbsp;800 ₴</td>
-    <td class="mono">209&nbsp;221 ₴</td>
+    <td class="mono">183&nbsp;442 ₴</td>
     <td class="mono" style="color:var(--accent)">3&nbsp;577&nbsp;534 ₴</td>
-    <td class="mono" style="color:var(--green)">2&nbsp;466&nbsp;994 ₴</td>
-    <td>65%</td>
+    <td class="mono" style="color:var(--green)">2&nbsp;492&nbsp;773 ₴</td>
+    <td>66%</td>
     </tr></tbody></table></div>
   </div>
 </div>
@@ -618,7 +635,7 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
 <!-- Projects list -->
 <div class="page" id="page-projects">
   <div class="page-header">
-    <div style="flex:1"><div class="page-title">Проекти</div><div class="page-sub" id="projects-count"></div></div>
+    <div style="flex:1"><div class="page-title">Проекти</div><div class="page-sub" id="projects-count">16 з 16 проектів</div></div>
     <button class="btn primary" onclick="openModal(&#39;new-project&#39;)">+ Новий проект</button>
   </div>
   <!-- Filter & search bar -->
@@ -630,18 +647,296 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
     <button class="filter-btn" data-status="done" onclick="setFilter(&#39;done&#39;)">Завершено</button>
     <button class="filter-btn" data-status="archive" onclick="setFilter(&#39;archive&#39;)">Архів</button>
   </div>
-  <div id="projects-grid"></div>
+  <div id="projects-grid">
+  <div class="card">
+  <div class="tbl-wrap"><table>
+    <thead><tr>
+      <th>Проект / Замовник</th>
+      <th>Статус</th>
+      <th>Дедлайн</th>
+      <th>Дохід</th>
+      <th>Витрати</th>
+      <th>Виплачено</th>
+      <th>Прибуток</th>
+      <th>Маржа</th>
+      <th>Розділи</th>
+    </tr></thead>
+    <tbody><tr onclick="navigate(&#39;detail&#39;,&#39;r19&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">АН - Буча, Вокзальна 101</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">ДРР</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td><span style="font-size:11px;color:var(--text3)">21.12.2026</span></td>
+        <td class="mono" style="color:#4a9eff">73&nbsp;692 ₴</td>
+        <td class="mono">0 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">69&nbsp;270 ₴</td>
+        <td><span class="badge green">94%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/1</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r20&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">АН - Ворзель, Курортна 37</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">ДРР</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td><span style="font-size:11px;color:var(--text3)">14.12.2026</span></td>
+        <td class="mono" style="color:#4a9eff">241&nbsp;368 ₴</td>
+        <td class="mono">0 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">226&nbsp;886 ₴</td>
+        <td><span class="badge green">94%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/1</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r21&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">АН - Буча, Яблунська 17</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Агенція Відновлення</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td><span style="font-size:11px;color:var(--text3)">21.12.2026</span></td>
+        <td class="mono" style="color:#4a9eff">19&nbsp;580 ₴</td>
+        <td class="mono">0 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">18&nbsp;405 ₴</td>
+        <td><span class="badge green">94%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/1</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r22&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">АН -Бучанський КДЦ - поліклініка (Полева,21)</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Бучанський КДЦ</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:#4a9eff">64&nbsp;080 ₴</td>
+        <td class="mono">0 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">60&nbsp;235 ₴</td>
+        <td><span class="badge green">94%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/1</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r23&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">ЕВМ Котедж Білогородка</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">ЕВМ</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:#4a9eff">429&nbsp;650 ₴</td>
+        <td class="mono">115&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">314&nbsp;650 ₴</td>
+        <td><span class="badge green">73%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/5</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r24&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">ЕВМ-МАФ Континент</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">ЕВМ</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:#4a9eff">98&nbsp;000 ₴</td>
+        <td class="mono">98&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">59&nbsp;000 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:60%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">0 ₴</td>
+        <td><span class="badge green">0%</span></td>
+        <td style="color:var(--text2);font-size:13px">2/3</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r25&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">ЕВМ-МАФ Новус</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">ЕВМ</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:#4a9eff">74&nbsp;000 ₴</td>
+        <td class="mono">74&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">49&nbsp;000 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:66%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">0 ₴</td>
+        <td><span class="badge green">0%</span></td>
+        <td style="color:var(--text2);font-size:13px">1/2</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r26&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">КП - Буча, Яблунська 17</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Агенція Відновлення</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:#4a9eff">564&nbsp;256 ₴</td>
+        <td class="mono">114&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">14&nbsp;000 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:12%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">416&nbsp;401 ₴</td>
+        <td><span class="badge green">74%</span></td>
+        <td style="color:var(--text2);font-size:13px">1/7</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r27&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">РП -ПЧ №15 ДСНС</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">ДСНС №15</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:#4a9eff">145&nbsp;000 ₴</td>
+        <td class="mono">47&nbsp;800 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">88&nbsp;500 ₴</td>
+        <td><span class="badge green">61%</span></td>
+        <td style="color:var(--text2);font-size:13px">4/5</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r28&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">РП -Бучанський КДЦ - поліклініка (Полева,21)</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Бучанський КДЦ</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:#4a9eff">352&nbsp;150 ₴</td>
+        <td class="mono">103&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">53&nbsp;000 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:51%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">228&nbsp;021 ₴</td>
+        <td><span class="badge green">65%</span></td>
+        <td style="color:var(--text2);font-size:13px">3/6</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r29&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">РП- Каховська 62А</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Дніпровська РДА</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:#4a9eff">192&nbsp;211 ₴</td>
+        <td class="mono">80&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">100&nbsp;679 ₴</td>
+        <td><span class="badge green">52%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/6</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;r30&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">РП-Соборності,17</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Дніпровська РДА</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:#4a9eff">380&nbsp;027 ₴</td>
+        <td class="mono">190&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">167&nbsp;225 ₴</td>
+        <td><span class="badge green">44%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/10</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;x1780681085450yw1p&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">РП-Софіївсько-Борщагівський ліцей</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Софіївсько-Борщагівський ліцей</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:#4a9eff">145&nbsp;000 ₴</td>
+        <td class="mono">65&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">71&nbsp;300 ₴</td>
+        <td><span class="badge green">49%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/5</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;x1780825204646oh78&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">РП - Офіс Яблунська</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">ЕВМ</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td><span style="font-size:11px;color:var(--text3)">30.06.2026</span></td>
+        <td class="mono" style="color:#4a9eff">0 ₴</td>
+        <td class="mono">0 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">0 ₴</td>
+        <td><span class="badge green">0%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/2</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;x1780825432188emeb&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">КП - Куророртна,37 (ЗВК)</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Освіта БМР</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td></td>
+        <td class="mono" style="color:#4a9eff">880&nbsp;000 ₴</td>
+        <td class="mono">100&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">0 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:0%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">727&nbsp;200 ₴</td>
+        <td><span class="badge green">83%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/4</td>
+      </tr><tr onclick="navigate(&#39;detail&#39;,&#39;x1780825714989runp&#39;)" style="cursor:pointer" class="">
+        <td>
+          <div style="font-weight:600">РП - Ладижин Адмінка</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">ЕВМ</div>
+        </td>
+        <td><span class="badge green">В роботі</span></td>
+        <td><span style="font-size:11px;color:var(--text3)">30.06.2026</span></td>
+        <td class="mono" style="color:#4a9eff">116&nbsp;000 ₴</td>
+        <td class="mono">112&nbsp;000 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--amber)">40&nbsp;000 ₴</div>
+          <div class="pay-bar" style="margin-top:4px;width:70px"><div class="pay-bar-fill partial" style="width:36%"></div></div>
+        </td>
+        <td class="mono" style="color:var(--green)">4&nbsp;000 ₴</td>
+        <td><span class="badge green">3%</span></td>
+        <td style="color:var(--text2);font-size:13px">0/3</td>
+      </tr>
+    </tbody>
+  </table></div>
+  </div></div>
 </div>
 
 <!-- Project detail -->
 <div class="page" id="page-detail">
   <div class="detail-back">
     <button class="btn sm" onclick="navigate(&#39;projects&#39;)">← Назад</button>
-    <div class="breadcrumb">Проекти › <span id="detail-breadcrumb"></span></div>
+    <div class="breadcrumb">Проекти › <span id="detail-breadcrumb">АН - Буча, Вокзальна 101</span></div>
   </div>
   <div class="page-header">
-    <div style="flex:1"><div class="page-title" id="detail-name"></div><div class="page-sub" id="detail-sub"></div></div>
-    <div id="detail-links" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    <div style="flex:1"><div class="page-title" id="detail-name">АН - Буча, Вокзальна 101</div><div class="page-sub" id="detail-sub">ДРР · Договір: 01.01.2026</div></div>
+    <div id="detail-links" style="display:flex;gap:6px;flex-wrap:wrap"><a href="https://drive.google.com/drive/folders/1JP76z861DvM5W4oU2kedsJOXVdowkgDS?usp=sharing" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:6px;background:#1a73e8;color:#fff;font-size:13px;font-weight:700;font-family:var(--font);letter-spacing:.03em;border:none">
+    <svg width="16" height="16" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"></path><path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"></path><path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.75z" fill="#ea4335"></path><path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"></path><path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"></path><path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 27h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"></path></svg>
+    Drive</a><button onclick="toggleProjectTasks(&#39;r19&#39;)" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:6px;background:var(--accent);color:#0a1628;font-size:13px;font-weight:700;font-family:var(--font);letter-spacing:.03em;border:none;cursor:pointer">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+    Задачі (2)
+  </button></div>
     <button class="btn sm" onclick="printProject()">🖨 Друк / PDF</button>
     <button class="btn sm" onclick="editCurrentProject()">✎ Редагувати</button>
     <button class="btn sm danger" onclick="deleteCurrentProject()">Видалити</button>
@@ -657,17 +952,72 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
           <button class="btn sm" onclick="toggleProjectTasks()">✕ Закрити</button>
         </div>
       </div>
-      <div id="project-tasks-panel"></div>
+      <div id="project-tasks-panel"><table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr>
+          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Задача</th>
+          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Виконавець</th>
+          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Строк</th>
+          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Пріоритет</th>
+          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Статус</th>
+          <th style="padding:9px 14px;background:rgba(255,149,0,0.1);border-bottom:1px solid rgba(255,149,0,0.25)"></th>
+        </tr></thead>
+        <tbody><tr style="background:rgba(255,149,0,0.03);border-left:2px solid rgba(255,149,0,0.35)">
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);font-weight:600;color:var(--text);">Привести у відповідність журнал АН</td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);color:var(--text2)">Аня Данілова</td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1)"><span class="badge amber">⏰ 2д</span></td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);font-size:11px;color:var(--red)">🔴 Терміново</td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1)"><span class="badge gray">Не почато</span></td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);white-space:nowrap">
+              <button class="btn sm" onclick="editTaskGlobal(12)" style="margin-right:4px">Ред.</button>
+              <button class="btn sm danger" onclick="delTaskFromPanel(12)">✕</button>
+            </td>
+          </tr><tr style="background:rgba(255,149,0,0.03);border-left:2px solid rgba(255,149,0,0.35)">
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);font-weight:600;color:var(--text);">перевірити журнал АН обовязково</td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);color:var(--text2)">ПАД</td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1)"><span class="badge amber">6д</span></td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);font-size:11px;color:var(--red)">🔴 Терміново</td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1)"><span class="badge blue">В роботі</span></td>
+            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);white-space:nowrap">
+              <button class="btn sm" onclick="editTaskGlobal(18)" style="margin-right:4px">Ред.</button>
+              <button class="btn sm danger" onclick="delTaskFromPanel(18)">✕</button>
+            </td>
+          </tr>
+        </tbody>
+      </table></div>
     </div>
   </div>
 
   <!-- P&L metrics -->
-  <div class="metrics" id="detail-metrics"></div>
+  <div class="metrics" id="detail-metrics">
+    <div class="metric"><div class="metric-label">Виручка за договором</div><div class="metric-value" style="color:#4a9eff">73&nbsp;692 ₴</div></div>
+    <div class="metric"><div class="metric-label">Податок 6% ЄП</div><div class="metric-value amber">4&nbsp;422 ₴</div></div>
+    <div class="metric metric-clickable" onclick="toggleMetricPanel(&#39;costs&#39;)" style="cursor:pointer" title="Натисніть для деталей"><div class="metric-label">Витрати виконавці <span style="opacity:.5;font-size:9px">▼</span></div><div class="metric-value">0 ₴</div></div>
+    <div class="metric metric-clickable" onclick="toggleMetricPanel(&#39;paid&#39;)" style="cursor:pointer" title="Натисніть для деталей"><div class="metric-label">Виплачено факт <span style="opacity:.5;font-size:9px">▼</span></div><div class="metric-value amber">0 ₴</div></div>
+    <div class="metric metric-clickable" onclick="toggleMetricPanel(&#39;topay&#39;)" style="cursor:pointer" title="Натисніть для деталей"><div class="metric-label">Залишок до виплати <span style="opacity:.5;font-size:9px">▼</span></div><div class="metric-value green">0 ₴</div></div>
+    <div class="metric"><div class="metric-label">Чистий дохід</div><div class="metric-value green">69&nbsp;270 ₴</div></div>
+    <div class="metric"><div class="metric-label">Маржинальність</div><div class="metric-value green">94%</div></div>
+    <div class="metric"><div class="metric-label">Авансів отримано</div><div class="metric-value">0 ₴</div></div>
+    <div class="metric"><div class="metric-label">Залишок від замовника</div><div class="metric-value amber">73&nbsp;692 ₴</div></div>
+  </div>
 
   <!-- Metric detail panels -->
-  <div id="metric-panel-costs" class="metric-panel" style="display:none"></div>
-  <div id="metric-panel-paid" class="metric-panel" style="display:none"></div>
-  <div id="metric-panel-topay" class="metric-panel" style="display:none"></div>
+  <div id="metric-panel-costs" class="metric-panel" style="display:none">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr>
+        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Розділ</th>
+        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Виконавець</th>
+        <th style="text-align:right;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Договір</th>
+      </tr></thead>
+      <tbody><tr>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600">Журнал АН</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text2)">Світлана Шевчук</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:right;font-weight:700;color:var(--accent)">0 ₴</td>
+        </tr>
+        <tr style="background:var(--bg3)"><td colspan="2" style="padding:8px 12px;font-weight:700">Разом</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:var(--accent)">0 ₴</td></tr>
+      </tbody>
+    </table></div>
+  <div id="metric-panel-paid" class="metric-panel" style="display:none"><div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Виплат ще не зафіксовано</div></div>
+  <div id="metric-panel-topay" class="metric-panel" style="display:none"><div style="padding:16px;text-align:center;color:var(--green);font-size:12px">✓ Всі виплати здійснено</div></div>
 
   <!-- Extra costs block -->
   <div id="extra-costs-block"></div>
@@ -678,7 +1028,7 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
       <span class="card-title">💰 Оплати від замовника</span>
       <button class="btn sm primary" onclick="openModal(&#39;add-advance&#39;)">+ Оплата</button>
     </div>
-    <div class="tbl-wrap"><table id="advances-table"></table></div>
+    <div class="tbl-wrap"><table id="advances-table"><tbody><tr><td colspan="4" style="padding:20px;text-align:center;color:var(--text3)">Авансів ще не внесено</td></tr></tbody></table></div>
   </div>
 
   <!-- Sections with executor cards -->
@@ -690,13 +1040,62 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
         <button class="btn sm primary" onclick="openModal(&#39;add-section&#39;)">+ Розділ</button>
       </div>
     </div>
-    <div class="tbl-wrap"><table id="sections-table"></table></div>
+    <div class="tbl-wrap"><table id="sections-table"><thead><tr><th>Розділ</th><th style="min-width:200px">Виконавець</th><th>Дедлайн</th><th>Договір</th><th>Виплачено</th><th>Залишок</th><th>Статус</th><th></th></tr></thead>
+    <tbody><tr class="">
+        <td>
+          <strong>Журнал АН</strong>
+          
+        </td>
+        <td>
+          <div class="ex-card">
+            <div class="ex-card-name">Світлана Шевчук</div>
+            <div class="ex-card-role">ГАП</div>
+            <div class="ex-card-contacts">
+              <div class="ex-card-contact">📞 +380 (67) 673 38 79</div>
+              <div class="ex-card-contact">✉ gap@armabudproject.com</div>
+              
+              
+            </div>
+          </div>
+        </td>
+        <td></td>
+        <td class="mono">0 ₴</td>
+        <td>
+          <div class="mono" style="color:var(--text3)">0 ₴</div>
+          
+        </td>
+        <td class="mono" style="color:var(--green)">0 ₴</td>
+        <td><span class="badge blue">● В роботі</span></td>
+        <td style="white-space:nowrap">
+          <button class="btn sm success" onclick="openQuickPay(0)" style="margin-bottom:4px;display:block">💳 Виплата</button>
+          <button class="btn sm" onclick="editSection(0)" style="margin-right:4px">Ред.</button>
+          <button class="btn sm danger" onclick="delSection(0)">✕</button>
+        </td>
+      </tr>
+    <tr class="total-row">
+      <td colspan="3">Разом</td>
+      <td class="mono">0 ₴</td>
+      <td class="mono" style="color:var(--amber)">0 ₴</td>
+      <td class="mono" style="color:var(--red)">0 ₴</td>
+      <td colspan="2"></td>
+    </tr></tbody></table></div>
   </div>
 
   <!-- Payments summary per executor -->
   <div class="card">
     <div class="card-head"><span class="card-title">👥 Розрахунки з виконавцями</span></div>
-    <div id="executor-payments"></div>
+    <div id="executor-payments">
+    <table><thead><tr><th>Виконавець</th><th>Розділи</th><th>Телефон / контакт</th><th>Договір</th><th>Виплачено</th><th>До виплати</th><th>%</th></tr></thead>
+    <tbody><tr>
+        <td><div class="contact"><div class="avatar ">СШ</div><div><div style="font-weight:600">Світлана Шевчук</div><div style="font-size:11px;color:var(--text3)">ГАП</div></div></div></td>
+        <td style="font-size:12px;color:var(--text2)">Журнал АН</td>
+        <td style="font-size:12px">+380 (67) 673 38 79</td>
+        <td class="mono">0 ₴</td>
+        <td class="mono" style="color:var(--amber)">0 ₴</td>
+        <td class="mono" style="color:var(--green)">0 ₴</td>
+        <td><span class="badge gray">0%</span></td>
+      </tr>
+    </tbody></table></div>
   </div>
 </div>
 
@@ -711,12 +1110,8 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
     <button class="btn primary" onclick="openModal(&#39;add-task&#39;)">+ Задача</button>
   </div>
   <div class="filter-bar">
-    <select class="search-input" id="tasks-filter-proj" onchange="renderTasksPage()" style="min-width:200px">
-      <option value="">Всі проекти</option>
-    </select>
-    <select class="search-input" id="tasks-filter-exec" onchange="renderTasksPage()" style="min-width:180px">
-      <option value="">Всі виконавці</option>
-    </select>
+    <select class="search-input" id="tasks-filter-proj" onchange="renderTasksPage()" style="min-width:200px"><option value="">Всі проекти</option><option value="r19">АН - Буча, Вокзальна 101</option><option value="r20">АН - Ворзель, Курортна 37</option><option value="r21">АН - Буча, Яблунська 17</option><option value="r22">АН -Бучанський КДЦ - поліклініка (Полева,21)</option><option value="r23">ЕВМ Котедж Білогородка</option><option value="r24">ЕВМ-МАФ Континент</option><option value="r25">ЕВМ-МАФ Новус</option><option value="r26">КП - Буча, Яблунська 17</option><option value="r27">РП -ПЧ №15 ДСНС</option><option value="r28">РП -Бучанський КДЦ - поліклініка (Полева,21)</option><option value="r29">РП- Каховська 62А</option><option value="r30">РП-Соборності,17</option><option value="x1780681085450yw1p">РП-Софіївсько-Борщагівський ліцей</option><option value="x1780825204646oh78">РП - Офіс Яблунська</option><option value="x1780825432188emeb">КП - Куророртна,37 (ЗВК)</option><option value="x1780825714989runp">РП - Ладижин Адмінка</option></select>
+    <select class="search-input" id="tasks-filter-exec" onchange="renderTasksPage()" style="min-width:180px"><option value="">Всі виконавці</option><option value="r1">Світлана Шевчук</option><option value="r2">Віктор Свобода</option><option value="r3">Володя Береза</option><option value="r4">Ларіса Гурінчук</option><option value="r5">РембудКонсалтинг (Інна)</option><option value="r6">Менеджер ЕДРБ</option><option value="r7">Роман Компані</option><option value="r8">Хоменко ГАП (Наташа)</option><option value="r9">GreenBuild Дмитро</option><option value="r10">Виталик Кучер (ОблГаз)</option><option value="r11">ЕТР Дмитро</option><option value="r12">ФОП Соловйов С.</option><option value="r13">Евроформат Алексей</option><option value="r14">Дмитро Жовтуха</option><option value="r15">Друкарня ФОП</option><option value="r16">Сергей Автополив</option><option value="r17">Виталик Кучер (Газ)</option><option value="r18">Рман Тацюе (Львів)</option><option value="x17806805325593b7p">ФОП Синьків Сергій</option><option value="x1780680671536cvqw">Аня Данілова</option><option value="x1780775253081itrz">ПАД</option><option value="x1780832229384vms7">Настя Нідком</option><option value="x178083252321701gk">ПТО Вергун Володя</option><option value="x1780832654567fwjh">ПТО Борис Лісовський</option><option value="x1780944245171820z">Ліфт Евроформат Олександр</option><option value="x1781200782406h4a4">Аня Юрист</option><option value="x1781206438305m0v7">ОВ Елена Теплопроект</option><option value="x1781206706247z6ro">ВК Александр</option><option value="x1781206819884j0xw">ЕТР Вадим</option></select>
     <button class="filter-btn active" data-ts="all" onclick="setTaskFilter(&#39;all&#39;)">Всі</button>
     <button class="filter-btn" data-ts="todo" onclick="setTaskFilter(&#39;todo&#39;)">Не почато</button>
     <button class="filter-btn" data-ts="progress" onclick="setTaskFilter(&#39;progress&#39;)">В роботі</button>
@@ -729,7 +1124,7 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
     </div>
   </div>
   <div class="card">
-    <div class="tbl-wrap"><table id="all-tasks-table"></table></div>
+    <div class="tbl-wrap"><table id="all-tasks-table"><thead><tr><th>Задача</th><th>Виконавець</th><th>Дедлайн</th><th>Пріоритет</th><th>Статус</th><th></th></tr></thead><tbody><tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(&#39;detail&#39;,&#39;x1780681085450yw1p&#39;)">📁 РП-Софіївсько-Борщагівський ліцей</span><span style="font-size:10px;color:var(--text3);margin-left:8px">3 задач</span></td></tr><tr class="" style=""><td><div style="font-weight:600;">Підготувати Договір+додатки  на проектування</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-15" onchange="updateTaskDeadline(0,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(0)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[0])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(0)">✕</button></td></tr><tr class="" style=""><td><div style="font-weight:600;">По дефектному акту составит ЗНП</div></td><td style="font-size:12px;color:var(--text2)">Світлана Шевчук</td><td><input type="date" value="2026-06-16" onchange="updateTaskDeadline(14,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(14)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[14])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(14)">✕</button></td></tr><tr class="" style="opacity:.55"><td><div style="font-weight:600;text-decoration:line-through">Надати поетажний план меж проектування</div></td><td style="font-size:12px;color:var(--text2)">ПТО Вергун Володя</td><td><input type="date" value="2026-06-12" onchange="updateTaskDeadline(31,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge green">Виконано</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(31)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[31])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(31)">✕</button></td></tr><tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(&#39;detail&#39;,&#39;r23&#39;)">📁 ЕВМ Котедж Білогородка</span><span style="font-size:10px;color:var(--text3);margin-left:8px">4 задач</span></td></tr><tr class="" style=""><td><div style="font-weight:600;">Призначити ГАП</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-16" onchange="updateTaskDeadline(1,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(1)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[1])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(1)">✕</button></td></tr><tr class="" style=""><td><div style="font-weight:600;">Надати планувальні рішення будинків</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-21" onchange="updateTaskDeadline(19,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(19)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[19])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(19)">✕</button></td></tr><tr class="" style="opacity:.55"><td><div style="font-weight:600;text-decoration:line-through">Підготувати плани на нарду</div></td><td style="font-size:12px;color:var(--text2)">Світлана Шевчук</td><td><input type="date" value="2026-06-09" onchange="updateTaskDeadline(24,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge green">Виконано</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(24)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[24])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(24)">✕</button></td></tr><tr class="" style="opacity:.55"><td><div style="font-weight:600;text-decoration:line-through">Провести виїздну нараду на обʼєкті</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-14" onchange="updateTaskDeadline(32,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge green">Виконано</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(32)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[32])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(32)">✕</button></td></tr><tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(&#39;detail&#39;,&#39;r27&#39;)">📁 РП -ПЧ №15 ДСНС</span><span style="font-size:10px;color:var(--text3);margin-left:8px">6 задач</span></td></tr><tr class="" style=""><td><div style="font-weight:600;">Видати витя  звіту з едессб</div></td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><input type="date" value="2026-06-15" onchange="updateTaskDeadline(2,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(2)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[2])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(2)">✕</button></td></tr><tr class="" style=""><td><div style="font-weight:600;">Нагадувати про оплату!</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-15" onchange="updateTaskDeadline(10,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(10)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[10])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(10)">✕</button></td></tr><tr class="" style="opacity:.55"><td><div style="font-weight:600;text-decoration:line-through">Надати розділи проекту в форматі PDF для друку</div></td><td style="font-size:12px;color:var(--text2)">Світлана Шевчук</td><td><input type="date" value="2026-06-08" onchange="updateTaskDeadline(23,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge green">Виконано</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(23)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[23])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(23)">✕</button></td></tr><tr class="" style="opacity:.55"><td><div style="font-weight:600;text-decoration:line-through">передати ПКД Замовнику</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-11" onchange="updateTaskDeadline(28,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge green">Виконано</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(28)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[28])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(28)">✕</button></td></tr><tr class="" style="opacity:.55"><td><div style="font-weight:600;text-decoration:line-through">Підготувати Акти виконаних робіт</div><div style="font-size:11px;color:var(--text2)">Відправити на почту data@armabudproject.com</div></td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><input type="date" value="2026-06-10" onchange="updateTaskDeadline(26,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge green">Виконано</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(26)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[26])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(26)">✕</button></td></tr><tr class="" style="opacity:.55"><td><div style="font-weight:600;text-decoration:line-through">Надрукувати проект у 4-х примірниках</div></td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><input type="date" value="2026-06-10" onchange="updateTaskDeadline(27,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge green">Виконано</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(27)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[27])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(27)">✕</button></td></tr><tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(&#39;detail&#39;,&#39;r30&#39;)">📁 РП-Соборності,17</span><span style="font-size:10px;color:var(--text3);margin-left:8px">4 задач</span></td></tr><tr class="" style=""><td><div style="font-weight:600;">Вивчити акт обстеження - дать пропозицію</div><div style="font-size:11px;color:var(--text2)">Задача просрочена на 2 дні!</div></td><td style="font-size:12px;color:var(--text2)">Віктор Свобода</td><td><input type="date" value="2026-06-15" onchange="updateTaskDeadline(3,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(3)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[3])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(3)">✕</button></td></tr><tr class="" style=""><td><div style="font-weight:600;">Підготувати вихідні креслення для суміжників</div></td><td style="font-size:12px;color:var(--text2)">Світлана Шевчук</td><td><input type="date" value="2026-06-16" onchange="updateTaskDeadline(13,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(13)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[13])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(13)">✕</button></td></tr><tr class="" style=""><td><div style="font-weight:600;">Визначити виконавця КР</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-17" onchange="updateTaskDeadline(16,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(16)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[16])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(16)">✕</button></td></tr><tr class="" style="opacity:.55"><td><div style="font-weight:600;text-decoration:line-through">Визначити Ліфтову компанію</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-10" onchange="updateTaskDeadline(25,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge green">Виконано</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(25)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[25])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(25)">✕</button></td></tr><tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(&#39;detail&#39;,&#39;x1780825714989runp&#39;)">📁 РП - Ладижин Адмінка</span><span style="font-size:10px;color:var(--text3);margin-left:8px">4 задач</span></td></tr><tr class="" style=""><td><div style="font-weight:600;">Отримати розділ КМ від ЛСТК 24</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-15" onchange="updateTaskDeadline(4,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(4)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[4])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(4)">✕</button></td></tr><tr class="" style=""><td><div style="font-weight:600;">контроль комунікації інженерів</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-17" onchange="updateTaskDeadline(33,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(33)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[33])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(33)">✕</button></td></tr><tr class="" style="opacity:.55"><td><div style="font-weight:600;text-decoration:line-through">Знайти виконавця розділу ЕТР</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-12" onchange="updateTaskDeadline(29,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge green">Виконано</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(29)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[29])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(29)">✕</button></td></tr><tr class="" style="opacity:.55"><td><div style="font-weight:600;text-decoration:line-through">Знайти виконавця проекту ВК</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-12" onchange="updateTaskDeadline(30,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--text2)">⚪ Звичайний</td><td><span class="badge green">Виконано</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(30)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[30])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(30)">✕</button></td></tr><tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(&#39;detail&#39;,&#39;r29&#39;)">📁 РП- Каховська 62А</span><span style="font-size:10px;color:var(--text3);margin-left:8px">2 задач</span></td></tr><tr class="" style=""><td><div style="font-weight:600;">Знайти кошторисника</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-15" onchange="updateTaskDeadline(5,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(5)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[5])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(5)">✕</button></td></tr><tr class="" style=""><td><div style="font-weight:600;">Передати всі розділи та обїєеми жля обрахунку в кошторисний відділ</div></td><td style="font-size:12px;color:var(--text2)">Світлана Шевчук</td><td><input type="date" value="2026-06-15" onchange="updateTaskDeadline(9,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(9)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[9])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(9)">✕</button></td></tr><tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(&#39;detail&#39;,&#39;r25&#39;)">📁 ЕВМ-МАФ Новус</span><span style="font-size:10px;color:var(--text3);margin-left:8px">1 задач</span></td></tr><tr class="" style=""><td><div style="font-weight:600;">Подати лист на оренду</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-15" onchange="updateTaskDeadline(6,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(6)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[6])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(6)">✕</button></td></tr><tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(&#39;detail&#39;,&#39;r26&#39;)">📁 КП - Буча, Яблунська 17</span><span style="font-size:10px;color:var(--text3);margin-left:8px">3 задач</span></td></tr><tr class="" style=""><td><div style="font-weight:600;">Подати Договір з додатками на Замовника</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-16" onchange="updateTaskDeadline(11,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(11)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[11])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(11)">✕</button></td></tr><tr class="" style=""><td><div style="font-weight:600;">Видати ЗКР по обʼєкту для пдачі в експертизу</div></td><td style="font-size:12px;color:var(--text2)">Настя Нідком</td><td><input type="date" value="2026-06-15" onchange="updateTaskDeadline(7,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(7)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[7])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(7)">✕</button></td></tr><tr class="" style=""><td><div style="font-weight:600;">Узгодити договір на коригування з Замовником</div></td><td style="font-size:12px;color:var(--text2)">Аня Юрист</td><td><input type="date" value="2026-06-16" onchange="updateTaskDeadline(15,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--text2)">⚪ Звичайний</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(15)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[15])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(15)">✕</button></td></tr><tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(&#39;detail&#39;,&#39;r20&#39;)">📁 АН - Ворзель, Курортна 37</span><span style="font-size:10px;color:var(--text3);margin-left:8px">1 задач</span></td></tr><tr class="" style=""><td><div style="font-weight:600;">Привести у відповідність дурнал АН</div></td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><input type="date" value="2026-06-15" onchange="updateTaskDeadline(8,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(8)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[8])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(8)">✕</button></td></tr><tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(&#39;detail&#39;,&#39;r19&#39;)">📁 АН - Буча, Вокзальна 101</span><span style="font-size:10px;color:var(--text3);margin-left:8px">2 задач</span></td></tr><tr class="" style=""><td><div style="font-weight:600;">Привести у відповідність журнал АН</div></td><td style="font-size:12px;color:var(--text2)">Аня Данілова</td><td><input type="date" value="2026-06-16" onchange="updateTaskDeadline(12,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge gray">Не почато</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(12)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[12])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(12)">✕</button></td></tr><tr class="" style=""><td><div style="font-weight:600;">перевірити журнал АН обовязково</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-20" onchange="updateTaskDeadline(18,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--red)">🔴 Терміново</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(18)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[18])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(18)">✕</button></td></tr><tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(&#39;detail&#39;,&#39;r24&#39;)">📁 ЕВМ-МАФ Континент</span><span style="font-size:10px;color:var(--text3);margin-left:8px">1 задач</span></td></tr><tr class="" style=""><td><div style="font-weight:600;">Отримати ТУ ВК</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-18" onchange="updateTaskDeadline(17,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--text2)">⚪ Звичайний</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(17)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[17])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(17)">✕</button></td></tr><tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(&#39;detail&#39;,&#39;x1780825432188emeb&#39;)">📁 КП - Куророртна,37 (ЗВК)</span><span style="font-size:10px;color:var(--text3);margin-left:8px">2 задач</span></td></tr><tr class="" style=""><td><div style="font-weight:600;">Поновити ТУ ДТЕК</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-30" onchange="updateTaskDeadline(20,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(20)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[20])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(20)">✕</button></td></tr><tr class="" style=""><td><div style="font-weight:600;">Поновити ТУ Теплопостачання</div></td><td style="font-size:12px;color:var(--text2)">ПАД</td><td><input type="date" value="2026-06-30" onchange="updateTaskDeadline(21,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--amber)">🟡 Високий</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(21)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[21])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(21)">✕</button></td></tr><tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(&#39;detail&#39;,&#39;x1780825204646oh78&#39;)">📁 РП - Офіс Яблунська</span><span style="font-size:10px;color:var(--text3);margin-left:8px">1 задач</span></td></tr><tr class="" style=""><td><div style="font-weight:600;">Погодити планувальні рішення</div></td><td style="font-size:12px;color:var(--text2)">Світлана Шевчук</td><td><input type="date" value="2026-06-30" onchange="updateTaskDeadline(22,this.value)" style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--font);padding:3px 6px;outline:none;width:130px"></td><td style="font-size:11px;color:var(--text2)">⚪ Звичайний</td><td><span class="badge blue">В роботі</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editTaskGlobal(22)" style="margin-right:4px">Ред.</button><button class="btn sm" onclick="addToGoogleCalendar(state.tasks[22])" style="margin-right:4px;color:#4285f4;border-color:rgba(66,133,244,0.4)" title="Додати в Google Calendar">📅</button><button class="btn sm danger" onclick="delTaskGlobal(22)">✕</button></td></tr></tbody></table></div>
   </div>
 </div>
 
@@ -1117,7 +1512,135 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
 
 </div>
 
-<div id="print-area"></div>
+<div id="print-area">
+  <div style="max-width:760px;margin:0 auto;color:#111;font-size:13px;line-height:1.5">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #b87d12;padding-bottom:10px;margin-bottom:16px">
+      <div>
+        <div style="font-size:22px;font-weight:800;letter-spacing:.04em;color:#b87d12">АрмаБуд</div>
+        <div style="font-size:11px;color:#666;letter-spacing:.06em;text-transform:uppercase">Менеджер проектів · armabudproject.com</div>
+      </div>
+      <div style="text-align:right;font-size:11px;color:#666">Сформовано: 15.06.2026</div>
+    </div>
+
+    <h2 style="font-size:18px;margin:0 0 2px">КП - Буча, Яблунська 17</h2>
+    <div style="color:#555;margin-bottom:16px">Агенція Відновлення · Договір від 15.06.2026 · Статус: В роботі</div>
+
+    <h3 style="font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:#b87d12;border-bottom:1px solid #ddd;padding-bottom:4px;margin:0 0 8px">Фінансовий підсумок</h3>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:18px">
+      <tbody>
+        <tr><td style="padding:5px 0;color:#555">Вартість за договором</td><td style="text-align:right;font-weight:700">564&nbsp;256 ₴</td></tr>
+        <tr><td style="padding:5px 0;color:#555">Податок (6% ЄП)</td><td style="text-align:right">33&nbsp;855 ₴</td></tr>
+        <tr><td style="padding:5px 0;color:#555">Витрати на виконавців</td><td style="text-align:right">114&nbsp;000 ₴</td></tr>
+        
+        <tr><td style="padding:5px 0;color:#555">Виплачено виконавцям</td><td style="text-align:right">14&nbsp;000 ₴</td></tr>
+        <tr><td style="padding:5px 0;color:#555">Залишок до виплати</td><td style="text-align:right">100&nbsp;000 ₴</td></tr>
+        <tr><td style="padding:5px 0;color:#555">Авансів отримано від замовника</td><td style="text-align:right">0 ₴</td></tr>
+        <tr><td style="padding:5px 0;color:#555">Залишок від замовника</td><td style="text-align:right">564&nbsp;256 ₴</td></tr>
+        <tr style="border-top:2px solid #333"><td style="padding:7px 0;font-weight:800">Чистий дохід · маржа</td><td style="text-align:right;font-weight:800">416&nbsp;401 ₴ · 74%</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:#b87d12;border-bottom:1px solid #ddd;padding-bottom:4px;margin:0 0 8px">Розділи проекту</h3>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:18px;font-size:12px">
+      <thead><tr style="background:#f3f3f3">
+        <th style="text-align:left;padding:6px 8px;border:1px solid #ddd">Розділ</th>
+        <th style="text-align:left;padding:6px 8px;border:1px solid #ddd">Виконавець</th>
+        <th style="text-align:right;padding:6px 8px;border:1px solid #ddd">Договір</th>
+        <th style="text-align:right;padding:6px 8px;border:1px solid #ddd">Виплачено</th>
+        <th style="text-align:right;padding:6px 8px;border:1px solid #ddd">Залишок</th>
+        <th style="text-align:left;padding:6px 8px;border:1px solid #ddd">Статус</th>
+      </tr></thead>
+      <tbody><tr>
+      <td style="padding:6px 8px;border:1px solid #ddd">АР</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">Світлана Шевчук <span style="color:#777">(ГАП)</span></td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">0 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">0 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">0 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">В роботі</td>
+    </tr><tr>
+      <td style="padding:6px 8px;border:1px solid #ddd">Дендроплан</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">GreenBuild Дмитро <span style="color:#777">(Дендроплан/Озеленення)</span></td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">14&nbsp;000 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">14&nbsp;000 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">0 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">Готово</td>
+    </tr><tr>
+      <td style="padding:6px 8px;border:1px solid #ddd">Газофікація</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">Виталик Кучер (ОблГаз) <span style="color:#777">(Газофікація)</span></td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">35&nbsp;000 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">0 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">35&nbsp;000 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">В роботі</td>
+    </tr><tr>
+      <td style="padding:6px 8px;border:1px solid #ddd">Автополив</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">Сергей Автополив <span style="color:#777">(Автополив)</span></td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">0 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">0 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">0 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">В роботі</td>
+    </tr><tr>
+      <td style="padding:6px 8px;border:1px solid #ddd">Експертиза проекту</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">РембудКонсалтинг (Інна) <span style="color:#777">(Експертиза проекту)</span></td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">55&nbsp;000 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">0 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">55&nbsp;000 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">Не почато</td>
+    </tr><tr>
+      <td style="padding:6px 8px;border:1px solid #ddd">Друк проектів</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">Друкарня ФОП <span style="color:#777">(Друк проектів)</span></td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">10&nbsp;000 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">0 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">10&nbsp;000 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">Не почато</td>
+    </tr><tr>
+      <td style="padding:6px 8px;border:1px solid #ddd">Кошторис</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">Настя Нідком <span style="color:#777">(Кошторисник)</span></td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">0 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">0 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd;text-align:right">0 ₴</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">В роботі</td>
+    </tr></tbody>
+    </table>
+
+    
+
+    <h3 style="font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:#b87d12;border-bottom:1px solid #ddd;padding-bottom:4px;margin:0 0 8px">Задачі проекту</h3>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:18px;font-size:12px">
+      <thead><tr style="background:#f3f3f3">
+        <th style="text-align:left;padding:6px 8px;border:1px solid #ddd">Задача</th>
+        <th style="text-align:left;padding:6px 8px;border:1px solid #ddd">Виконавець</th>
+        <th style="text-align:left;padding:6px 8px;border:1px solid #ddd">Дедлайн</th>
+        <th style="text-align:left;padding:6px 8px;border:1px solid #ddd">Пріоритет</th>
+        <th style="text-align:left;padding:6px 8px;border:1px solid #ddd">Статус</th>
+      </tr></thead>
+      <tbody><tr>
+      <td style="padding:6px 8px;border:1px solid #ddd">Видати ЗКР по обʼєкту для пдачі в експертизу</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">Настя Нідком</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">15.06.2026</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">Високий</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">В роботі</td>
+    </tr><tr>
+      <td style="padding:6px 8px;border:1px solid #ddd">Подати Договір з додатками на Замовника</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">ПАД</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">16.06.2026</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">Терміново</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">В роботі</td>
+    </tr><tr>
+      <td style="padding:6px 8px;border:1px solid #ddd">Узгодити договір на коригування з Замовником</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">Аня Юрист</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">16.06.2026</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">Звичайний</td>
+      <td style="padding:6px 8px;border:1px solid #ddd">В роботі</td>
+    </tr></tbody>
+    </table>
+
+    
+
+    <div style="display:flex;justify-content:space-between;margin-top:40px;font-size:12px;color:#555">
+      <div style="border-top:1px solid #999;padding-top:5px;width:45%">Виконавець / підпис</div>
+      <div style="border-top:1px solid #999;padding-top:5px;width:45%;text-align:right">Замовник / підпис</div>
+    </div>
+  </div></div>
 
 <script>
 // ── FIREBASE CONFIG ──
@@ -1515,12 +2038,13 @@ function renderDashboard(){
   let tR=0,tC=0,tT=0,tN=0,tA=0,tP=0;
   state.projects.forEach(p=>{const pl=calcPnl(p);tR+=pl.rev;tC+=pl.costs;tT+=pl.tax;tN+=pl.net;tA+=pl.adv;tP+=pl.paid;});
   document.getElementById('dash-metrics').innerHTML=`
-    <div class="metric"><div class="metric-label">Проектів</div><div class="metric-value" style="color:var(--green)">${state.projects.length}</div></div>
-    <div class="metric"><div class="metric-label">Загальний дохід</div><div class="metric-value" style="color:#4a9eff">${fmt(tR)}</div></div>
-    <div class="metric"><div class="metric-label">Витрати (план)</div><div class="metric-value">${fmt(tC)}</div></div>
-    <div class="metric"><div class="metric-label">Виплачено факт</div><div class="metric-value amber">${fmt(tP)}</div></div>
-    <div class="metric"><div class="metric-label">Податки ЄП</div><div class="metric-value amber">${fmt(tT)}</div></div>
-    <div class="metric"><div class="metric-label">Прибуток</div><div class="metric-value ${tN>=0?'green':'red'}">${fmt(tN)}</div></div>
+    <div class="metric" style="--mc:var(--accent)"><div class="metric-top"><div class="metric-label">Проектів</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span></div><div class="metric-value" style="color:var(--green)">${state.projects.length}</div></div>
+    <div class="metric" style="--mc:#4a9eff"><div class="metric-top"><div class="metric-label">Загальний дохід</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span></div><div class="metric-value" style="color:#4a9eff">${fmt(tR)}</div></div>
+    <div class="metric" style="--mc:var(--text2)"><div class="metric-top"><div class="metric-label">Витрати (план)</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6v12a2 2 0 0 0 2 2h16V8H5a2 2 0 0 1-2-2z"/><path d="M3 6a2 2 0 0 1 2-2h12v4"/><circle cx="16.5" cy="14" r="1.4"/></svg></span></div><div class="metric-value">${fmt(tC)}</div></div>
+    <div class="metric" style="--mc:var(--amber)"><div class="metric-top"><div class="metric-label">Виплачено факт</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></span></div><div class="metric-value amber">${fmt(tP)}</div></div>
+    <div class="metric" style="--mc:var(--purple)"><div class="metric-top"><div class="metric-label">Отримано від замовника</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 11 12 16 17 11"/><line x1="12" y1="4" x2="12" y2="16"/></svg></span></div><div class="metric-value" style="color:var(--purple)">${fmt(tA)}</div></div>
+    <div class="metric" style="--mc:var(--amber)"><div class="metric-top"><div class="metric-label">Податки ЄП</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="7.5" cy="7.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/></svg></span></div><div class="metric-value amber">${fmt(tT)}</div></div>
+    <div class="metric" style="--mc:${tN>=0?'var(--green)':'var(--red)'}"><div class="metric-top"><div class="metric-label">Прибуток</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5h3.3a1.85 1.85 0 0 1 0 3.7H10"/></svg></span></div><div class="metric-value ${tN>=0?'green':'red'}">${fmt(tN)}</div></div>
   `;
 
   renderAttention();
