@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0185)file:///Users/alexpshenya/Downloads/%D0%90%D1%80%D0%BC%D0%B0%D0%91%D1%83%D0%B4___%D0%9C%D0%B5%D0%BD%D0%B5%D0%B4%D0%B6%D0%B5%D1%80_%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D1%96%D0%B2_7.html -->
+<!-- saved from url=(0186)file:///Users/alexpshenya/Downloads/%D0%90%D1%80%D0%BC%D0%B0%D0%91%D1%83%D0%B4___%D0%9C%D0%B5%D0%BD%D0%B5%D0%B4%D0%B6%D0%B5%D1%80_%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D1%96%D0%B2_10.html -->
 <html lang="uk"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -226,6 +226,34 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
   #print-area{display:block!important;color:#111;font-family:var(--font);padding:0}
   @page{margin:14mm}
 }
+
+/* ── ПЛАН ДНЯ ── */
+.plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.plan-section{overflow:hidden}
+.plan-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border)}
+.plan-section-title{font-size:14px;font-weight:700;color:var(--text)}
+.plan-date-label{font-size:11px;color:var(--text3);text-transform:capitalize;margin-left:4px}
+.plan-count{font-size:11px;font-weight:700;color:var(--text2);background:var(--bg3);padding:2px 9px;border-radius:20px;flex-shrink:0}
+.plan-list{padding:8px 10px;display:flex;flex-direction:column;gap:6px}
+.plan-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--rsm);background:var(--bg3);border:1px solid var(--border);transition:all .15s}
+.plan-item:hover{border-color:var(--border2)}
+.plan-item input[type=checkbox]{width:16px;height:16px;flex-shrink:0;cursor:pointer;accent-color:var(--accent)}
+.plan-item-body{flex:1;min-width:0}
+.plan-item-title{font-size:12px;font-weight:600;color:var(--text);line-height:1.35}
+.plan-item-meta{font-size:10px;color:var(--text2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plan-item.done .plan-item-title{text-decoration:line-through;color:var(--text3)}
+.plan-item.done{opacity:.6}
+.plan-tag{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);background:var(--bg4);padding:2px 6px;border-radius:4px;flex-shrink:0}
+.plan-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:2px 5px;border-radius:4px;flex-shrink:0}
+.plan-del:hover{color:var(--red);background:var(--rs)}
+.plan-empty{font-size:11px;color:var(--text3);padding:12px;text-align:center}
+.plan-date-group{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);padding:8px 4px 2px;margin-top:4px}
+.plan-date-group:first-child{margin-top:0}
+.plan-item-edit{gap:6px;flex-wrap:wrap}
+.plan-edit-text{flex:1;min-width:140px;font-size:12px;padding:6px 9px}
+.plan-edit-date{width:135px;font-size:12px;padding:6px 8px}
+.plan-edit-time{width:95px;font-size:12px;padding:6px 8px}
+@media(max-width:768px){.plan-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body><div class="app">
@@ -254,6 +282,9 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
     </button>
     <button class="nav-item" onclick="navigate(&#39;tasks&#39;)" id="nav-tasks">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>Задачі
+    </button>
+    <button class="nav-item" onclick="navigate(&#39;plan&#39;)" id="nav-plan">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M9 16l2 2 4-4"></path></svg>План дня
     </button>
     <div class="nav-label">Експорт</div>
     <button class="nav-item" onclick="exportExcel()">
@@ -300,19 +331,7 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
     <div class="metric"><div class="metric-label">Податки ЄП</div><div class="metric-value amber">209&nbsp;221 ₴</div></div>
     <div class="metric"><div class="metric-label">Прибуток</div><div class="metric-value green">2&nbsp;466&nbsp;994 ₴</div></div>
   </div>
-  <div id="dash-attention">
-    <div class="attn-card">
-      <div class="attn-head"><span class="card-title">⏰ Прострочені задачі <span style="opacity:.7">8</span></span></div>
-      <div style="padding:9px 12px"><div class="attn-item" onclick="gotoProjectTasks(&#39;r26&#39;)">
-      <span class="attn-item-name">Подати Договір з додатками на Замовника <span style="color:var(--accent);font-weight:600">· КП - Буча, Яблунська 17</span></span><span class="attn-item-meta" style="color:var(--red)">⚠ 2д тому</span></div><div class="attn-item" onclick="gotoProjectTasks(&#39;r30&#39;)">
-      <span class="attn-item-name">Вивчити акт обстеження - дать пропозицію <span style="color:var(--accent);font-weight:600">· РП-Соборності,17</span></span><span class="attn-item-meta" style="color:var(--red)">⚠ 1д тому</span></div><div class="attn-item" onclick="gotoProjectTasks(&#39;x1780825714989runp&#39;)">
-      <span class="attn-item-name">Знайти виконавця розділу ЕТР <span style="color:var(--accent);font-weight:600">· РП - Ладижин Адмінка</span></span><span class="attn-item-meta" style="color:var(--red)">⚠ 1д тому</span></div><div class="attn-item" onclick="gotoProjectTasks(&#39;r24&#39;)">
-      <span class="attn-item-name">Отримати ТУ ВК <span style="color:var(--accent);font-weight:600">· ЕВМ-МАФ Континент</span></span><span class="attn-item-meta" style="color:var(--red)">⚠ 1д тому</span></div><div class="attn-item" onclick="gotoProjectTasks(&#39;x1780825714989runp&#39;)">
-      <span class="attn-item-name">Знайти виконавця проекту ВК <span style="color:var(--accent);font-weight:600">· РП - Ладижин Адмінка</span></span><span class="attn-item-meta" style="color:var(--red)">⚠ 1д тому</span></div><div class="attn-item" onclick="gotoProjectTasks(&#39;x1780825714989runp&#39;)">
-      <span class="attn-item-name">Отримати розділ КМ від ЛСТК 24 <span style="color:var(--accent);font-weight:600">· РП - Ладижин Адмінка</span></span><span class="attn-item-meta" style="color:var(--red)">⚠ 1д тому</span></div><div class="attn-item" onclick="gotoProjectTasks(&#39;r27&#39;)">
-      <span class="attn-item-name">Видати витя  звіту з едессб <span style="color:var(--accent);font-weight:600">· РП -ПЧ №15 ДСНС</span></span><span class="attn-item-meta" style="color:var(--red)">⚠ 2д тому</span></div><div class="attn-item" onclick="gotoProjectTasks(&#39;x1780681085450yw1p&#39;)">
-      <span class="attn-item-name">Надати поетажний план меж проектування <span style="color:var(--accent);font-weight:600">· РП-Софіївсько-Борщагівський ліцей</span></span><span class="attn-item-meta" style="color:var(--red)">⚠ 1д тому</span></div></div>
-    </div></div>
+  <div id="dash-attention"></div>
   <div class="card">
     <div class="card-head">
       <span class="card-title">Всі проекти</span>
@@ -714,6 +733,166 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
   </div>
 </div>
 
+<!-- Plan of the day -->
+<div class="page" id="page-plan">
+  <div class="page-header">
+    <div><div class="page-title">План дня</div><div class="page-sub" id="plan-sub">Задачі та власні плани на сьогодні й завтра</div></div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="padding:11px 13px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+      <div style="flex:1;min-width:200px">
+        <label class="form-label">Свій план / подія</label>
+        <input class="form-input" id="plan-text" placeholder="Напр. Дзвінок замовнику, виїзд на об’єкт..." onkeydown="if(event.key===&#39;Enter&#39;)addPlanItem()">
+      </div>
+      <div style="width:140px">
+        <label class="form-label">Дата</label>
+        <input class="form-input" type="date" id="plan-date">
+      </div>
+      <div style="width:110px">
+        <label class="form-label">Час</label>
+        <input class="form-input" type="time" id="plan-time">
+      </div>
+      <button class="btn primary" onclick="addPlanItem()">+ Додати</button>
+    </div>
+  </div>
+  <div id="plan-content"><div class="plan-grid">
+    <div class="card plan-section" style="border-top:3px solid var(--accent)">
+      <div class="plan-head">
+        <div><span class="plan-section-title">📌 Сьогодні</span> <span class="plan-date-label">понеділок, 15 червня</span></div>
+        <span class="plan-count">0/11</span>
+      </div>
+      <div class="plan-list"><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x1781467487721ee8i&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;r27&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🔴 Видати витя  звіту з едессб</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">РП -ПЧ №15 ДСНС</span> · Аня Данілова · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x1781081918058v7t1&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;r29&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🔴 Знайти кошторисника</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">РП- Каховська 62А</span> · ПАД · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x1781469971019ggwl&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;x1780681085450yw1p&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🟡 Підготувати Договір+додатки  на проектування</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">РП-Софіївсько-Борщагівський ліцей</span> · ПАД · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x17814676419054iq1&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;r30&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🟡 Вивчити акт обстеження - дать пропозицію</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">РП-Соборності,17</span> · Віктор Свобода · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x1781467719023u4m5&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;x1780825714989runp&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🟡 Отримати розділ КМ від ЛСТК 24</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">РП - Ладижин Адмінка</span> · ПАД · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x1781082286043f368&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;r25&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🟡 Подати лист на оренду</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">ЕВМ-МАФ Новус</span> · ПАД · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x1781079608267yuvs&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;r26&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🟡 Видати ЗКР по обʼєкту для пдачі в експертизу</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">КП - Буча, Яблунська 17</span> · Настя Нідком · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x1780771319684ox55&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;r20&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🟡 Привести у відповідність дурнал АН</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">АН - Ворзель, Курортна 37</span> · Аня Данілова · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x17809135391393cvl&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;r29&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🟡 Передати всі розділи та обїєеми жля обрахунку в кошторисний відділ</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">РП- Каховська 62А</span> · Світлана Шевчук · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x1781467553271pons&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;r27&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🟡 Нагадувати про оплату!</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">РП -ПЧ №15 ДСНС</span> · ПАД · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanDone(&#39;x1781470139118febq&#39;)">
+      <div class="plan-item-body">
+        <div class="plan-item-title"><strong style="color:var(--accent)">10:30</strong> Лізнатись чи подали на оплату акт по ПЧ15</div>
+      </div>
+      <span class="plan-tag" style="background:var(--as);color:var(--accent)">подія</span>
+      <button class="plan-del" onclick="startEditPlan(&#39;x1781470139118febq&#39;)" title="Редагувати">✎</button>
+      <button class="plan-del" onclick="delPlan(&#39;x1781470139118febq&#39;)" title="Видалити">✕</button>
+    </div></div>
+    </div>
+    <div class="card plan-section" style="border-top:3px solid #4a9eff">
+      <div class="plan-head">
+        <div><span class="plan-section-title">🔜 Завтра</span> <span class="plan-date-label">вівторок, 16 червня</span></div>
+        <span class="plan-count">0/6</span>
+      </div>
+      <div class="plan-list"><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x1781467437354icx9&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;r26&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🔴 Подати Договір з додатками на Замовника</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">КП - Буча, Яблунська 17</span> · ПАД · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x1780771375967x2tu&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;r19&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🔴 Привести у відповідність журнал АН</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">АН - Буча, Вокзальна 101</span> · Аня Данілова · Не почато</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x1781469997801c5xk&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;r23&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🟡 Призначити ГАП</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">ЕВМ Котедж Білогородка</span> · ПАД · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x1780913657856ng23&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;r30&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🟡 Підготувати вихідні креслення для суміжників</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">РП-Соборності,17</span> · Світлана Шевчук · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x17812005774034kj4&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;x1780681085450yw1p&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">🟡 По дефектному акту составит ЗНП</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">РП-Софіївсько-Борщагівський ліцей</span> · Світлана Шевчук · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div><div class="plan-item ">
+      <input type="checkbox" onclick="togglePlanTaskDone(&#39;x1781200886942t96e&#39;)" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks(&#39;r26&#39;)" style="cursor:pointer">
+        <div class="plan-item-title">⚪ Узгодити договір на коригування з Замовником</div>
+        <div class="plan-item-meta"><span style="color:var(--accent)">КП - Буча, Яблунська 17</span> · Аня Юрист · В роботі</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div></div>
+    </div>
+  </div></div>
+</div>
+
 <!-- Workload page -->
 <div class="page" id="page-workload">
   <div class="page-header">
@@ -725,66 +904,29 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
 <!-- Executors list -->
 <div class="page" id="page-executors">
   <div class="page-header">
-    <div style="flex:1"><div class="page-title">Виконавці</div><div class="page-sub" id="executors-count">1 з 29 виконавців</div></div>
+    <div style="flex:1"><div class="page-title">Виконавці</div><div class="page-sub" id="executors-count">Субпідрядники та співробітники</div></div>
     <button class="btn primary" onclick="openModal(&#39;new-executor&#39;)">+ Виконавець</button>
   </div>
   <div class="filter-bar">
     <input class="search-input" id="ex-search" placeholder="🔍 Пошук за ПІБ, роллю, телефоном..." oninput="renderExecutors()" style="min-width:200px">
-    <select class="dash-select" id="ex-filter" onchange="renderExecutors()"><option value="">Всі виконавці</option><option value="x1780680671536cvqw">Аня Данілова</option><option value="x1781200782406h4a4">Аня Юрист</option><option value="r17">Виталик Кучер (Газ)</option><option value="r10">Виталик Кучер (ОблГаз)</option><option value="r2">Віктор Свобода</option><option value="x1781206706247z6ro">ВК Александр</option><option value="r3">Володя Береза</option><option value="r14">Дмитро Жовтуха</option><option value="r15">Друкарня ФОП</option><option value="r13">Евроформат Алексей</option><option value="x1781206819884j0xw">ЕТР Вадим</option><option value="r11">ЕТР Дмитро</option><option value="r4">Ларіса Гурінчук</option><option value="x1780944245171820z">Ліфт Евроформат Олександр</option><option value="r6">Менеджер ЕДРБ</option><option value="x1780832229384vms7">Настя Нідком</option><option value="x1781206438305m0v7">ОВ Елена Теплопроект</option><option value="x1780775253081itrz">ПАД</option><option value="x1780832654567fwjh">ПТО Борис Лісовський</option><option value="x178083252321701gk">ПТО Вергун Володя</option><option value="r5">РембудКонсалтинг (Інна)</option><option value="r18">Рман Тацюе (Львів)</option><option value="r7">Роман Компані</option><option value="r1">Світлана Шевчук</option><option value="r16">Сергей Автополив</option><option value="x17806805325593b7p">ФОП Синьків Сергій</option><option value="r12">ФОП Соловйов С.</option><option value="r8">Хоменко ГАП (Наташа)</option><option value="r9">GreenBuild Дмитро</option></select>
+    <select class="dash-select" id="ex-filter" onchange="renderExecutors()"><option value="">Всі виконавці</option></select>
   </div>
-  <div id="executors-cards">
-  <div class="card">
-  <div class="tbl-wrap"><table>
-    <thead><tr>
-      <th class="sortable " style="text-align:left" onclick="setExSort(&#39;name&#39;)">Виконавець <span class="sort-arrow">↕</span></th>
-      <th class="sortable " style="text-align:left" onclick="setExSort(&#39;role&#39;)">Роль <span class="sort-arrow">↕</span></th>
-      <th class="sortable " style="text-align:center" onclick="setExSort(&#39;projects&#39;)">Проектів <span class="sort-arrow">↕</span></th>
-      <th class="sortable " style="text-align:center" onclick="setExSort(&#39;sections&#39;)">Розділів <span class="sort-arrow">↕</span></th>
-      <th class="sortable " style="text-align:center" onclick="setExSort(&#39;tasks&#39;)">Задачі <span class="sort-arrow">↕</span></th>
-      <th class="sortable " style="text-align:left" onclick="setExSort(&#39;cost&#39;)">Сума договорів <span class="sort-arrow">↕</span></th>
-      <th class="sortable " style="text-align:left" onclick="setExSort(&#39;paid&#39;)">Виплачено <span class="sort-arrow">↕</span></th>
-      <th class="sortable " style="text-align:left" onclick="setExSort(&#39;remain&#39;)">До виплати <span class="sort-arrow">↕</span></th>
-      <th class="sortable " style="text-align:left" onclick="setExSort(&#39;pct&#39;)">% <span class="sort-arrow">↕</span></th>
-    </tr></thead>
-    <tbody><tr onclick="navigate(&#39;executor-detail&#39;,&#39;r2&#39;)" style="cursor:pointer">
-        <td>
-          <div style="display:flex;align-items:center;gap:10px">
-            <div style="width:32px;height:32px;border-radius:50%;background:var(--as);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">ВС</div>
-            <div>
-              <div style="font-weight:600">Віктор Свобода</div>
-              <div style="font-size:11px;color:var(--text3)">+380 (97) 901 95 43</div>
-            </div>
-          </div>
-        </td>
-        <td style="color:var(--text2)">Конструктор</td>
-        <td style="text-align:center">4</td>
-        <td style="text-align:center">4</td>
-        <td style="text-align:center">
-          <span onclick="showExTasks(&#39;r2&#39;);event.stopPropagation()" style="cursor:pointer;font-weight:700;color:var(--accent);text-decoration:underline;text-underline-offset:2px">1</span> <span class="badge red" style="font-size:9px">⚠1</span>
-        </td>
-        <td class="mono">0 ₴</td>
-        <td class="mono" style="color:var(--amber)">0 ₴</td>
-        <td class="mono" style="color:var(--green)">0 ₴</td>
-        <td><span class="badge gray">0%</span></td>
-      </tr>
-    </tbody>
-  </table></div>
-  </div></div>
+  <div id="executors-cards"></div>
 </div>
 
 <!-- Executor detail -->
 <div class="page" id="page-executor-detail">
   <div class="detail-back">
     <button class="btn sm" onclick="navigate(&#39;executors&#39;)">← Назад</button>
-    <div class="breadcrumb">Виконавці › <span id="ex-detail-breadcrumb">Віктор Свобода</span></div>
+    <div class="breadcrumb">Виконавці › <span id="ex-detail-breadcrumb"></span></div>
   </div>
   <!-- Profile header -->
   <div style="display:flex;align-items:center;gap:20px;margin-bottom:28px;flex-wrap:wrap">
-    <div id="ex-detail-avatar" style="width:64px;height:64px;border-radius:50%;background:var(--as);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;flex-shrink:0">ВС</div>
+    <div id="ex-detail-avatar" style="width:64px;height:64px;border-radius:50%;background:var(--as);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;flex-shrink:0"></div>
     <div style="flex:1">
-      <div style="font-size:24px;font-weight:700;letter-spacing:-.5px" id="ex-detail-name">Віктор Свобода</div>
-      <div style="font-size:14px;color:var(--text2);margin-top:2px" id="ex-detail-role">Конструктор</div>
-      <div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap" id="ex-detail-contacts"><span style="font-size:13px;color:var(--text2)">📞 +380 (97) 901 95 43</span><span style="font-size:13px;color:var(--text2)">✉ cons@armabudproject.com</span></div>
+      <div style="font-size:24px;font-weight:700;letter-spacing:-.5px" id="ex-detail-name"></div>
+      <div style="font-size:14px;color:var(--text2);margin-top:2px" id="ex-detail-role"></div>
+      <div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap" id="ex-detail-contacts"></div>
     </div>
     <div style="display:flex;gap:8px">
       <button class="btn sm" onclick="openEditExCurrent()">✎ Редагувати</button>
@@ -792,79 +934,16 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
     </div>
   </div>
   <!-- Summary metrics -->
-  <div class="metrics" id="ex-detail-metrics">
-    <div class="metric"><div class="metric-label">Проектів</div><div class="metric-value blue">4</div></div>
-    <div class="metric"><div class="metric-label">Розділів</div><div class="metric-value blue">4</div></div>
-    <div class="metric"><div class="metric-label">Сума договорів</div><div class="metric-value">0 ₴</div></div>
-    <div class="metric"><div class="metric-label">Виплачено</div><div class="metric-value amber">0 ₴</div></div>
-    <div class="metric"><div class="metric-label">Залишок до виплати</div><div class="metric-value green">0 ₴</div></div>
-    <div class="metric"><div class="metric-label">Виплачено %</div><div class="metric-value red">0%</div></div>
-  </div>
+  <div class="metrics" id="ex-detail-metrics"></div>
   <!-- Projects table -->
   <div class="card">
     <div class="card-head"><span class="card-title">Проекти виконавця</span></div>
-    <div class="tbl-wrap"><table id="ex-detail-projects"><thead><tr><th>Проект / Замовник</th><th>Розділ</th><th>Статус</th><th>Договір</th><th>Виплачено</th><th>Залишок</th><th></th></tr></thead><tbody><tr>
-          <td rowspan="1" style="border-right:1px solid var(--border);vertical-align:top;padding-top:14px">
-            <div style="font-weight:600;cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r23&#39;)">ЕВМ Котедж Білогородка</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px">ЕВМ</div>
-          </td>
-          <td><strong>КР</strong></td>
-          <td><span class="badge gray">○ Не почато</span></td>
-          <td class="mono">0 ₴</td>
-          <td>
-            <div class="mono" style="color:var(--text3)">0 ₴</div>
-            
-          </td>
-          <td class="mono" style="color:var(--green)">0 ₴</td>
-          <td><button class="btn sm success" onclick="openQuickPayEx(&#39;r23&#39;,1)">💳 Виплата</button></td>
-        </tr><tr>
-          <td rowspan="1" style="border-right:1px solid var(--border);vertical-align:top;padding-top:14px">
-            <div style="font-weight:600;cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r29&#39;)">РП- Каховська 62А</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px">Дніпровська РДА</div>
-          </td>
-          <td><strong>КР</strong></td>
-          <td><span class="badge blue">● В роботі</span></td>
-          <td class="mono">0 ₴</td>
-          <td>
-            <div class="mono" style="color:var(--text3)">0 ₴</div>
-            
-          </td>
-          <td class="mono" style="color:var(--green)">0 ₴</td>
-          <td><button class="btn sm success" onclick="openQuickPayEx(&#39;r29&#39;,1)">💳 Виплата</button></td>
-        </tr><tr>
-          <td rowspan="1" style="border-right:1px solid var(--border);vertical-align:top;padding-top:14px">
-            <div style="font-weight:600;cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;r30&#39;)">РП-Соборності,17</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px">Дніпровська РДА</div>
-          </td>
-          <td><strong>КР</strong></td>
-          <td><span class="badge gray">○ Не почато</span></td>
-          <td class="mono">0 ₴</td>
-          <td>
-            <div class="mono" style="color:var(--text3)">0 ₴</div>
-            
-          </td>
-          <td class="mono" style="color:var(--green)">0 ₴</td>
-          <td><button class="btn sm success" onclick="openQuickPayEx(&#39;r30&#39;,1)">💳 Виплата</button></td>
-        </tr><tr>
-          <td rowspan="1" style="border-right:1px solid var(--border);vertical-align:top;padding-top:14px">
-            <div style="font-weight:600;cursor:pointer;color:var(--accent)" onclick="navigate(&#39;detail&#39;,&#39;x1780825432188emeb&#39;)">КП - Куророртна,37 (ЗВК)</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px">Освіта БМР</div>
-          </td>
-          <td><strong>КМ+КЖ+КР</strong></td>
-          <td><span class="badge blue">● В роботі</span></td>
-          <td class="mono">0 ₴</td>
-          <td>
-            <div class="mono" style="color:var(--text3)">0 ₴</div>
-            
-          </td>
-          <td class="mono" style="color:var(--green)">0 ₴</td>
-          <td><button class="btn sm success" onclick="openQuickPayEx(&#39;x1780825432188emeb&#39;,2)">💳 Виплата</button></td>
-        </tr><tr class="total-row"><td colspan="3">Разом</td><td class="mono">0 ₴</td><td class="mono" style="color:var(--amber)">0 ₴</td><td class="mono" style="color:var(--green)">0 ₴</td><td></td></tr></tbody></table></div>
+    <div class="tbl-wrap"><table id="ex-detail-projects"></table></div>
   </div>
   <!-- Payment history -->
   <div class="card">
     <div class="card-head"><span class="card-title">Історія виплат</span></div>
-    <div class="tbl-wrap"><table id="ex-detail-payments"><tbody><tr><td style="padding:20px;text-align:center;color:var(--text3)">Виплат ще не зафіксовано. Використовуйте кнопку «💳 Виплата» щоб записувати виплати.</td></tr></tbody></table></div>
+    <div class="tbl-wrap"><table id="ex-detail-payments"></table></div>
   </div>
 </div>
 
@@ -1036,128 +1115,7 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
   </div>
 </div>
 
-<div class="modal" id="modal-ex-tasks" style="display: none; max-width: 700px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div class="modal-title" style="margin-bottom:0">Задачі — ПАД</div>
-      <span style="font-size:11px;color:var(--text2)">17 задач</span>
-    </div>
-    
-    <div class="tbl-wrap"><table style="width:100%;border-collapse:collapse;font-size:12px">
-      <thead><tr>
-        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Задача</th>
-        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Проект</th>
-        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Дедлайн</th>
-        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Пріоритет</th>
-        <th style="text-align:left;padding:8px 12px;background:var(--bg3);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)">Статус</th>
-      </tr></thead>
-      <tbody><tr style=";background:rgba(240,84,84,0.06)">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;">Подати Договір з додатками на Замовника</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">КП - Буча, Яблунська 17</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge red" title="Прострочено">⚠ 2д тому</span></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--red)">🔴 Терміново</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge blue">В роботі</span></td>
-        </tr><tr style="">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;">Знайти кошторисника</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">РП- Каховська 62А</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge amber">⏰ 2д</span></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--red)">🔴 Терміново</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge blue">В роботі</span></td>
-        </tr><tr style="">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;">перевірити журнал АН обовязково</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">АН - Буча, Вокзальна 101</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge amber">7д</span></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--red)">🔴 Терміново</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge blue">В роботі</span></td>
-        </tr><tr style=";background:rgba(240,84,84,0.06)">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;">Знайти виконавця розділу ЕТР</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">РП - Ладижин Адмінка</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge red" title="Прострочено">⚠ 1д тому</span></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--amber)">🟡 Високий</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge blue">В роботі</span></td>
-        </tr><tr style="">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;">Подати лист на оренду</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">ЕВМ-МАФ Новус</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge amber">⏰ 2д</span></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--amber)">🟡 Високий</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge blue">В роботі</span></td>
-        </tr><tr style="">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;">Визначити виконавця КР</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">РП-Соборності,17</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge amber">4д</span></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--amber)">🟡 Високий</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge blue">В роботі</span></td>
-        </tr><tr style="">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;">Поновити ТУ ДТЕК</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">КП - Куророртна,37 (ЗВК)</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span style="font-size:11px;color:var(--text3)">30.06.2026</span></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--amber)">🟡 Високий</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge blue">В роботі</span></td>
-        </tr><tr style="">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;">Поновити ТУ Теплопостачання</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">КП - Куророртна,37 (ЗВК)</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span style="font-size:11px;color:var(--text3)">30.06.2026</span></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--amber)">🟡 Високий</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge blue">В роботі</span></td>
-        </tr><tr style="">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;">Підготувати Договір+додатки  на проектування</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">РП-Софіївсько-Борщагівський ліцей</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge amber">⏰ 1д</span></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--amber)">🟡 Високий</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge blue">В роботі</span></td>
-        </tr><tr style="">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;">Призначити ГАП</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">ЕВМ Котедж Білогородка</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge amber">⏰ 1д</span></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--amber)">🟡 Високий</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge blue">В роботі</span></td>
-        </tr><tr style="">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;">Надати планувальні рішення будинків</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">ЕВМ Котедж Білогородка</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span style="font-size:11px;color:var(--text3)">21.06.2026</span></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--amber)">🟡 Високий</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge blue">В роботі</span></td>
-        </tr><tr style=";background:rgba(240,84,84,0.06)">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;">Отримати ТУ ВК</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">ЕВМ-МАФ Континент</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge red" title="Прострочено">⚠ 1д тому</span></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text2)">⚪ Звичайний</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge blue">В роботі</span></td>
-        </tr><tr style=";background:rgba(240,84,84,0.06)">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;">Знайти виконавця проекту ВК</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">РП - Ладижин Адмінка</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge red" title="Прострочено">⚠ 1д тому</span></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text2)">⚪ Звичайний</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge blue">В роботі</span></td>
-        </tr><tr style=";background:rgba(240,84,84,0.06)">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;">Отримати розділ КМ від ЛСТК 24</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">РП - Ладижин Адмінка</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge red" title="Прострочено">⚠ 1д тому</span></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text2)">⚪ Звичайний</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge blue">В роботі</span></td>
-        </tr><tr style="opacity:.55">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;text-decoration:line-through">Визначити Ліфтову компанію</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">РП-Соборності,17</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--red)">🔴 Терміново</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge green">Виконано</span></td>
-        </tr><tr style="opacity:.55">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;text-decoration:line-through">передати ПКД Замовнику</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">РП -ПЧ №15 ДСНС</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--red)">🔴 Терміново</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge green">Виконано</span></td>
-        </tr><tr style="opacity:.55">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;text-decoration:line-through">Провести виїздну нараду на обʼєкті</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-size:11px">ЕВМ Котедж Білогородка</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"></td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--amber)">🟡 Високий</td>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="badge green">Виконано</span></td>
-        </tr>
-      </tbody>
-    </table></div>
-    <div class="modal-footer">
-      <button class="btn primary" onclick="closeModal()">Закрити</button>
-    </div></div></div>
+</div>
 
 <div id="print-area"></div>
 
@@ -1275,6 +1233,7 @@ async function load(){
         if(!state.executors)state.executors=[];
         if(!state.projects)state.projects=[];
         if(!state.tasks)state.tasks=[];
+        if(!state.plans)state.plans=[];
         showSyncStatus('✓ Синхронізовано','var(--green)');
         return;
       }
@@ -1285,6 +1244,7 @@ async function load(){
   if(!state.executors)state.executors=[];
   if(!state.projects)state.projects=[];
   if(!state.tasks)state.tasks=[];
+        if(!state.plans)state.plans=[];
   showSyncStatus('⚠ Офлайн режим','var(--amber)');
 }
 
@@ -1339,15 +1299,16 @@ let curExId=null;
 function navigate(page,pid){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  const pageMap={'dashboard':'dashboard','projects':'projects','detail':'detail','executors':'executors','executor-detail':'executor-detail','workload':'workload','tasks':'tasks'};
+  const pageMap={'dashboard':'dashboard','projects':'projects','detail':'detail','executors':'executors','executor-detail':'executor-detail','workload':'workload','tasks':'tasks','plan':'plan'};
   document.getElementById('page-'+(pageMap[page]||page)).classList.add('active');
-  const navMap={'dashboard':'nav-dashboard','projects':'nav-projects','detail':'nav-projects','executors':'nav-executors','executor-detail':'nav-executors','workload':'nav-workload','tasks':'nav-tasks'};
+  const navMap={'dashboard':'nav-dashboard','projects':'nav-projects','detail':'nav-projects','executors':'nav-executors','executor-detail':'nav-executors','workload':'nav-workload','tasks':'nav-tasks','plan':'nav-plan'};
   const nav=document.getElementById(navMap[page]);if(nav)nav.classList.add('active');
   if(page==='dashboard')renderDashboard();
   else if(page==='projects')renderProjects();
   else if(page==='executors')renderExecutors();
   else if(page==='workload')renderWorkload();
   else if(page==='tasks')renderTasksPage();
+  else if(page==='plan')renderPlan();
   else if(page==='detail'&&pid){curPid=pid;renderDetail();}
   else if(page==='executor-detail'&&pid){curExId=pid;renderExecutorDetail();}
 }
@@ -2497,6 +2458,154 @@ function gotoProjectTasks(pid){
   if(wrap)wrap.style.display='block';
 }
 
+// ═══════════════ ПЛАН ДНЯ ═══════════════
+function isoDay(offset){
+  const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+(offset||0));
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+const PR_LBL_PLAN={urgent:'🔴',high:'🟡',normal:'⚪'};
+const ST_LBL_PLAN={todo:'Не почато',progress:'В роботі',done:'Виконано'};
+
+function addPlanItem(){
+  const text=document.getElementById('plan-text').value.trim();
+  const date=document.getElementById('plan-date').value||isoDay(0);
+  const time=document.getElementById('plan-time').value||'';
+  if(!text){alert('Введіть текст плану');return;}
+  if(!state.plans)state.plans=[];
+  state.plans.push({id:uid(),date,time,text,done:false});
+  document.getElementById('plan-text').value='';
+  document.getElementById('plan-time').value='';
+  save();renderPlan();
+}
+function togglePlanDone(id){
+  const pl=(state.plans||[]).find(x=>x.id===id);if(!pl)return;
+  pl.done=!pl.done;save();renderPlan();
+}
+function delPlan(id){
+  if(!confirm('Видалити цей план?'))return;
+  state.plans=(state.plans||[]).filter(x=>x.id!==id);
+  if(editingPlanId===id)editingPlanId=null;
+  save();renderPlan();
+}
+// Редагування події (текст / дата / час)
+let editingPlanId=null;
+function startEditPlan(id){editingPlanId=id;renderPlan();const f=document.getElementById('ep-text-'+id);if(f)f.focus();}
+function cancelEditPlan(){editingPlanId=null;renderPlan();}
+function saveEditPlan(id){
+  const pl=(state.plans||[]).find(x=>x.id===id);if(!pl)return;
+  const text=(document.getElementById('ep-text-'+id).value||'').trim();
+  if(!text){alert('Текст не може бути порожнім');return;}
+  pl.text=text;
+  pl.date=document.getElementById('ep-date-'+id).value||pl.date;
+  pl.time=document.getElementById('ep-time-'+id).value||'';
+  editingPlanId=null;save();renderPlan();
+}
+// Перемикання статусу задачі прямо з плану: todo → done → todo
+function togglePlanTaskDone(taskId){
+  const t=(state.tasks||[]).find(x=>x.id===taskId);if(!t)return;
+  t.status=(t.status==='done')?'todo':'done';
+  save();renderPlan();
+}
+
+function renderPlan(){
+  const el=document.getElementById('plan-content');if(!el)return;
+  const dateInput=document.getElementById('plan-date');
+  if(dateInput&&!dateInput.value)dateInput.value=isoDay(0);
+
+  const today=isoDay(0), tomorrow=isoDay(1);
+
+  // Задачі для дня: дедлайн == день. Прострочені (дедлайн<сьогодні, не виконані) переносимо в «Сьогодні».
+  const tasksFor=(day,withOverdue)=>{
+    return (state.tasks||[]).map((t,i)=>({t,i})).filter(x=>{
+      if(!x.t.deadline)return false;
+      if(x.t.deadline===day)return true;
+      if(withOverdue&&x.t.deadline<today&&(x.t.status||'todo')!=='done')return true;
+      return false;
+    });
+  };
+  const plansFor=day=>(state.plans||[]).filter(p=>p.date===day).sort((a,b)=>(a.done-b.done)||((a.time||'99')> (b.time||'99')?1:-1));
+
+  const taskRow=x=>{
+    const t=x.t;
+    const proj=state.projects.find(p=>p.id===t.pid)||null;
+    const ex=state.executors.find(e=>e.id===t.executorId)||null;
+    const done=(t.status||'todo')==='done';
+    const overdue=t.deadline<today&&!done;
+    return`<div class="plan-item ${done?'done':''}">
+      <input type="checkbox" ${done?'checked':''} onclick="togglePlanTaskDone('${t.id}')" title="Позначити виконаною">
+      <div class="plan-item-body" onclick="gotoProjectTasks('${t.pid||''}')" style="cursor:pointer">
+        <div class="plan-item-title">${PR_LBL_PLAN[t.priority||'normal']} ${t.name}${overdue?' <span class="badge red" style="font-size:9px">прострочено</span>':''}</div>
+        <div class="plan-item-meta">${proj?'<span style="color:var(--accent)">'+proj.name+'</span>':''}${ex?' · '+ex.name:''} · ${ST_LBL_PLAN[t.status||'todo']}</div>
+      </div>
+      <span class="plan-tag">задача</span>
+    </div>`;
+  };
+  const planRow=p=>{
+    if(p.id===editingPlanId){
+      return`<div class="plan-item plan-item-edit">
+        <input class="form-input plan-edit-text" id="ep-text-${p.id}" value="${(p.text||'').replace(/"/g,'&quot;')}" onkeydown="if(event.key==='Enter')saveEditPlan('${p.id}');if(event.key==='Escape')cancelEditPlan()">
+        <input class="form-input plan-edit-date" type="date" id="ep-date-${p.id}" value="${p.date||''}">
+        <input class="form-input plan-edit-time" type="time" id="ep-time-${p.id}" value="${p.time||''}">
+        <button class="btn sm primary" onclick="saveEditPlan('${p.id}')">✓</button>
+        <button class="btn sm" onclick="cancelEditPlan()">✕</button>
+      </div>`;
+    }
+    return`<div class="plan-item ${p.done?'done':''}">
+      <input type="checkbox" ${p.done?'checked':''} onclick="togglePlanDone('${p.id}')">
+      <div class="plan-item-body">
+        <div class="plan-item-title">${p.time?'<strong style="color:var(--accent)">'+p.time+'</strong> ':''}${p.text}</div>
+      </div>
+      <span class="plan-tag" style="background:var(--as);color:var(--accent)">подія</span>
+      <button class="plan-del" onclick="startEditPlan('${p.id}')" title="Редагувати">✎</button>
+      <button class="plan-del" onclick="delPlan('${p.id}')" title="Видалити">✕</button>
+    </div>`;
+  };
+
+  const section=(title,day,withOverdue,accent)=>{
+    const tasks=tasksFor(day,withOverdue);
+    const plans=plansFor(day);
+    // прострочені вгорі, потім за пріоритетом, виконані вниз
+    tasks.sort((a,b)=>{
+      const da=(a.t.status||'todo')==='done', db=(b.t.status||'todo')==='done';
+      if(da!==db)return da?1:-1;
+      const oa=a.t.deadline<today, ob=b.t.deadline<today;
+      if(oa!==ob)return oa?-1:1;
+      const pr={urgent:0,high:1,normal:2};
+      return (pr[a.t.priority||'normal'])-(pr[b.t.priority||'normal']);
+    });
+    const total=tasks.length+plans.length;
+    const doneCount=tasks.filter(x=>(x.t.status||'todo')==='done').length+plans.filter(p=>p.done).length;
+    const body=total?[...tasks.map(taskRow),...plans.map(planRow)].join(''):'<div class="plan-empty">Нічого не заплановано</div>';
+    const dlabel=new Date(day).toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
+    return`<div class="card plan-section" style="border-top:3px solid ${accent}">
+      <div class="plan-head">
+        <div><span class="plan-section-title">${title}</span> <span class="plan-date-label">${dlabel}</span></div>
+        <span class="plan-count">${doneCount}/${total}</span>
+      </div>
+      <div class="plan-list">${body}</div>
+    </div>`;
+  };
+
+  // Майбутні власні плани (після завтра)
+  const future=(state.plans||[]).filter(p=>p.date>tomorrow).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
+  let futureHtml='';
+  if(future.length){
+    const byDate={};
+    future.forEach(p=>{(byDate[p.date]=byDate[p.date]||[]).push(p);});
+    futureHtml=`<div class="card plan-section" style="border-top:3px solid var(--text3)">
+      <div class="plan-head"><span class="plan-section-title">Інші заплановані дні</span><span class="plan-count">${future.length}</span></div>
+      <div class="plan-list">${Object.keys(byDate).map(d=>`
+        <div class="plan-date-group">${new Date(d).toLocaleDateString('uk-UA',{weekday:'short',day:'numeric',month:'long'})}</div>
+        ${byDate[d].map(planRow).join('')}`).join('')}</div>
+    </div>`;
+  }
+
+  el.innerHTML=`<div class="plan-grid">
+    ${section('📌 Сьогодні',today,true,'var(--accent)')}
+    ${section('🔜 Завтра',tomorrow,false,'#4a9eff')}
+  </div>${futureHtml}`;
+}
+
 function showExTasks(eid){
   const ex=state.executors.find(e=>e.id===eid);
   if(!ex)return;
@@ -2904,6 +3013,7 @@ function saveTask(){
   };
   var idx = document.getElementById('edit-task-idx').value;
   if(!state.tasks)state.tasks=[];
+        if(!state.plans)state.plans=[];
   if(idx!==''){
     state.tasks[+idx]=task;
   } else {
