@@ -1495,6 +1495,7 @@ function openModal(name){
   }else if(name==='templates'){
     openTemplatesModal();return;
   }else if(name==='add-advance'){
+    document.getElementById('overlay').classList.add('show');
     document.getElementById('modal-add-advance').style.display='block';
     document.getElementById('edit-advance-idx').value='';
     document.getElementById('adv-date').value=new Date().toISOString().slice(0,10);
@@ -1687,9 +1688,12 @@ function deleteCurrentProject(){
 }
 
 function saveAdvance(){
+  if(!curPid){alert('Помилка: проект не визначено');return;}
   const p=state.projects.find(x=>x.id===curPid);
+  if(!p){alert('Проект не знайдено');return;}
   const amount=+document.getElementById('adv-amount').value||0;
   if(!amount){alert('Введіть суму');return;}
+  if(!p.advances)p.advances=[];
   const data={date:document.getElementById('adv-date').value,amount,note:document.getElementById('adv-note').value};
   const idx=document.getElementById('edit-advance-idx').value;
   if(idx!=='')p.advances[+idx]=data;else p.advances.push(data);
