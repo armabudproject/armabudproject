@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- saved from url=(0067)file:///Users/alexpshenya/Downloads/armabudproject_fix_advance.html -->
+<!-- saved from url=(0186)file:///Users/alexpshenya/Downloads/%D0%90%D1%80%D0%BC%D0%B0%D0%91%D1%83%D0%B4___%D0%9C%D0%B5%D0%BD%D0%B5%D0%B4%D0%B6%D0%B5%D1%80_%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D1%96%D0%B2_39.html -->
 <html lang="uk"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>АрмаБуд — Менеджер проектів</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iI2YwYjQyOSIvPjxwYXRoIGQ9Ik01IDE4IEwxNSA3LjUgTDE1IDI3IEw1IDI3IFoiIGZpbGw9IiMwYzFhMzMiLz48cGF0aCBkPSJNMjcgMTYuNSBMMTcgNS41IEwxNyAyNyBMMjcgMjcgWiIgZmlsbD0iIzBjMWEzMyIvPjxnIHN0cm9rZT0iI2VhYWQyNyIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+PGxpbmUgeDE9IjciIHkxPSIxOSIgeDI9IjEzIiB5Mj0iMTkiLz48bGluZSB4MT0iNyIgeTE9IjIyIiB4Mj0iMTMiIHkyPSIyMiIvPjxsaW5lIHgxPSI3IiB5MT0iMjUiIHgyPSIxMyIgeTI9IjI1Ii8+PGxpbmUgeDE9IjE5IiB5MT0iMTUuNSIgeDI9IjI1IiB5Mj0iMTUuNSIvPjxsaW5lIHgxPSIxOSIgeTE9IjE4LjUiIHgyPSIyNSIgeTI9IjE4LjUiLz48bGluZSB4MT0iMTkiIHkxPSIyMS41IiB4Mj0iMjUiIHkyPSIyMS41Ii8+PGxpbmUgeDE9IjE5IiB5MT0iMjQuNSIgeDI9IjI1IiB5Mj0iMjQuNSIvPjwvZz48L3N2Zz4=">
-<link href="./АрмаБуд — Менеджер проектів_files/css2" rel="stylesheet">
+<link href="file:///Users/alexpshenya/Downloads/%D0%90%D1%80%D0%BC%D0%B0%D0%91%D1%83%D0%B4%20%E2%80%94%20%D0%9C%D0%B5%D0%BD%D0%B5%D0%B4%D0%B6%D0%B5%D1%80%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D1%96%D0%B2_files/css2" rel="stylesheet">
 <style>
 :root{
   --bg:#0f1e35;
@@ -80,8 +80,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 @media(max-width:560px){.dash-metrics2 .metric.wide{grid-column:span 1}}
 
 /* ── ГРАФІЧНІ БЛОКИ ДАШБОРДА ── */
-.dash-cols{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-@media(max-width:760px){.dash-cols{grid-template-columns:1fr}}
+.dash-cols{display:block}
+.dash-cols .dash-card{margin-bottom:8px}
 .dash-card .card-body{padding:13px}
 .seg-toggle{display:inline-flex;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;overflow:hidden}
 .seg-toggle button{border:none;background:none;color:var(--text2);font-size:10px;font-weight:700;font-family:var(--font);text-transform:uppercase;letter-spacing:.04em;padding:4px 11px;cursor:pointer;transition:all .15s}
@@ -111,15 +111,23 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .top-sub{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-top:1px}
 
 /* компактніший дашборд */
-.dash-metrics2{grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:7px}
-.dash-metrics2 .metric{padding:8px 11px}
-.dash-metrics2 .metric-top{margin-bottom:3px}
-.dash-metrics2 .metric-value{font-size:16px}
-.dash-metrics2 .metric-icon{width:22px;height:22px;border-radius:6px}
-.dash-metrics2 .metric-icon svg{width:12px;height:12px}
-.metric-bd{margin-top:6px;padding-top:6px;gap:2px}
-.bd-item{font-size:10px}
-.bd-dot{width:6px;height:6px}
+.dash-metrics2{display:block;margin-bottom:12px}
+.dash-big-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.dash-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:start}
+.dash-col{display:flex;flex-direction:column;gap:8px;min-width:0}
+@media(max-width:1200px){.dash-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){.dash-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:460px){.dash-grid{grid-template-columns:1fr}}
+@media(max-width:620px){.dash-big-row{grid-template-columns:1fr}}
+#dash-metrics .metric{padding:13px 16px}
+#dash-metrics .metric-top{margin-bottom:6px}
+#dash-metrics .metric-label{font-size:13px}
+#dash-metrics .metric-value{font-size:30px}
+#dash-metrics .metric-icon{width:36px;height:36px;border-radius:9px}
+#dash-metrics .metric-icon svg{width:19px;height:19px}
+#dash-metrics .metric-bd{margin-top:11px;padding-top:10px;gap:6px}
+#dash-metrics .bd-item{font-size:14px}
+#dash-metrics .bd-dot{width:9px;height:9px}
 .dash-card .card-head{padding:7px 11px}
 .dash-card .card-body{padding:9px 11px}
 .bar-row{margin-bottom:6px;gap:8px}
@@ -133,16 +141,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .top-meta .mono{font-size:12px}
 
 /* кругові діаграми */
-.donut-wrap{display:flex;gap:6px}
-.donut-block{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center}
-.donut-ring{position:relative;width:118px;height:118px}
+.donut-wrap{display:flex;gap:18px;flex-wrap:wrap}
+.donut-block{flex:1;min-width:230px;display:flex;flex-direction:row;align-items:center;gap:14px;justify-content:center}
+.donut-ring{position:relative;width:92px;height:92px;flex-shrink:0}
 .donut-svg{width:100%;height:100%;display:block}
-.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none}
-.donut-center span{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2)}
-.donut-center b{font-size:12px;font-variant-numeric:tabular-nums}
-.donut-legend{display:flex;flex-direction:column;gap:2px;margin-top:8px;width:100%}
-.donut-legend .bd-item{font-size:10px}
-@media(max-width:480px){.donut-wrap{flex-direction:column;gap:14px}.donut-ring{width:130px;height:130px}}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;pointer-events:none}
+.donut-center span{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text2)}
+.donut-center b{font-size:11px;font-variant-numeric:tabular-nums}
+.donut-legend{display:flex;flex-direction:column;gap:3px;margin-top:0;min-width:130px}
+.donut-legend .bd-item{font-size:11px}
+.donut-legend .bd-dot{width:7px;height:7px}
+@media(max-width:480px){.donut-block{flex-direction:column}}
 .metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;position:relative;overflow:hidden;box-shadow:var(--sh);transition:transform .15s,border-color .15s,box-shadow .15s}
 .metric:hover{transform:translateY(-2px);border-color:var(--border2);box-shadow:var(--sh2)}
 .metric-clickable:hover{border-color:rgba(240,180,41,0.4);background:rgba(240,180,41,0.05);cursor:pointer}
@@ -370,16 +379,16 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
   <div class="sidebar-logo">
     <div class="logo-icon" title="АрмаБуд">
       <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5 18 L15 7.5 L15 27 L5 27 Z" fill="#0c1a33"/>
-        <path d="M27 16.5 L17 5.5 L17 27 L27 27 Z" fill="#0c1a33"/>
+        <path d="M5 18 L15 7.5 L15 27 L5 27 Z" fill="#0c1a33"></path>
+        <path d="M27 16.5 L17 5.5 L17 27 L27 27 Z" fill="#0c1a33"></path>
         <g stroke="#eaad27" stroke-width="1.5" stroke-linecap="round">
-          <line x1="7" y1="19" x2="13" y2="19"/>
-          <line x1="7" y1="22" x2="13" y2="22"/>
-          <line x1="7" y1="25" x2="13" y2="25"/>
-          <line x1="19" y1="15.5" x2="25" y2="15.5"/>
-          <line x1="19" y1="18.5" x2="25" y2="18.5"/>
-          <line x1="19" y1="21.5" x2="25" y2="21.5"/>
-          <line x1="19" y1="24.5" x2="25" y2="24.5"/>
+          <line x1="7" y1="19" x2="13" y2="19"></line>
+          <line x1="7" y1="22" x2="13" y2="22"></line>
+          <line x1="7" y1="25" x2="13" y2="25"></line>
+          <line x1="19" y1="15.5" x2="25" y2="15.5"></line>
+          <line x1="19" y1="18.5" x2="25" y2="18.5"></line>
+          <line x1="19" y1="21.5" x2="25" y2="21.5"></line>
+          <line x1="19" y1="24.5" x2="25" y2="24.5"></line>
         </g>
       </svg>
     </div>
@@ -446,8 +455,118 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
     <div><div class="page-title">Огляд</div><div class="page-sub">Зведена аналітика по всіх проектах</div></div>
     <button class="btn primary" onclick="navigate(&#39;projects&#39;);openModal(&#39;new-project&#39;)">+ Новий проект</button>
   </div>
-  <div class="dash-metrics2" id="dash-metrics"></div>
-  <div id="dash-extra"></div>
+  <div class="dash-metrics2" id="dash-metrics"><div class="dash-grid"><div class="dash-col">
+    <div class="metric " style="--mc:var(--accent)">
+      <div class="metric-top"><div class="metric-label">Всього проектів</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></span></div>
+      <div class="metric-value" style="color:var(--green)">16</div>
+      <div class="metric-bd"><span class="bd-item"><span class="bd-dot" style="background:#f0b429"></span>РП<b>6</b></span><span class="bd-item"><span class="bd-dot" style="background:#ff5b5b"></span>АН<b>4</b></span><span class="bd-item"><span class="bd-dot" style="background:#9aa3b2"></span>БП<b>4</b></span><span class="bd-item"><span class="bd-dot" style="background:#38bdf8"></span>КП<b>2</b></span></div>
+    </div>
+    <div class="metric " style="--mc:var(--green)">
+      <div class="metric-top"><div class="metric-label">Маржа</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14a8 8 0 1 1 16 0"></path><line x1="12" y1="14" x2="16" y2="9"></line></svg></span></div>
+      <div class="metric-value" style="color:var(--green)">66%</div>
+      
+    </div></div><div class="dash-col">
+    <div class="metric " style="--mc:#4a9eff">
+      <div class="metric-top"><div class="metric-label">Загальний дохід</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg></span></div>
+      <div class="metric-value" style="color:#4a9eff">3&nbsp;724&nbsp;014 ₴</div>
+      <div class="metric-bd"><span class="bd-item"><span class="bd-dot" style="background:#f0b429"></span>РП<b>1&nbsp;597&nbsp;038 ₴</b></span><span class="bd-item"><span class="bd-dot" style="background:#38bdf8"></span>КП<b>1&nbsp;444&nbsp;256 ₴</b></span><span class="bd-item"><span class="bd-dot" style="background:#ff5b5b"></span>АН<b>398&nbsp;720 ₴</b></span><span class="bd-item"><span class="bd-dot" style="background:#9aa3b2"></span>БП<b>284&nbsp;000 ₴</b></span></div>
+    </div>
+    <div class="metric " style="--mc:var(--amber)">
+      <div class="metric-top"><div class="metric-label">Податки ЄП</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"></line><circle cx="7.5" cy="7.5" r="2"></circle><circle cx="16.5" cy="16.5" r="2"></circle></svg></span></div>
+      <div class="metric-value" style="color:var(--amber)">180&nbsp;622 ₴</div>
+      
+    </div></div><div class="dash-col">
+    <div class="metric " style="--mc:var(--text2)">
+      <div class="metric-top"><div class="metric-label">Витрати (план)</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6v12a2 2 0 0 0 2 2h16V8H5a2 2 0 0 1-2-2z"></path><path d="M3 6a2 2 0 0 1 2-2h12v4"></path><circle cx="16.5" cy="14" r="1.4"></circle></svg></span></div>
+      <div class="metric-value">1&nbsp;101&nbsp;182 ₴</div>
+      
+    </div>
+    <div class="metric " style="--mc:var(--green)">
+      <div class="metric-top"><div class="metric-label">Прибуток</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v10M9.5 9.5h3.3a1.85 1.85 0 0 1 0 3.7H10"></path></svg></span></div>
+      <div class="metric-value" style="color:var(--green)">2&nbsp;442&nbsp;211 ₴</div>
+      
+    </div></div><div class="dash-col">
+    <div class="metric " style="--mc:var(--purple)">
+      <div class="metric-top"><div class="metric-label">Отримано від замовників</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 11 12 16 17 11"></polyline><line x1="12" y1="4" x2="12" y2="16"></line></svg></span></div>
+      <div class="metric-value" style="color:var(--purple)">197&nbsp;480 ₴</div>
+      
+    </div>
+    <div class="metric " style="--mc:#38bdf8">
+      <div class="metric-top"><div class="metric-label">Залишок від замовника</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path><circle cx="16.5" cy="15" r="1.4"></circle></svg></span></div>
+      <div class="metric-value" style="color:#38bdf8">3&nbsp;526&nbsp;534 ₴</div>
+      
+    </div></div><div class="dash-col">
+    <div class="metric " style="--mc:var(--red)">
+      <div class="metric-top"><div class="metric-label">Залишок виконавцям</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="13"></line><line x1="12" y1="16" x2="12" y2="16"></line></svg></span></div>
+      <div class="metric-value" style="color:var(--red)">886&nbsp;182 ₴</div>
+      
+    </div>
+    <div class="metric " style="--mc:var(--amber)">
+      <div class="metric-top"><div class="metric-label">Оплачено виконавцям</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M9 12l2 2 4-4"></path></svg></span></div>
+      <div class="metric-value" style="color:var(--amber)">215&nbsp;000 ₴</div>
+      
+    </div></div></div></div>
+  <div id="dash-extra"><div class="dash-cols"><div class="card dash-card">
+    <div class="card-head"><span class="card-title">Розбивка за типами</span></div>
+    <div class="card-body donut-wrap">
+      <div class="donut-block">
+        <div class="donut-ring"><svg viewBox="0 0 100 100" class="donut-svg"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--bg4)" stroke-width="15"></circle><circle cx="50" cy="50" r="42" fill="none" stroke="#f0b429" stroke-width="15" stroke-dasharray="113.17 150.72" stroke-dashoffset="0.00" transform="rotate(-90 50 50)" stroke-linecap="butt"></circle><circle cx="50" cy="50" r="42" fill="none" stroke="#38bdf8" stroke-width="15" stroke-dasharray="102.34 161.55" stroke-dashoffset="-113.17" transform="rotate(-90 50 50)" stroke-linecap="butt"></circle><circle cx="50" cy="50" r="42" fill="none" stroke="#ff5b5b" stroke-width="15" stroke-dasharray="28.25 235.64" stroke-dashoffset="-215.51" transform="rotate(-90 50 50)" stroke-linecap="butt"></circle><circle cx="50" cy="50" r="42" fill="none" stroke="#9aa3b2" stroke-width="15" stroke-dasharray="20.13 243.77" stroke-dashoffset="-243.77" transform="rotate(-90 50 50)" stroke-linecap="butt"></circle></svg><div class="donut-center"><span>Дохід</span><b style="color:#4a9eff">3,7М ₴</b></div></div>
+        <div class="donut-legend"><span class="bd-item"><span class="bd-dot" style="background:#f0b429"></span>РП<b style="color:var(--text)">1&nbsp;597&nbsp;038 ₴</b></span><span class="bd-item"><span class="bd-dot" style="background:#38bdf8"></span>КП<b style="color:var(--text)">1&nbsp;444&nbsp;256 ₴</b></span><span class="bd-item"><span class="bd-dot" style="background:#ff5b5b"></span>АН<b style="color:var(--text)">398&nbsp;720 ₴</b></span><span class="bd-item"><span class="bd-dot" style="background:#9aa3b2"></span>БП<b style="color:var(--text)">284&nbsp;000 ₴</b></span></div>
+      </div>
+      <div class="donut-block">
+        <div class="donut-ring"><svg viewBox="0 0 100 100" class="donut-svg"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--bg4)" stroke-width="15"></circle><circle cx="50" cy="50" r="42" fill="none" stroke="#38bdf8" stroke-width="15" stroke-dasharray="123.57 140.32" stroke-dashoffset="0.00" transform="rotate(-90 50 50)" stroke-linecap="butt"></circle><circle cx="50" cy="50" r="42" fill="none" stroke="#f0b429" stroke-width="15" stroke-dasharray="99.82 164.07" stroke-dashoffset="-123.57" transform="rotate(-90 50 50)" stroke-linecap="butt"></circle><circle cx="50" cy="50" r="42" fill="none" stroke="#ff5b5b" stroke-width="15" stroke-dasharray="40.50 223.40" stroke-dashoffset="-223.40" transform="rotate(-90 50 50)" stroke-linecap="butt"></circle></svg><div class="donut-center"><span>Прибуток</span><b style="color:var(--green)">2,4М ₴</b></div></div>
+        <div class="donut-legend"><span class="bd-item"><span class="bd-dot" style="background:#38bdf8"></span>КП<b style="color:var(--text)">1&nbsp;143&nbsp;601 ₴</b></span><span class="bd-item"><span class="bd-dot" style="background:#f0b429"></span>РП<b style="color:var(--text)">923&nbsp;814 ₴</b></span><span class="bd-item"><span class="bd-dot" style="background:#ff5b5b"></span>АН<b style="color:var(--text)">374&nbsp;797 ₴</b></span><span class="bd-item"><span class="bd-dot" style="background:#9aa3b2"></span>БП<b style="color:var(--text)">0 ₴</b></span></div>
+      </div>
+    </div>
+  </div><div class="card dash-card">
+    <div class="card-head"><span class="card-title">🏆 Топ виконавців</span><span style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">за участю в проектах</span></div>
+    <div class="card-body" style="padding:5px 9px">
+    <div class="top-ex" onclick="navigate(&#39;executor-detail&#39;,&#39;r1&#39;)">
+      <span class="top-rank">🥇</span>
+      <span class="top-avatar" style="background:#f0b42922;color:#f0b429">СШ</span>
+      <div class="top-body">
+        <div class="top-name">Світлана Шевчук</div>
+        <div class="bar-track sm"><div class="bar-fill" style="width:100%;background:#f0b429"></div></div>
+      </div>
+      <div class="top-meta"><div class="mono"><b>13</b> <span style="font-size:9px;color:var(--text3)">проєктів</span></div><div class="top-sub">13 розділів</div></div>
+    </div>
+    <div class="top-ex" onclick="navigate(&#39;executor-detail&#39;,&#39;r2&#39;)">
+      <span class="top-rank">🥈</span>
+      <span class="top-avatar" style="background:#f5921e22;color:#f5921e">ВС</span>
+      <div class="top-body">
+        <div class="top-name">Віктор Свобода</div>
+        <div class="bar-track sm"><div class="bar-fill" style="width:31%;background:#f5921e"></div></div>
+      </div>
+      <div class="top-meta"><div class="mono"><b>4</b> <span style="font-size:9px;color:var(--text3)">проєкти</span></div><div class="top-sub">4 розділів</div></div>
+    </div>
+    <div class="top-ex" onclick="navigate(&#39;executor-detail&#39;,&#39;r3&#39;)">
+      <span class="top-rank">🥉</span>
+      <span class="top-avatar" style="background:#f5921e22;color:#f5921e">ВБ</span>
+      <div class="top-body">
+        <div class="top-name">Володя Береза</div>
+        <div class="bar-track sm"><div class="bar-fill" style="width:31%;background:#f5921e"></div></div>
+      </div>
+      <div class="top-meta"><div class="mono"><b>4</b> <span style="font-size:9px;color:var(--text3)">проєкти</span></div><div class="top-sub">4 розділів</div></div>
+    </div>
+    <div class="top-ex" onclick="navigate(&#39;executor-detail&#39;,&#39;r5&#39;)">
+      <span class="top-rank">#4</span>
+      <span class="top-avatar" style="background:#4a9eff22;color:#4a9eff">Р(</span>
+      <div class="top-body">
+        <div class="top-name">РембудКонсалтинг (Інна)</div>
+        <div class="bar-track sm"><div class="bar-fill" style="width:31%;background:#4a9eff"></div></div>
+      </div>
+      <div class="top-meta"><div class="mono"><b>4</b> <span style="font-size:9px;color:var(--text3)">проєкти</span></div><div class="top-sub">4 розділів</div></div>
+    </div>
+    <div class="top-ex" onclick="navigate(&#39;executor-detail&#39;,&#39;r4&#39;)">
+      <span class="top-rank">#5</span>
+      <span class="top-avatar" style="background:#ff8c5a22;color:#ff8c5a">ЛГ</span>
+      <div class="top-body">
+        <div class="top-name">Ларіса Гурінчук</div>
+        <div class="bar-track sm"><div class="bar-fill" style="width:23%;background:#ff8c5a"></div></div>
+      </div>
+      <div class="top-meta"><div class="mono"><b>3</b> <span style="font-size:9px;color:var(--text3)">проєкти</span></div><div class="top-sub">3 розділів</div></div>
+    </div></div>
+  </div></div></div>
   <div id="dash-attention"></div>
 </div>
 
@@ -468,6 +587,7 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
       <option value="ЕП">ЕП</option>
       <option value="БП">БП</option>
     </select>
+    <select class="dash-select" id="proj-client-filter" onchange="renderProjects()"><option value="">Всі замовники</option></select>
     <button class="filter-btn active" data-status="all" onclick="setFilter(&#39;all&#39;)">Всі</button>
     <button class="filter-btn" data-status="active" onclick="setFilter(&#39;active&#39;)">В роботі</button>
     <button class="filter-btn" data-status="pause" onclick="setFilter(&#39;pause&#39;)">Пауза</button>
@@ -587,7 +707,7 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
     <div style="padding:11px 13px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
       <div style="flex:1;min-width:200px">
         <label class="form-label">Свій план / подія</label>
-        <input class="form-input" id="plan-text" placeholder="Напр. Дзвінок замовнику, виїзд на об’єкт..." onkeydown="if(event.key==='Enter')addPlanItem()">
+        <input class="form-input" id="plan-text" placeholder="Напр. Дзвінок замовнику, виїзд на об’єкт..." onkeydown="if(event.key===&#39;Enter&#39;)addPlanItem()">
       </div>
       <div style="width:140px">
         <label class="form-label">Дата</label>
@@ -1324,17 +1444,25 @@ function renderDashboard(){
       ${extra}
     </div>`;
 
+  const cVsogo=card('var(--accent)','Всього проектів',state.projects.length,ic.proj,bd(x=>x.count,x=>x.count),false,'var(--green)');
+  const cDohid=card('#4a9eff','Загальний дохід',fmt(tR),ic.rev,bd(x=>x.rev,x=>fmt(x.rev)),false,'#4a9eff');
+  const cVytraty=card('var(--text2)','Витрати (план)',fmt(tCosts),ic.cost);
+  const cOtrymano=card('var(--purple)','Отримано від замовників',fmt(tAdv),ic.inbox,'',false,'var(--purple)');
+  const cZalZam=card('#38bdf8','Залишок від замовника',fmt(tRemain),ic.wallet,'',false,'#38bdf8');
+  const cOplacheno=card('var(--amber)','Оплачено виконавцям',fmt(tPaid),ic.paid,'',false,'var(--amber)');
+  const cZalVyk=card(tToPay>0?'var(--red)':'var(--green)','Залишок виконавцям',fmt(tToPay),ic.owe,'',false,tToPay>0?'var(--red)':'var(--green)');
+  const cPodatky=card('var(--amber)','Податки ЄП',fmt(tTax),ic.tax,'',false,'var(--amber)');
+  const cPrybutok=card(tNet>=0?'var(--green)':'var(--red)','Прибуток',fmt(tNet),ic.profit,'',false,tNet>=0?'var(--green)':'var(--red)');
+  const cMarzha=card(tNet>=0?'var(--green)':'var(--red)','Маржа',margin+'%',ic.margin,'',false,tNet>=0?'var(--green)':'var(--red)');
+
   el.innerHTML=
-    card('var(--accent)','Всього проектів',state.projects.length,ic.proj,bd(x=>x.count,x=>x.count),true,'var(--green)')+
-    card('#4a9eff','Загальний дохід',fmt(tR),ic.rev,bd(x=>x.rev,x=>fmt(x.rev)),true,'#4a9eff')+
-    card('var(--text2)','Витрати (план)',fmt(tCosts),ic.cost)+
-    card('var(--purple)','Отримано від замовників',fmt(tAdv),ic.inbox,'',false,'var(--purple)')+
-    card('#38bdf8','Залишок від замовника',fmt(tRemain),ic.wallet,'',false,'#38bdf8')+
-    card('var(--amber)','Оплачено виконавцям',fmt(tPaid),ic.paid,'',false,'var(--amber)')+
-    card(tToPay>0?'var(--red)':'var(--green)','Залишок виконавцям',fmt(tToPay),ic.owe,'',false,tToPay>0?'var(--red)':'var(--green)')+
-    card('var(--amber)','Податки ЄП',fmt(tTax),ic.tax,'',false,'var(--amber)')+
-    card(tNet>=0?'var(--green)':'var(--red)','Прибуток',fmt(tNet),ic.profit,'',false,tNet>=0?'var(--green)':'var(--red)')+
-    card(tNet>=0?'var(--green)':'var(--red)','Маржа',margin+'%',ic.margin,'',false,tNet>=0?'var(--green)':'var(--red)');
+    '<div class="dash-grid">'+
+      '<div class="dash-col">'+cVsogo+cMarzha+'</div>'+
+      '<div class="dash-col">'+cDohid+cPodatky+'</div>'+
+      '<div class="dash-col">'+cVytraty+cPrybutok+'</div>'+
+      '<div class="dash-col">'+cOtrymano+cZalZam+'</div>'+
+      '<div class="dash-col">'+cZalVyk+cOplacheno+'</div>'+
+    '</div>';
 
   renderAttention();
   renderDashExtra();
@@ -1387,31 +1515,26 @@ function renderDashExtra(){
     </div>
   </div>`;
 
-  // 3. Топ виконавців — за кількістю задач та своєчасністю виконання
+  // 3. Топ виконавців — за кількістю участі в проектах
   const exStats=state.executors.map(e=>{
-    const ts=(state.tasks||[]).filter(t=>t.executorId===e.id);
-    const total=ts.length;
-    const done=ts.filter(t=>(t.status||'todo')==='done').length;
-    const overdue=ts.filter(t=>t.deadline&&isOverdue(t.deadline)&&(t.status||'todo')!=='done').length;
-    const onTime=total?Math.round((total-overdue)/total*100):0; // % задач без прострочення
-    const score=total+done-overdue*2; // багато задач + виконані, штраф за прострочені
-    return{e,total,done,overdue,onTime,score};
-  }).filter(x=>x.total>0).sort((a,b)=>(b.score-a.score)||(b.total-a.total)).slice(0,5);
+    const d=getExStats(e.id);
+    return{e,projects:d.projectCount,sections:d.sectionCount};
+  }).filter(x=>x.projects>0).sort((a,b)=>(b.projects-a.projects)||(b.sections-a.sections)).slice(0,5);
+  const maxP=Math.max(1,...exStats.map(x=>x.projects));
   const medals=['🥇','🥈','🥉'];
   const topRows=exStats.length?exStats.map((x,i)=>{
-    const barColor=x.overdue>0?'var(--amber)':'var(--green)';
     return`
     <div class="top-ex" onclick="navigate('executor-detail','${x.e.id}')">
       <span class="top-rank">${medals[i]||'#'+(i+1)}</span>
       <span class="top-avatar" style="background:${exColor(x.e.name)}22;color:${exColor(x.e.name)}">${ini(x.e.name)}</span>
       <div class="top-body">
         <div class="top-name">${x.e.name}</div>
-        <div class="bar-track sm" title="Вчасно: ${x.onTime}%"><div class="bar-fill" style="width:${x.onTime}%;background:${barColor}"></div></div>
+        <div class="bar-track sm"><div class="bar-fill" style="width:${Math.round(x.projects/maxP*100)}%;background:${exColor(x.e.name)}"></div></div>
       </div>
-      <div class="top-meta"><div class="mono"><b>${x.total}</b> <span style="font-size:9px;color:var(--text3)">задач</span></div><div class="top-sub">✓${x.done}${x.overdue>0?` · <span style="color:var(--red)">⚠${x.overdue}</span>`:` · ${x.onTime}% вчасно`}</div></div>
-    </div>`;}).join(''):'<div class="empty-sub">Немає виконавців із задачами</div>';
+      <div class="top-meta"><div class="mono"><b>${x.projects}</b> <span style="font-size:9px;color:var(--text3)">проєкт${x.projects===1?'':(x.projects<5?'и':'ів')}</span></div><div class="top-sub">${x.sections} розділів</div></div>
+    </div>`;}).join(''):'<div class="empty-sub">Немає виконавців у проектах</div>';
   const topCard=`<div class="card dash-card">
-    <div class="card-head"><span class="card-title">🏆 Топ виконавців</span><span style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">задачі · своєчасність</span></div>
+    <div class="card-head"><span class="card-title">🏆 Топ виконавців</span><span style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">за участю в проектах</span></div>
     <div class="card-body" style="padding:5px 9px">${topRows}</div>
   </div>`;
 
@@ -1420,9 +1543,20 @@ function renderDashExtra(){
 
 // ── PROJECTS LIST ──
 function renderProjects(){
+  // Заповнюємо випадайку замовників
+  const clientSel=document.getElementById('proj-client-filter');
+  if(clientSel){
+    const cur=clientSel.value;
+    const clients=[...new Set(state.projects.map(p=>p.client).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'uk'));
+    clientSel.innerHTML='<option value="">Всі замовники</option>'+clients.map(c=>`<option value="${c.replace(/"/g,'&quot;')}">${c}</option>`).join('');
+    if(clients.includes(cur))clientSel.value=cur;
+  }
+  const fClient=(document.getElementById('proj-client-filter')||{}).value||'';
+
   let ps=state.projects;
   if(activeFilter!=='all')ps=ps.filter(p=>(p.status||'active')===activeFilter);
   if(activeTypeFilter!=='all')ps=ps.filter(p=>(p.type||'')===activeTypeFilter);
+  if(fClient)ps=ps.filter(p=>(p.client||'')===fClient);
   const q=(document.getElementById('proj-search')||{}).value||'';
   if(q.trim())ps=ps.filter(p=>{
     const s=q.toLowerCase();
@@ -1434,7 +1568,7 @@ function renderProjects(){
   // індикатор активного фільтра
   const ind=document.getElementById('proj-filter-active');
   if(ind){
-    const on=!!q.trim()||activeFilter!=='all'||activeTypeFilter!=='all';
+    const on=!!q.trim()||activeFilter!=='all'||activeTypeFilter!=='all'||!!fClient;
     ind.innerHTML=on?`<span class="filter-active" onclick="resetProjFilters()" title="Скинути фільтри"><span class="dot"></span>Фільтр активний<span class="x">✕</span></span>`:'';
   }
 
@@ -1503,6 +1637,7 @@ function renderProjects(){
 function resetProjFilters(){
   const s=document.getElementById('proj-search');if(s)s.value='';
   const tf=document.getElementById('proj-type-filter');if(tf)tf.value='all';
+  const cf=document.getElementById('proj-client-filter');if(cf)cf.value='';
   activeTypeFilter='all';
   setFilter('all');
 }
