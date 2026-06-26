@@ -10,16 +10,20 @@ DZO / Prozorro Monitor — стартова версія під Prozorro API.
 Знайдене — короткий дайджест у Telegram + запис у стрічку для сайту.
 
 ────────────────────────────────────────────────────────────────────────
-⚠️  ЦЕ СТАРТОВА ВЕРСІЯ — ЇЇ ТРЕБА ВІДТЕСТУВАТИ НА ЖИВОМУ API В CLAUDE CODE.
-   Місця, які майже напевно треба підкрутити проти реальних відповідей,
-   позначені коментарем  # TODO[claude-code].
-   Зокрема:
-     1. Перевірити, що ендпоінт фіда віддає дані без авторизації.
-     2. Звірити назви полів (status / value / procuringEntity.address.region /
-        items[].classification.id) з реальним JSON одного тендера.
-     3. Розглянути перехід на пошуковий API Prozorro (серверна фільтрація) —
-        фід повертає ВСЮ країну, тож деталі доводиться тягнути по одному.
-        Для денного обсягу це багато запитів; пошуковий API ефективніший.
+Звірено з живим API (public-api.prozorro.gov.ua/api/2.5):
+  • Фід /tenders повертає без авторизації, але лише {id, dateModified}
+    + те, що явно попросити через opt_fields. Повноцінного пошукового
+    API з серверною фільтрацією за статусом/регіоном/CPV/сумою у
+    Prozorro немає — є лише opt_fields=status,procuringEntity (value,
+    items, tenderPeriod через opt_fields НЕ повертаються).
+  • Тож фід просять з opt_fields=status,procuringEntity — це дозволяє
+    відсіяти за статусом і регіоном ще на етапі списку, а повні деталі
+    (для перевірки CPV і суми) тягнути лише для тих, що пройшли
+    попередній фільтр. Це і є «серверна фільтрація» в межах того, що
+    реально підтримує API.
+  • Назви полів status / value.amount / value.currency /
+    procuringEntity.address.region / items[].classification.id —
+    підтверджені на реальних тендерах, без змін.
 ────────────────────────────────────────────────────────────────────────
 """
 
@@ -82,12 +86,24 @@ def save_state(state):
     STATE_PATH.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
 
 
-# ── Збір нових id з фіда ─────────────────────────────────────────────
-def fetch_new_tender_ids(offset):
-    """Гортає фід від збереженого offset; повертає (ids, new_offset)."""
+def _region_ok(pe):
+    region = ((pe.get("address") or {}).get("region") or "").strip().lower()
+    return region in TARGET_REGIONS
+
+
+# ── Збір id-кандидатів з фіда (попередній фільтр статус+регіон) ───────
+def fetch_candidate_ids(offset):
+    """Гортає фід від збереженого offset; повертає (ids, new_offset).
+
+    opt_fields=status,procuringEntity дозволяє відсіяти тендери за
+    статусом і регіоном замовника прямо тут, без запиту повних деталей
+    кожного тендера (value/items опт_fields не повертає — для CPV і
+    суми все одно треба буде fetch_tender нижче).
+    """
     ids, pages = [], 0
     url = PROZORRO_FEED
-    params = {"limit": 100, "descending": "0"}
+    base_params = {"limit": 100, "descending": "0", "opt_fields": "status,procuringEntity"}
+    params = dict(base_params)
     if offset:
         params["offset"] = offset
 
@@ -99,8 +115,14 @@ def fetch_new_tender_ids(offset):
         if not data:
             break
         for t in data:
-            if t.get("id"):
-                ids.append(t["id"])
+            tid = t.get("id")
+            if not tid:
+                continue
+            if t.get("status") not in TARGET_STATUSES:
+                continue
+            if not _region_ok(t.get("procuringEntity", {}) or {}):
+                continue
+            ids.append(tid)
         # наступна сторінка
         nxt = body.get("next_page", {})
         new_offset = nxt.get("offset")
@@ -108,7 +130,7 @@ def fetch_new_tender_ids(offset):
             offset = new_offset
             break
         offset = new_offset
-        params = {"limit": 100, "descending": "0", "offset": offset}
+        params = {**base_params, "offset": offset}
         pages += 1
 
     return ids, offset
@@ -238,8 +260,8 @@ def main():
     state = load_state()
     seen = load_seen()
 
-    ids, new_offset = fetch_new_tender_ids(state.get("offset"))
-    print(f"[info] зібрано id з фіда: {len(ids)}.")
+    ids, new_offset = fetch_candidate_ids(state.get("offset"))
+    print(f"[info] кандидатів з фіда (статус+регіон пройшли): {len(ids)}.")
 
     fresh_ids = [i for i in ids if i not in seen][:MAX_DETAIL_FETCH]
     print(f"[info] нових для перевірки: {len(fresh_ids)} (ліміт {MAX_DETAIL_FETCH}).")

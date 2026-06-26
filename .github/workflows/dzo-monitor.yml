@@ -6,7 +6,7 @@ on:
   workflow_dispatch:        # дозволяє запустити вручну з вкладки Actions
 
 permissions:
-  contents: write           # щоб коммітити оновлені seen.json / dzo_feed.json
+  contents: write           # щоб коммітити оновлені seen.json / dzo_feed.json / state.json
 
 jobs:
   monitor:
@@ -23,20 +23,20 @@ jobs:
       - name: Install deps
         run: pip install -r requirements.txt
 
-      - name: Run DZO monitor
+      - name: Run Prozorro monitor
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}  # необов'язково
-        run: python dzo_monitor.py
+        run: python dzo_monitor_prozorro.py
 
       - name: Commit updated data
         run: |
           git config user.name  "dzo-monitor-bot"
           git config user.email "bot@armabudproject.com"
-          git add data/seen.json data/dzo_feed.json
+          git add data/seen.json data/dzo_feed.json data/state.json
           if git diff --cached --quiet; then
             echo "Змін немає."
           else
-            git commit -m "DZO feed update ($(date -u +%Y-%m-%d))"
+            git commit -m "Prozorro feed update ($(date -u +%Y-%m-%d))"
             git push
           fi
