@@ -1,0 +1,44 @@
+
+on:
+  schedule:
+    # 06:00 UTC = 09:00 за київським часом (літо). Узимку зсунеться на 08:00.
+    - cron: "0 6 * * *"
+  workflow_dispatch:        # дозволяє запустити вручну з вкладки Actions
+
+permissions:
+  contents: write           # щоб коммітити оновлені seen.json / dzo_feed.json
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run DZO monitor
+        env:
+          ANTHROPIC_API_KEY:  ${{ secrets.ANTHROPIC_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
+          TAVILY_API_KEY:     ${{ secrets.TAVILY_API_KEY }}   # необов'язково
+        run: python dzo_monitor.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name  "dzo-monitor-bot"
+          git config user.email "bot@armabudproject.com"
+          git add data/seen.json data/dzo_feed.json
+          if git diff --cached --quiet; then
+            echo "Змін немає."
+          else
+            git commit -m "DZO feed update ($(date -u +%Y-%m-%d))"
+            git push
+          fi
