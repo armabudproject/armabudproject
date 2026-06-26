@@ -298,6 +298,13 @@ body.ro .modal,body.ro #overlay{display:none!important}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:9px;overflow:hidden;box-shadow:var(--sh)}
 .card-head{display:flex;align-items:center;justify-content:space-between;padding:8px 13px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:6px;background:var(--bg3);background:linear-gradient(180deg,var(--bg3),color-mix(in srgb,var(--bg3) 70%,transparent))}
 .card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.dzo-updated{font-size:11px;color:var(--text2);margin-bottom:10px}
+.dzo-card{border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;background:var(--bg3)}
+.dzo-title{display:block;font-size:13px;font-weight:700;color:var(--text);text-decoration:none;margin-bottom:4px}
+.dzo-title:hover{color:var(--accent)}
+.dzo-summary{font-size:12px;color:var(--text2);margin:0 0 6px}
+.dzo-deadline{font-size:11px;color:var(--amber);margin-right:10px}
+.dzo-added{font-size:11px;color:var(--text2)}
 .tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th{text-align:left;padding:7px 11px;background:var(--bg3);color:var(--text2);font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border);white-space:nowrap}
@@ -2654,6 +2661,11 @@ function renderProcurement(){
     </div>
   </div>`;
 
+  const autoFeed=`<div class="card" style="margin-bottom:14px">
+    <div class="card-head"><span class="card-title">🤖 Автоматична стрічка Prozorro</span></div>
+    <div class="card-body"><div id="dzo-feed">Завантаження…</div></div>
+  </div>`;
+
   const editing=editingTenderId?(state.tenders||[]).find(t=>t.id===editingTenderId):null;
   const ed=editing||{};
   const esc=v=>String(v==null?'':v).replace(/"/g,'&quot;');
@@ -2711,7 +2723,8 @@ function renderProcurement(){
     </table></div>`;
   }
 
-  el.innerHTML=quick+form+`<div class="card"><div class="card-head"><span class="card-title">📋 Воронка тендерів</span></div><div class="card-body" style="padding-top:10px">${chips}</div>${body}</div>`;
+  el.innerHTML=quick+autoFeed+form+`<div class="card"><div class="card-head"><span class="card-title">📋 Воронка тендерів</span></div><div class="card-body" style="padding-top:10px">${chips}</div>${body}</div>`;
+  if(typeof renderDzoFeed==='function')renderDzoFeed('dzo-feed');
 }
 
 function renderWorkload(){
@@ -4320,4 +4333,5 @@ function exportMeetingProtocolPdf(){
   openPrint('АрмаБуд — Протокол наради',inner);
 }
 </script>
+<script src="site-integration.js"></script>
 </body></html>
