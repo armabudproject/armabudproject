@@ -1,0 +1,274 @@
+#!/usr/bin/env python3
+"""
+DZO / Prozorro Monitor — стартова версія під Prozorro API.
+
+Мета: щодня ловити НОВІ закупівлі на ПРОЕКТНІ РОБОТИ, що:
+  • мають статус «період уточнень» (active.enquiries)
+    або «подання пропозицій» (active.tendering);
+  • на суму від 300 000 грн (UAH);
+  • у регіонах: м. Київ, Київська область, Житомирська область.
+Знайдене — короткий дайджест у Telegram + запис у стрічку для сайту.
+
+────────────────────────────────────────────────────────────────────────
+⚠️  ЦЕ СТАРТОВА ВЕРСІЯ — ЇЇ ТРЕБА ВІДТЕСТУВАТИ НА ЖИВОМУ API В CLAUDE CODE.
+   Місця, які майже напевно треба підкрутити проти реальних відповідей,
+   позначені коментарем  # TODO[claude-code].
+   Зокрема:
+     1. Перевірити, що ендпоінт фіда віддає дані без авторизації.
+     2. Звірити назви полів (status / value / procuringEntity.address.region /
+        items[].classification.id) з реальним JSON одного тендера.
+     3. Розглянути перехід на пошуковий API Prozorro (серверна фільтрація) —
+        фід повертає ВСЮ країну, тож деталі доводиться тягнути по одному.
+        Для денного обсягу це багато запитів; пошуковий API ефективніший.
+────────────────────────────────────────────────────────────────────────
+"""
+
+import os
+import json
+import html
+import time
+import datetime as dt
+from pathlib import Path
+
+import requests
+
+# ── Конфіг (env / GitHub Secrets) ────────────────────────────────────
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID   = os.environ.get("TELEGRAM_CHAT_ID", "")
+ANTHROPIC_API_KEY  = os.environ.get("ANTHROPIC_API_KEY", "")  # необов'язково
+
+# Офіційний відкритий фід Prozorro (читання без токена).
+# TODO[claude-code]: перевірити доступність саме цього хоста; за потреби
+# замінити на пошуковий API чи інший дзеркальний ендпоінт.
+PROZORRO_FEED = os.environ.get(
+    "PROZORRO_FEED", "https://public-api.prozorro.gov.ua/api/2.5/tenders"
+)
+
+# ── Критерії відбору ─────────────────────────────────────────────────
+TARGET_STATUSES = {"active.enquiries", "active.tendering"}
+CPV_PREFIXES    = ("71",)        # проектні / архітектурно-інженерні (ДК021)
+MIN_AMOUNT      = 300_000.0      # грн
+# Регіони пишемо у кількох варіантах написання — Prozorro не завжди однаковий
+TARGET_REGIONS  = {
+    "м. київ", "місто київ", "м.київ", "київ",
+    "київська область", "київська обл", "київська обл.",
+    "житомирська область", "житомирська обл", "житомирська обл.",
+}
+
+# Запобіжники, щоб денний прогін не перетворився на тисячі запитів
+MAX_PAGES         = int(os.environ.get("MAX_PAGES", "60"))      # сторінок фіда за прогін
+MAX_DETAIL_FETCH  = int(os.environ.get("MAX_DETAIL_FETCH", "1500"))
+REQUEST_PAUSE     = 0.15         # пауза між запитами деталей, сек
+
+DATA_DIR   = Path(__file__).parent / "data"
+SEEN_PATH  = DATA_DIR / "seen.json"
+FEED_PATH  = DATA_DIR / "dzo_feed.json"
+STATE_PATH = DATA_DIR / "state.json"   # зберігаємо offset фіда між прогонами
+FEED_LIMIT = 50
+
+SESSION = requests.Session()
+SESSION.headers.update({"User-Agent": "ArmabudProzorroBot/1.0"})
+
+
+# ── Стан фіда (offset) ───────────────────────────────────────────────
+def load_state():
+    if STATE_PATH.exists():
+        return json.loads(STATE_PATH.read_text(encoding="utf-8"))
+    return {"offset": None}
+
+
+def save_state(state):
+    DATA_DIR.mkdir(exist_ok=True)
+    STATE_PATH.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
+
+
+# ── Збір нових id з фіда ─────────────────────────────────────────────
+def fetch_new_tender_ids(offset):
+    """Гортає фід від збереженого offset; повертає (ids, new_offset)."""
+    ids, pages = [], 0
+    url = PROZORRO_FEED
+    params = {"limit": 100, "descending": "0"}
+    if offset:
+        params["offset"] = offset
+
+    while pages < MAX_PAGES:
+        r = SESSION.get(url, params=params, timeout=40)
+        r.raise_for_status()
+        body = r.json()
+        data = body.get("data", [])
+        if not data:
+            break
+        for t in data:
+            if t.get("id"):
+                ids.append(t["id"])
+        # наступна сторінка
+        nxt = body.get("next_page", {})
+        new_offset = nxt.get("offset")
+        if not new_offset or new_offset == offset:
+            offset = new_offset
+            break
+        offset = new_offset
+        params = {"limit": 100, "descending": "0", "offset": offset}
+        pages += 1
+
+    return ids, offset
+
+
+# ── Деталі одного тендера ────────────────────────────────────────────
+def fetch_tender(tid):
+    r = SESSION.get(f"{PROZORRO_FEED}/{tid}", timeout=40)
+    r.raise_for_status()
+    return r.json().get("data", {})
+
+
+# ── Перевірка під критерії ───────────────────────────────────────────
+def matches(t):
+    # 1) статус
+    if t.get("status") not in TARGET_STATUSES:
+        return False
+
+    # 2) сума
+    val = t.get("value", {}) or {}
+    amount = float(val.get("amount") or 0)
+    currency = (val.get("currency") or "").upper()
+    if currency and currency != "UAH":
+        return False
+    if amount < MIN_AMOUNT:
+        return False
+
+    # 3) проектні роботи за CPV (ДК021) в items
+    cpv_ok = False
+    for it in t.get("items", []) or []:
+        cid = ((it.get("classification") or {}).get("id") or "")
+        if cid.startswith(CPV_PREFIXES):
+            cpv_ok = True
+            break
+    if not cpv_ok:
+        return False
+
+    # 4) регіон замовника (з кількома варіантами доставки/замовника)
+    region = ""
+    pe = t.get("procuringEntity", {}) or {}
+    region = ((pe.get("address") or {}).get("region") or "").strip().lower()
+    if region not in TARGET_REGIONS:
+        # запасний варіант — регіон доставки в items
+        for it in t.get("items", []) or []:
+            dr = ((it.get("deliveryAddress") or {}).get("region") or "").strip().lower()
+            if dr in TARGET_REGIONS:
+                region = dr
+                break
+    if region not in TARGET_REGIONS:
+        return False
+
+    return True
+
+
+def to_record(t):
+    val = t.get("value", {}) or {}
+    pe = t.get("procuringEntity", {}) or {}
+    tid = t.get("id", "")
+    status_ua = {"active.enquiries": "Період уточнень",
+                 "active.tendering": "Подання пропозицій"}.get(t.get("status"), t.get("status"))
+    end = ((t.get("tenderPeriod") or {}).get("endDate") or "")[:16].replace("T", " ")
+    return {
+        "title": t.get("title", "Без назви"),
+        "summary": f"{pe.get('name','')} · {status_ua}",
+        "amount": f"{float(val.get('amount') or 0):,.0f} грн".replace(",", " "),
+        "deadline": end,
+        "region": ((pe.get("address") or {}).get("region") or ""),
+        # посилання на картку в Prozorro (можна замінити на DZO-вьюер)
+        "url": f"https://prozorro.gov.ua/tender/{tid}",
+    }
+
+
+# ── Стан «вже бачили» ────────────────────────────────────────────────
+def load_seen():
+    if SEEN_PATH.exists():
+        return set(json.loads(SEEN_PATH.read_text(encoding="utf-8")))
+    return set()
+
+
+def save_seen(seen):
+    DATA_DIR.mkdir(exist_ok=True)
+    SEEN_PATH.write_text(json.dumps(sorted(seen)[-5000:], ensure_ascii=False),
+                         encoding="utf-8")
+
+
+# ── Telegram ─────────────────────────────────────────────────────────
+def send_telegram(records):
+    if not (TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID):
+        print("[warn] немає TELEGRAM_BOT_TOKEN/CHAT_ID — пропускаю надсилання.")
+        return
+    today = dt.date.today().strftime("%d.%m.%Y")
+    lines = [f"<b>🏗 Нові тендери (проектні роботи) — {today}</b>", ""]
+    for r in records:
+        title = html.escape(r["title"])
+        lines.append(
+            f"• <a href=\"{html.escape(r['url'])}\"><b>{title}</b></a>\n"
+            f"  {html.escape(r['summary'])}\n"
+            f"  💰 {html.escape(r['amount'])}   📍 {html.escape(r['region'])}\n"
+            f"  ⏳ до {html.escape(r['deadline'])}"
+        )
+    text = "\n\n".join(lines)[:4000]
+    SESSION.post(
+        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+        json={"chat_id": TELEGRAM_CHAT_ID, "text": text,
+              "parse_mode": "HTML", "disable_web_page_preview": True},
+        timeout=30,
+    ).raise_for_status()
+    print(f"[ok] надіслано в Telegram: {len(records)} тендер(ів).")
+
+
+# ── Стрічка для сайту ────────────────────────────────────────────────
+def update_feed(records):
+    DATA_DIR.mkdir(exist_ok=True)
+    old = []
+    if FEED_PATH.exists():
+        old = json.loads(FEED_PATH.read_text(encoding="utf-8")).get("items", [])
+    now = dt.datetime.now().isoformat(timespec="minutes")
+    items = ([{**r, "added": now} for r in records] + old)[:FEED_LIMIT]
+    FEED_PATH.write_text(
+        json.dumps({"updated": now, "items": items}, ensure_ascii=False, indent=2),
+        encoding="utf-8")
+    print(f"[ok] оновлено стрічку сайту: {FEED_PATH}")
+
+
+# ── Головний потік ───────────────────────────────────────────────────
+def main():
+    state = load_state()
+    seen = load_seen()
+
+    ids, new_offset = fetch_new_tender_ids(state.get("offset"))
+    print(f"[info] зібрано id з фіда: {len(ids)}.")
+
+    fresh_ids = [i for i in ids if i not in seen][:MAX_DETAIL_FETCH]
+    print(f"[info] нових для перевірки: {len(fresh_ids)} (ліміт {MAX_DETAIL_FETCH}).")
+
+    matched = []
+    for i, tid in enumerate(fresh_ids, 1):
+        try:
+            t = fetch_tender(tid)
+            if matches(t):
+                matched.append(to_record(t))
+        except Exception as e:
+            print(f"[warn] tender {tid}: {e}")
+        seen.add(tid)
+        if i % 200 == 0:
+            print(f"[info] оброблено {i}/{len(fresh_ids)}…")
+        time.sleep(REQUEST_PAUSE)
+
+    print(f"[info] під критерії підійшло: {len(matched)}.")
+
+    if matched:
+        send_telegram(matched)
+        update_feed(matched)
+
+    save_seen(seen)
+    if new_offset:
+        state["offset"] = new_offset
+        save_state(state)
+    print("[done]")
+
+
+if __name__ == "__main__":
+    main()
