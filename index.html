@@ -38,7 +38,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
 .app{display:flex;min-height:100vh;position:relative;z-index:1}
-.sidebar{width:210px;background:#080f1e;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:10}
+.sidebar{width:210px;background-color:#080f1e;background-image:linear-gradient(rgba(6,12,26,.62),rgba(6,12,26,.62)),url('armabud-banner.svg');background-size:cover,cover;background-position:right top,right top;background-repeat:no-repeat,no-repeat;background-attachment:local,local;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:10}
 .main{margin-left:210px;flex:1;padding:18px 22px;min-height:100vh}
 
 /* ── Анімований фон ── */
@@ -70,7 +70,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   .dash-grid .dash-col,#dash-extra .dash-card{animation:none}
   .donut-seg{transition:none}
 }
-.sidebar-logo{padding:16px 14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;min-height:140px;background-image:url('armabud-banner.svg');background-size:cover;background-position:right center;background-repeat:no-repeat}
+.sidebar-logo{padding:16px 14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;min-height:140px}
 .logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),#b8860b);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 12px rgba(240,180,41,0.4)}
 .logo-icon svg{width:23px;height:23px;display:block}
 .logo-name{font-size:12px;font-weight:700;letter-spacing:.06em;color:#fdf6e3;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.5)}
