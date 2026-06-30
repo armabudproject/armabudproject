@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 200" preserveAspectRatio="xMaxYMid slice">
+<defs>
+<radialGradient id="bg2" cx="70%" cy="40%" r="90%">
+<stop offset="0%" stop-color="#17264A"/>
+<stop offset="55%" stop-color="#0E1730"/>
+<stop offset="100%" stop-color="#080D1E"/>
+</radialGradient>
+<radialGradient id="glow2" cx="50%" cy="50%" r="50%">
+<stop offset="0%" stop-color="#3E6CC0" stop-opacity="0.13"/>
+<stop offset="100%" stop-color="#3E6CC0" stop-opacity="0"/>
+</radialGradient>
+</defs>
+
+<rect x="0" y="0" width="680" height="200" fill="url(#bg2)"/>
+<ellipse cx="600" cy="90" rx="190" ry="140" fill="url(#glow2)"/>
+
+<g fill="none" stroke="#7FA8E6">
+<polygon points="680,52 668,72.8 644,72.8 632,52 644,31.2 668,31.2" stroke-opacity="0.17"/>
+<polygon points="680,94 668,114.8 644,114.8 632,94 644,73.2 668,73.2" stroke-opacity="0.17"/>
+<polygon points="680,136 668,156.8 644,156.8 632,136 644,115.2 668,115.2" stroke-opacity="0.16"/>
+<polygon points="644,73 632,93.8 608,93.8 596,73 608,52.2 632,52.2" stroke-opacity="0.16"/>
+<polygon points="644,115 632,135.8 608,135.8 596,115 608,94.2 632,94.2" stroke-opacity="0.15" fill="#5A82D2" fill-opacity="0.04"/>
+<polygon points="644,157 632,177.8 608,177.8 596,157 608,136.2 632,136.2" stroke-opacity="0.14"/>
+<polygon points="608,52 596,72.8 572,72.8 560,52 572,31.2 596,31.2" stroke-opacity="0.15"/>
+<polygon points="608,94 596,114.8 572,114.8 560,94 572,73.2 596,73.2" stroke-opacity="0.15" fill="#5A82D2" fill-opacity="0.04"/>
+<polygon points="608,136 596,156.8 572,156.8 560,136 572,115.2 596,115.2" stroke-opacity="0.14"/>
+<polygon points="572,73 560,93.8 536,93.8 524,73 536,52.2 560,52.2" stroke-opacity="0.12"/>
+<polygon points="572,115 560,135.8 536,135.8 524,115 536,94.2 560,94.2" stroke-opacity="0.12"/>
+<polygon points="572,157 560,177.8 536,177.8 524,157 536,136.2 560,136.2" stroke-opacity="0.10"/>
+<polygon points="536,52 524,72.8 500,72.8 488,52 500,31.2 524,31.2" stroke-opacity="0.085"/>
+<polygon points="536,94 524,114.8 500,114.8 488,94 500,73.2 524,73.2" stroke-opacity="0.085"/>
+<polygon points="500,73 488,93.8 464,93.8 452,73 464,52.2 488,52.2" stroke-opacity="0.06"/>
+</g>
+
+<g stroke="#6E9AD8" stroke-opacity="0.3" fill="none">
+<polyline points="338,150 378,132 378,96 416,78"/>
+<line x1="378" y1="132" x2="416" y2="150"/>
+</g>
+<g fill="#8FC2F5">
+<circle cx="338" cy="150" r="2.2" fill-opacity="0.5"/>
+<circle cx="378" cy="132" r="2.5" fill-opacity="0.55"/>
+<circle cx="378" cy="96" r="2.2" fill-opacity="0.5"/>
+<circle cx="416" cy="78" r="2.1" fill-opacity="0.45"/>
+<circle cx="416" cy="150" r="2" fill-opacity="0.4"/>
+</g>
+
+<g fill="none" stroke="#C4D8F4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.85">
+<path d="M468,66 L468,44 L494,32"/>
+<circle cx="468" cy="66" r="4.5" fill="#0E1733"/>
+</g>
+<circle cx="494" cy="32" r="3.4" fill="#D8E6FB" fill-opacity="0.9"/>
+
+<g fill="#A8CBF5">
+<circle cx="320" cy="52" r="1.5" fill-opacity="0.32"/>
+<circle cx="356" cy="180" r="1.3" fill-opacity="0.26"/>
+<circle cx="446" cy="168" r="1.6" fill-opacity="0.35"/>
+<circle cx="520" cy="178" r="1.4" fill-opacity="0.3"/>
+<circle cx="624" cy="186" r="1.5" fill-opacity="0.32"/>
+<circle cx="648" cy="36" r="1.3" fill-opacity="0.28"/>
+<circle cx="572" cy="190" r="1.4" fill-opacity="0.26"/>
+<circle cx="492" cy="110" r="1.3" fill-opacity="0.32"/>
+<circle cx="540" cy="152" r="1.4" fill-opacity="0.28"/>
+</g>
+</svg>

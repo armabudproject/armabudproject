@@ -70,11 +70,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   .dash-grid .dash-col,#dash-extra .dash-card{animation:none}
   .donut-seg{transition:none}
 }
-.sidebar-logo{padding:16px 14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-logo{padding:16px 14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;min-height:140px;background-image:url('armabud-banner.svg');background-size:cover;background-position:right center;background-repeat:no-repeat}
 .logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),#b8860b);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 12px rgba(240,180,41,0.4)}
 .logo-icon svg{width:23px;height:23px;display:block}
-.logo-name{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--accent);text-transform:uppercase}
-.logo-sub{font-size:9px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-top:1px}
+.logo-name{font-size:12px;font-weight:700;letter-spacing:.06em;color:#fdf6e3;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.logo-sub{font-size:9px;color:#cdd6e8;letter-spacing:.08em;text-transform:uppercase;margin-top:1px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
 .sidebar-nav{padding:8px 6px;flex:1;overflow-y:auto}
 .nav-label{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:0 8px;margin-bottom:3px;margin-top:12px}
 .nav-label:first-child{margin-top:2px}
@@ -424,10 +424,14 @@ td:hover .edit-hint{opacity:1}
 @media(max-width:768px){
   .sidebar{width:100%;height:auto;position:relative}
   .main{margin-left:0;padding:10px}
+  .sidebar-logo{min-height:100px}
   .sidebar-nav{display:flex;flex-wrap:wrap;gap:3px;padding:6px}
   .nav-label{display:none}.sidebar-footer{display:none}
   .form-row2,.form-row3{grid-template-columns:1fr}
   .projects-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .sidebar-logo{min-height:80px;padding:12px}
 }
 
 /* ── СВІТЛА ТЕМА ── */
