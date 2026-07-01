@@ -1944,12 +1944,53 @@ function renderCashflowCharts(){
   const GRID='rgba(127,168,230,0.10)',TICK='#7a96b8';
   Chart.defaults.color=TICK;
 
+  // Custom plugin: draw gap amount labels below negative balance points
+  const gapLabelPlugin={
+    id:'gapLabels',
+    afterDatasetsDraw(chart){
+      const ds=chart.data.datasets;
+      const balIdx=ds.findIndex(d=>d.label==='Баланс');
+      if(balIdx<0)return;
+      const meta=chart.getDatasetMeta(balIdx);
+      const ctx=chart.ctx;
+      ds[balIdx].data.forEach((val,i)=>{
+        if(val>=0)return;
+        const pt=meta.data[i];
+        ctx.save();
+        ctx.font='bold 11px monospace';
+        ctx.fillStyle=CORAL;
+        ctx.textAlign='center';
+        ctx.fillText('−'+fmt(Math.abs(val)),pt.x,pt.y+18);
+        ctx.restore();
+      });
+    }
+  };
+
   // ── Panel 1: Forecast (grouped bars + balance line) ───────────────────────
   const fc1=document.getElementById('cf-forecast-chart');
   if(fc1){
     const fIncome=cf.forecast.map(r=>r['Прихід']);
     const fExp=cf.forecast.map(r=>r['Виплати']);
     const fBal=cf.forecast.map(r=>r['Баланс']);
+
+    // Gap summary below chart
+    const gaps=cf.forecast.filter(r=>r['Баланс']<0);
+    const gapEl=document.getElementById('cf-gap-summary');
+    if(gapEl){
+      if(gaps.length){
+        gapEl.innerHTML='<div style="margin-top:10px;padding:10px 14px;border-radius:6px;background:rgba(248,113,113,0.10);border:1px solid rgba(248,113,113,0.30)">'
+          +'<div style="color:'+CORAL+';font-weight:700;font-size:12px;margin-bottom:6px">⚠️ Касові розриви</div>'
+          +gaps.map(r=>`<div style="font-size:12px;color:var(--text);margin-bottom:3px">`
+            +`<span style="color:var(--text2);min-width:70px;display:inline-block">${r['Місяць']}</span>`
+            +`<span style="color:${CORAL};font-weight:700">розрив ${fmt(Math.abs(r['Баланс']))} грн</span>`
+            +`<span style="color:var(--text3);font-size:11px;margin-left:8px">(прихід ${fmt(r['Прихід'])} − виплати ${fmt(r['Виплати'])})</span>`
+            +'</div>').join('')
+          +'</div>';
+      } else {
+        gapEl.innerHTML='<div style="margin-top:8px;font-size:12px;color:var(--text3)">✅ Касових розривів не виявлено</div>';
+      }
+    }
+
     _cfCharts.forecast=new Chart(fc1,{
       data:{
         labels:cf.fwdKeys.map(monLabel),
@@ -1976,7 +2017,8 @@ function renderCashflowCharts(){
           x:{grid:{color:GRID},ticks:{color:TICK}},
           y:{grid:{color:GRID},ticks:{color:TICK,callback:v=>v===0?'0':fmt(v)},beginAtZero:true}
         }
-      }
+      },
+      plugins:[gapLabelPlugin]
     });
   }
 
@@ -2061,6 +2103,7 @@ function renderEconomics(){
       <div class="card-body" style="position:relative;height:260px;padding-top:8px">
         <canvas id="cf-forecast-chart"></canvas>
       </div>
+      <div id="cf-gap-summary" style="padding:0 14px 12px"></div>
     </div>
     <div class="card" style="margin-top:14px">
       <div class="card-head">
