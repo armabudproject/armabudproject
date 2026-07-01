@@ -1327,6 +1327,16 @@ async function load(){
   showSyncStatus('⚠ Офлайн режим','var(--amber)');
 }
 
+function saveAdminCost(key,val){
+  if(!state.adminCosts)state.adminCosts={};
+  const n=+val||0;
+  if(n>0)state.adminCosts[key]=n;
+  else delete state.adminCosts[key];
+  save();
+  // оновити тільки графіки, не перемальовувати всю сторінку
+  requestAnimationFrame(renderCashflowCharts);
+}
+
 function save(){
   if(READONLY)return; // режим перегляду — без запису
   // Зберігаємо локально одразу
@@ -1891,6 +1901,10 @@ function calcCashflow(){
     });
   });
 
+  // Add admin costs to each forecast month
+  const adminCosts=state.adminCosts||{};
+  fwdKeys.forEach(k=>{if(adminCosts[k])fwd[k].expenses+=adminCosts[k];});
+
   const forecast=fwdKeys.map(k=>({
     Місяць:k,'Прихід':fwd[k].income,'Виплати':fwd[k].expenses,'Баланс':fwd[k].income-fwd[k].expenses
   }));
@@ -2094,11 +2108,34 @@ function renderEconomics(){
   }else{
     panel='<div style="margin-top:16px;text-align:center;color:var(--text3);font-size:13px;padding:8px">Натисніть на будь-який показник, щоб побачити розшифровку по проектах</div>';
   }
+  const year=new Date().getFullYear();
+  const MON_SHORT=['Січ','Лют','Бер','Кві','Тра','Чер','Лип','Сер','Вер','Жов','Лис','Гру'];
+  const adminInputs=MON_SHORT.map((mn,i)=>{
+    const key=year+'-'+String(i+1).padStart(2,'0');
+    const val=(state.adminCosts&&state.adminCosts[key])||'';
+    return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+      <span style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em">${mn}</span>
+      <input type="number" min="0" step="1000"
+        style="width:74px;padding:4px 6px;border-radius:5px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:12px;text-align:right"
+        value="${val}" placeholder="0"
+        oninput="saveAdminCost('${key}',this.value)">
+    </div>`;
+  }).join('');
+
   const chartPanels=`
     <div class="card" style="margin-top:14px">
       <div class="card-head">
+        <span class="card-title">💼 Адмінвитрати</span>
+        <span style="font-size:11px;color:var(--text3)">${year} · фіксовані витрати по місяцях, грн</span>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;flex-wrap:wrap;gap:8px 10px">${adminInputs}</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-head">
         <span class="card-title">📈 Прогноз касового потоку</span>
-        <span style="font-size:11px;color:var(--text3)">6 місяців уперед · прихід vs виплати</span>
+        <span style="font-size:11px;color:var(--text3)">прихід vs виплати + адмін</span>
       </div>
       <div class="card-body" style="position:relative;height:260px;padding-top:8px">
         <canvas id="cf-forecast-chart"></canvas>
