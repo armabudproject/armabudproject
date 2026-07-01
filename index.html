@@ -1819,8 +1819,201 @@ function renderRadar(){
 
 let econActiveMetric=null;
 function econSelect(k){econActiveMetric=(econActiveMetric===k?null:k);renderEconomics();}
+// ── Cashflow helpers ─────────────────────────────────────────────────────────
+// Returns "YYYY-MM" for a date string "YYYY-MM-DD"
+function monthKey(dateStr){return dateStr?dateStr.slice(0,7):null;}
+
+// Computes 6-month forward cashflow forecast + 6-month backward cash movement.
+// Logs both tables to console; returns {forecast, history} for chart use.
+function calcCashflow(){
+  const now=new Date();
+  const thisYear=now.getFullYear();
+  const thisMon=now.getMonth(); // 0-based
+
+  // Build array of next 6 months as "YYYY-MM" keys
+  const fwdKeys=[];
+  for(let i=0;i<6;i++){
+    const d=new Date(thisYear,thisMon+i,1);
+    fwdKeys.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
+  }
+  // Build array of last 6 months (including current) as "YYYY-MM" keys
+  const bwdKeys=[];
+  for(let i=5;i>=0;i--){
+    const d=new Date(thisYear,thisMon-i,1);
+    bwdKeys.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
+  }
+
+  // ── FORECAST (6 months forward) ──────────────────────────────────────────
+  const fwd={};
+  fwdKeys.forEach(k=>{fwd[k]={income:0,expenses:0,incomeProjects:[],expenseSections:[]};});
+
+  (state.projects||[]).forEach(p=>{
+    const pl=calcPnl(p);
+    // Expected payment from client (remaining balance) on expectedPaymentDate
+    const epKey=monthKey(p.expectedPaymentDate);
+    if(epKey&&fwd[epKey]!==undefined){
+      const remaining=pl.remaining; // revenue − received advances
+      if(remaining>0){
+        fwd[epKey].income+=remaining;
+        fwd[epKey].incomeProjects.push({name:p.name,amount:remaining});
+      }
+    }
+    // Planned subcontractor payouts on plannedPayDate per section
+    (p.sections||[]).forEach(s=>{
+      const ppKey=monthKey(s.plannedPayDate);
+      if(ppKey&&fwd[ppKey]!==undefined){
+        const toPaySec=(+(s.cost)||0)-(+(s.paid)||0);
+        if(toPaySec>0){
+          fwd[ppKey].expenses+=toPaySec;
+          fwd[ppKey].expenseSections.push({project:p.name,section:s.name,amount:toPaySec});
+        }
+      }
+      // Also count quickPay payments that fall in forecast window
+      (s.payments||[]).forEach(pay=>{
+        const payKey=monthKey(pay.date);
+        if(payKey&&fwd[payKey]!==undefined){
+          fwd[payKey].expenses+=+(pay.amount)||0;
+        }
+      });
+    });
+  });
+
+  const forecast=fwdKeys.map(k=>{
+    const r=fwd[k];
+    const label=k.slice(0,7);
+    return{Місяць:label,'Прихід':r.income,'Виплати':r.expenses,'Баланс':r.income-r.expenses};
+  });
+
+  // ── HISTORY (6 months backward, real cash movement) ──────────────────────
+  const bwd={};
+  bwdKeys.forEach(k=>{bwd[k]={income:0,expenses:0};});
+
+  (state.projects||[]).forEach(p=>{
+    // Real advances received (with dates)
+    (p.advances||[]).forEach(a=>{
+      const ak=monthKey(a.date);
+      if(ak&&bwd[ak]!==undefined) bwd[ak].income+=+(a.amount)||0;
+    });
+    // Real quickPay subcontractor payments (with dates)
+    (p.sections||[]).forEach(s=>{
+      (s.payments||[]).forEach(pay=>{
+        const pk=monthKey(pay.date);
+        if(pk&&bwd[pk]!==undefined) bwd[pk].expenses+=+(pay.amount)||0;
+      });
+    });
+  });
+
+  const history=bwdKeys.map(k=>({
+    Місяць:k,
+    'Надходження (аванси)':bwd[k].income,
+    'Виплати (quickPay)':bwd[k].expenses,
+    'Баланс':bwd[k].income-bwd[k].expenses
+  }));
+
+  console.group('%c💰 ArmabudPM — Касовий потік','color:#EAB94C;font-weight:bold;font-size:14px');
+  console.log('%c📈 ПРОГНОЗ на 6 місяців уперед','color:#4ade80;font-weight:bold');
+  console.log('  Прихід = revenue − отримані аванси (по expectedPaymentDate)');
+  console.log('  Виплати = cost − paid по секціях (по plannedPayDate) + quickPay цього місяця');
+  console.table(forecast);
+  console.log('%c📊 РУХ КОШТІВ за 6 місяців назад','color:#38bdf8;font-weight:bold');
+  console.log('  ⚠️  Тільки реальні дати: аванси (advances[].date) + виплати (payments[].date)');
+  console.log('  Повний дохід/прибуток по місяцях неможливий — revenue не має помісячної деталізації');
+  console.table(history);
+  console.groupEnd();
+
+  return{forecast,history,fwdKeys,bwdKeys};
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+let _cfCharts={};
+
+function renderCashflowCharts(){
+  if(typeof Chart==='undefined')return;
+  const cf=calcCashflow();
+  // Destroy old instances before re-creating (economics re-renders on metric click)
+  ['forecast','history'].forEach(k=>{if(_cfCharts[k]){_cfCharts[k].destroy();delete _cfCharts[k];}});
+
+  const MON=['Січ','Лют','Бер','Кві','Тра','Чер','Лип','Сер','Вер','Жов','Лис','Гру'];
+  const monLabel=k=>{const[y,m]=k.split('-');return MON[+m-1]+' '+y.slice(2);};
+  const GREEN='#4ade80',CORAL='#f87171',GOLD='#EAB94C',SKY='#38bdf8';
+  const GRID='rgba(127,168,230,0.10)',TICK='#7a96b8';
+  Chart.defaults.color=TICK;
+
+  // ── Panel 1: Forecast (grouped bars + balance line) ───────────────────────
+  const fc1=document.getElementById('cf-forecast-chart');
+  if(fc1){
+    const fIncome=cf.forecast.map(r=>r['Прихід']);
+    const fExp=cf.forecast.map(r=>r['Виплати']);
+    const fBal=cf.forecast.map(r=>r['Баланс']);
+    _cfCharts.forecast=new Chart(fc1,{
+      data:{
+        labels:cf.fwdKeys.map(monLabel),
+        datasets:[
+          {type:'bar',label:'Прихід від замовника',data:fIncome,
+           backgroundColor:'rgba(74,222,128,0.55)',borderColor:GREEN,borderWidth:1,borderRadius:4,order:2},
+          {type:'bar',label:'Виплати субпідрядникам',data:fExp,
+           backgroundColor:'rgba(248,113,113,0.55)',borderColor:CORAL,borderWidth:1,borderRadius:4,order:2},
+          {type:'line',label:'Баланс',data:fBal,
+           borderColor:GOLD,backgroundColor:'transparent',borderWidth:2.5,
+           pointBackgroundColor:fBal.map(v=>v<0?CORAL:GOLD),
+           pointBorderColor:fBal.map(v=>v<0?CORAL:GOLD),
+           pointRadius:6,pointHoverRadius:8,tension:0.3,order:1,yAxisID:'y'},
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{labels:{color:TICK,boxWidth:12,padding:16,font:{size:12}}},
+          tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.parsed.y)+' грн'}}
+        },
+        scales:{
+          x:{grid:{color:GRID},ticks:{color:TICK}},
+          y:{grid:{color:GRID},ticks:{color:TICK,callback:v=>v===0?'0':fmt(v)},beginAtZero:true}
+        }
+      }
+    });
+  }
+
+  // ── Panel 2: History (two filled lines) ───────────────────────────────────
+  const fc2=document.getElementById('cf-history-chart');
+  if(fc2){
+    const hIncome=cf.history.map(r=>r['Надходження (аванси)']);
+    const hExp=cf.history.map(r=>r['Виплати (quickPay)']);
+    _cfCharts.history=new Chart(fc2,{
+      type:'line',
+      data:{
+        labels:cf.bwdKeys.map(monLabel),
+        datasets:[
+          {label:'Надходження (аванси)',data:hIncome,
+           borderColor:SKY,backgroundColor:'rgba(56,189,248,0.10)',
+           borderWidth:2.5,pointBackgroundColor:SKY,pointRadius:5,pointHoverRadius:7,
+           tension:0.3,fill:true},
+          {label:'Виплати (quickPay)',data:hExp,
+           borderColor:CORAL,backgroundColor:'rgba(248,113,113,0.10)',
+           borderWidth:2.5,pointBackgroundColor:CORAL,pointRadius:5,pointHoverRadius:7,
+           tension:0.3,fill:true}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{labels:{color:TICK,boxWidth:12,padding:16,font:{size:12}}},
+          tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.parsed.y)+' грн'}}
+        },
+        scales:{
+          x:{grid:{color:GRID},ticks:{color:TICK}},
+          y:{grid:{color:GRID},ticks:{color:TICK,callback:v=>v===0?'0':fmt(v)},beginAtZero:true}
+        }
+      }
+    });
+  }
+}
+
 function renderEconomics(){
   const el=document.getElementById('economics-content');if(!el)return;
+  calcCashflow(); // виводить таблиці в консоль браузера (Cmd+Option+J)
   const metrics=[
     {k:'rev',label:'Загальний дохід',color:'#4a9eff',fn:pl=>pl.rev},
     {k:'tax',label:'Податки ЄП',color:'var(--amber)',fn:pl=>pl.tax},
@@ -1854,7 +2047,27 @@ function renderEconomics(){
   }else{
     panel='<div style="margin-top:16px;text-align:center;color:var(--text3);font-size:13px;padding:8px">Натисніть на будь-який показник, щоб побачити розшифровку по проектах</div>';
   }
-  el.innerHTML='<div class="metrics">'+cards+'</div>'+panel;
+  const chartPanels=`
+    <div class="card" style="margin-top:14px">
+      <div class="card-head">
+        <span class="card-title">📈 Прогноз касового потоку</span>
+        <span style="font-size:11px;color:var(--text3)">6 місяців уперед · прихід vs виплати</span>
+      </div>
+      <div class="card-body" style="position:relative;height:260px;padding-top:8px">
+        <canvas id="cf-forecast-chart"></canvas>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-head">
+        <span class="card-title">📊 Рух коштів по місяцях</span>
+        <span style="font-size:11px;color:var(--text3)">6 місяців назад · реальні надходження та виплати</span>
+      </div>
+      <div class="card-body" style="position:relative;height:260px;padding-top:8px">
+        <canvas id="cf-history-chart"></canvas>
+      </div>
+    </div>`;
+  el.innerHTML='<div class="metrics">'+cards+'</div>'+panel+chartPanels;
+  requestAnimationFrame(renderCashflowCharts);
 }
 
 function renderDashboard(){
@@ -4383,4 +4596,5 @@ function exportMeetingProtocolPdf(){
 }
 </script>
 <script src="site-integration.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 </body></html>
