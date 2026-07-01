@@ -1045,6 +1045,7 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
   <div class="form-row2">
     <div class="form-group"><label class="form-label">Дата договору</label><input class="form-input" type="date" id="p-date"></div>
     <div class="form-group"><label class="form-label">Дедлайн здачі проекту</label><input class="form-input" type="date" id="p-deadline"></div>
+    <div class="form-group"><label class="form-label">Очікувана дата доплати від замовника <span style="color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0">(залишок суми)</span></label><input class="form-input" type="date" id="p-expected-payment"></div>
   </div>
   <div class="form-row2">
     <div class="form-group"><label class="form-label">Вартість договору, грн *</label><input class="form-input" type="number" id="p-revenue" placeholder="0"></div>
@@ -1099,6 +1100,7 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
     <div class="form-group"><label class="form-label">Виплачено виконавцю, грн</label><input class="form-input" type="number" id="sec-paid" placeholder="0"></div>
   </div>
   <div class="form-group"><label class="form-label">Дедлайн розділу</label><input class="form-input" type="date" id="sec-deadline"></div>
+  <div class="form-group"><label class="form-label">Планова дата виплати виконавцю <span style="color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0">(залишок)</span></label><input class="form-input" type="date" id="sec-planned-pay"></div>
   <div class="form-group"><label class="form-label">Примітка</label><input class="form-input" id="sec-note" placeholder="Додаткова інформація"></div>
   <div class="modal-footer">
     <button class="btn" onclick="closeModal()">Скасувати</button>
@@ -3038,6 +3040,7 @@ function openModal(name){
     document.getElementById('p-type').value='';
     document.getElementById('p-status').value='active';
     document.getElementById('p-deadline').value='';
+    document.getElementById('p-expected-payment').value='';
     document.getElementById('p-drive').value='';
     document.getElementById('p-gchat').value='';
     document.getElementById('p-tg').value='';
@@ -3060,6 +3063,7 @@ function openModal(name){
     document.getElementById('sec-paid').value='';
     document.getElementById('sec-note').value='';
     document.getElementById('sec-deadline').value='';
+    document.getElementById('sec-planned-pay').value='';
     document.getElementById('sec-status').value='todo';
     fillExSelect('sec-executor','');
   }else if(name==='add-task'){
@@ -3109,6 +3113,7 @@ function saveProject(){
     status:document.getElementById('p-status').value||'active',
     date:document.getElementById('p-date').value,
     deadline:document.getElementById('p-deadline').value,
+    expectedPaymentDate:document.getElementById('p-expected-payment').value,
     address:document.getElementById('p-addr').value,
     drive:document.getElementById('p-drive').value,
     gchat:document.getElementById('p-gchat').value,
@@ -3133,6 +3138,7 @@ function editCurrentProject(){
   document.getElementById('p-status').value=p.status||'active';
   document.getElementById('p-date').value=p.date||'';
   document.getElementById('p-deadline').value=p.deadline||'';
+  document.getElementById('p-expected-payment').value=p.expectedPaymentDate||'';
   document.getElementById('p-addr').value=p.address||'';
   document.getElementById('p-drive').value=p.drive||'';
   document.getElementById('p-gchat').value=p.gchat||'';
@@ -3429,6 +3435,7 @@ function saveSection(){
     paid:+document.getElementById('sec-paid').value||0,
     status:document.getElementById('sec-status').value,
     deadline:document.getElementById('sec-deadline').value,
+    plannedPayDate:document.getElementById('sec-planned-pay').value,
     note:document.getElementById('sec-note').value};
   const idx=document.getElementById('edit-section-idx').value;
   if(idx!=='')p.sections[+idx]=data;else p.sections.push(data);
@@ -3445,6 +3452,7 @@ function editSection(i){
   document.getElementById('sec-paid').value=s.paid||'';
   document.getElementById('sec-note').value=s.note||'';
   document.getElementById('sec-deadline').value=s.deadline||'';
+  document.getElementById('sec-planned-pay').value=s.plannedPayDate||'';
   document.getElementById('sec-status').value=s.status||'todo';
   fillExSelect('sec-executor',s.executorId);
 }
