@@ -2208,34 +2208,51 @@ function renderDetail(){
     if(!projTasks.length){
       ptEl.innerHTML='<div style="padding:20px;text-align:center;color:rgba(255,149,0,0.5);font-size:12px;text-transform:uppercase;letter-spacing:.05em">Задач по цьому проекту ще немає</div>';
     } else {
+      const activeTasks=projTasks.filter(t=>(t.status||'todo')!=='done');
+      const doneTasks=projTasks.filter(t=>(t.status||'todo')==='done');
+      const mkRow=(t,dimmed)=>{
+        const globalIdx=(state.tasks||[]).indexOf(t);
+        const ex=state.executors.find(e=>e.id===t.executorId)||null;
+        const st=t.status||'todo';
+        const pr=t.priority||'normal';
+        const od=t.deadline&&isOverdue(t.deadline)&&st!=='done';
+        return`<tr style="background:${od?'rgba(255,68,68,0.06)':'rgba(255,149,0,0.03)'};border-left:2px solid ${od?'var(--red)':'rgba(255,149,0,0.35)'};${dimmed?'opacity:.45':''}">
+          <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);font-weight:600;color:var(--text);${st==='done'?'text-decoration:line-through;opacity:.7':''}">${t.name}${t.note?`<div style="font-size:10px;color:var(--text2);font-weight:400;margin-top:2px">${t.note}</div>`:''}</td>
+          <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);color:var(--text2)">${ex?ex.name:'—'}</td>
+          <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1)">${deadlineBadge(t.deadline,st)}</td>
+          <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);font-size:11px;color:${PR_COLOR[pr]}">${PR_LABEL[pr]}</td>
+          <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1)"><span class="badge ${ST_BADGE[st]}">${ST_LABEL[st]}</span></td>
+          <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);white-space:nowrap">
+            <button class="btn sm" onclick="editTaskGlobal(${globalIdx})" style="margin-right:4px">Ред.</button>
+            <button class="btn sm danger" onclick="delTaskFromPanel(${globalIdx})">✕</button>
+          </td>
+        </tr>`;
+      };
+      const doneBodyId=`pt-done-${p.id}`;
+      const doneArrowId=`pt-arrow-${p.id}`;
+      const doneSection=doneTasks.length?`
+        <tbody>
+          <tr onclick="(function(){var b=document.getElementById('${doneBodyId}');var a=document.getElementById('${doneArrowId}');if(!b)return;var open=b.style.display!=='none';b.style.display=open?'none':'';a.textContent=open?'▸':'▾';})()" style="cursor:pointer;user-select:none">
+            <td colspan="6" style="padding:8px 14px;color:var(--text2);font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-top:1px solid rgba(255,149,0,0.18)">
+              <span id="${doneArrowId}">▸</span> Виконані задачі (${doneTasks.length})
+            </td>
+          </tr>
+        </tbody>
+        <tbody id="${doneBodyId}" style="display:none">
+          ${doneTasks.map(t=>mkRow(t,true)).join('')}
+        </tbody>`:'';
+      const thStyle='text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)';
       ptEl.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:12px">
         <thead><tr>
-          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Задача</th>
-          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Виконавець</th>
-          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Строк</th>
-          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Пріоритет</th>
-          <th style="text-align:left;padding:9px 14px;background:rgba(255,149,0,0.1);color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,149,0,0.25)">Статус</th>
+          <th style="${thStyle}">Задача</th>
+          <th style="${thStyle}">Виконавець</th>
+          <th style="${thStyle}">Строк</th>
+          <th style="${thStyle}">Пріоритет</th>
+          <th style="${thStyle}">Статус</th>
           <th style="padding:9px 14px;background:rgba(255,149,0,0.1);border-bottom:1px solid rgba(255,149,0,0.25)"></th>
         </tr></thead>
-        <tbody>${projTasks.map(t=>{
-          const globalIdx=(state.tasks||[]).indexOf(t);
-          const ex=state.executors.find(e=>e.id===t.executorId)||null;
-          const st=t.status||'todo';
-          const pr=t.priority||'normal';
-          const od=t.deadline&&isOverdue(t.deadline)&&st!=='done';
-          return`<tr style="background:${od?'rgba(255,68,68,0.06)':'rgba(255,149,0,0.03)'};border-left:2px solid ${od?'var(--red)':'rgba(255,149,0,0.35)'}">
-            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);font-weight:600;color:var(--text);${st==='done'?'text-decoration:line-through;opacity:.5':''}">${t.name}${t.note?`<div style="font-size:10px;color:var(--text2);font-weight:400;margin-top:2px">${t.note}</div>`:''}</td>
-            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);color:var(--text2)">${ex?ex.name:'—'}</td>
-            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1)">${deadlineBadge(t.deadline,st)}</td>
-            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);font-size:11px;color:${PR_COLOR[pr]}">${PR_LABEL[pr]}</td>
-            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1)"><span class="badge ${ST_BADGE[st]}">${ST_LABEL[st]}</span></td>
-            <td style="padding:9px 14px;border-bottom:1px solid rgba(255,149,0,0.1);white-space:nowrap">
-              <button class="btn sm" onclick="editTaskGlobal(${globalIdx})" style="margin-right:4px">Ред.</button>
-              <button class="btn sm danger" onclick="delTaskFromPanel(${globalIdx})">✕</button>
-            </td>
-          </tr>`;
-        }).join('')}
-        </tbody>
+        <tbody>${activeTasks.length?activeTasks.map(t=>mkRow(t,false)).join(''):`<tr><td colspan="6" style="padding:14px;text-align:center;color:var(--text2);font-size:11px">Всі задачі виконано</td></tr>`}</tbody>
+        ${doneSection}
       </table>`;
     }
   }
