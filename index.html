@@ -1823,78 +1823,80 @@ function econSelect(k){econActiveMetric=(econActiveMetric===k?null:k);renderEcon
 // Returns "YYYY-MM" for a date string "YYYY-MM-DD"
 function monthKey(dateStr){return dateStr?dateStr.slice(0,7):null;}
 
-// Computes 6-month forward cashflow forecast + 6-month backward cash movement.
-// Logs both tables to console; returns {forecast, history} for chart use.
+// Build sorted array of "YYYY-MM" keys from startKey to endKey inclusive
+function monthRange(startKey,endKey){
+  const keys=[];
+  let[y,m]=[+startKey.slice(0,4),+startKey.slice(5,7)-1];
+  const[ey,em]=[+endKey.slice(0,4),+endKey.slice(5,7)-1];
+  while(y<ey||(y===ey&&m<=em)){
+    keys.push(y+'-'+String(m+1).padStart(2,'0'));
+    m++;if(m>11){m=0;y++;}
+  }
+  return keys;
+}
+
+// Forecast covers current month → latest expectedPaymentDate / plannedPayDate in data.
+// History covers earliest advance/payment date → current month.
 function calcCashflow(){
   const now=new Date();
-  const thisYear=now.getFullYear();
-  const thisMon=now.getMonth(); // 0-based
+  const curKey=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
 
-  // Build array of next 6 months as "YYYY-MM" keys
-  const fwdKeys=[];
-  for(let i=0;i<6;i++){
-    const d=new Date(thisYear,thisMon+i,1);
-    fwdKeys.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
-  }
-  // Build array of last 6 months (including current) as "YYYY-MM" keys
-  const bwdKeys=[];
-  for(let i=5;i>=0;i--){
-    const d=new Date(thisYear,thisMon-i,1);
-    bwdKeys.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
-  }
+  // ── Determine dynamic ranges ──────────────────────────────────────────────
+  let fwdEnd=curKey; // will extend to latest future date found
+  let bwdStart=curKey; // will extend to earliest past date found
 
-  // ── FORECAST (6 months forward) ──────────────────────────────────────────
+  (state.projects||[]).forEach(p=>{
+    if(p.expectedPaymentDate){const k=monthKey(p.expectedPaymentDate);if(k>fwdEnd)fwdEnd=k;}
+    (p.sections||[]).forEach(s=>{
+      if(s.plannedPayDate){const k=monthKey(s.plannedPayDate);if(k>fwdEnd)fwdEnd=k;}
+      (s.payments||[]).forEach(pay=>{
+        if(pay.date){const k=monthKey(pay.date);if(k<bwdStart)bwdStart=k;if(k>fwdEnd)fwdEnd=k;}
+      });
+    });
+    (p.advances||[]).forEach(a=>{
+      if(a.date){const k=monthKey(a.date);if(k<bwdStart)bwdStart=k;}
+    });
+  });
+
+  const fwdKeys=monthRange(curKey,fwdEnd);
+  const bwdKeys=monthRange(bwdStart,curKey);
+
+  // ── FORECAST (current → latest date in data) ──────────────────────────────
   const fwd={};
-  fwdKeys.forEach(k=>{fwd[k]={income:0,expenses:0,incomeProjects:[],expenseSections:[]};});
+  fwdKeys.forEach(k=>{fwd[k]={income:0,expenses:0};});
 
   (state.projects||[]).forEach(p=>{
     const pl=calcPnl(p);
-    // Expected payment from client (remaining balance) on expectedPaymentDate
     const epKey=monthKey(p.expectedPaymentDate);
-    if(epKey&&fwd[epKey]!==undefined){
-      const remaining=pl.remaining; // revenue − received advances
-      if(remaining>0){
-        fwd[epKey].income+=remaining;
-        fwd[epKey].incomeProjects.push({name:p.name,amount:remaining});
-      }
+    if(epKey&&fwd[epKey]!==undefined&&pl.remaining>0){
+      fwd[epKey].income+=pl.remaining;
     }
-    // Planned subcontractor payouts on plannedPayDate per section
     (p.sections||[]).forEach(s=>{
       const ppKey=monthKey(s.plannedPayDate);
       if(ppKey&&fwd[ppKey]!==undefined){
         const toPaySec=(+(s.cost)||0)-(+(s.paid)||0);
-        if(toPaySec>0){
-          fwd[ppKey].expenses+=toPaySec;
-          fwd[ppKey].expenseSections.push({project:p.name,section:s.name,amount:toPaySec});
-        }
+        if(toPaySec>0) fwd[ppKey].expenses+=toPaySec;
       }
-      // Also count quickPay payments that fall in forecast window
       (s.payments||[]).forEach(pay=>{
         const payKey=monthKey(pay.date);
-        if(payKey&&fwd[payKey]!==undefined){
-          fwd[payKey].expenses+=+(pay.amount)||0;
-        }
+        if(payKey&&fwd[payKey]!==undefined) fwd[payKey].expenses+=+(pay.amount)||0;
       });
     });
   });
 
-  const forecast=fwdKeys.map(k=>{
-    const r=fwd[k];
-    const label=k.slice(0,7);
-    return{Місяць:label,'Прихід':r.income,'Виплати':r.expenses,'Баланс':r.income-r.expenses};
-  });
+  const forecast=fwdKeys.map(k=>({
+    Місяць:k,'Прихід':fwd[k].income,'Виплати':fwd[k].expenses,'Баланс':fwd[k].income-fwd[k].expenses
+  }));
 
-  // ── HISTORY (6 months backward, real cash movement) ──────────────────────
+  // ── HISTORY (earliest date → current month) ───────────────────────────────
   const bwd={};
   bwdKeys.forEach(k=>{bwd[k]={income:0,expenses:0};});
 
   (state.projects||[]).forEach(p=>{
-    // Real advances received (with dates)
     (p.advances||[]).forEach(a=>{
       const ak=monthKey(a.date);
       if(ak&&bwd[ak]!==undefined) bwd[ak].income+=+(a.amount)||0;
     });
-    // Real quickPay subcontractor payments (with dates)
     (p.sections||[]).forEach(s=>{
       (s.payments||[]).forEach(pay=>{
         const pk=monthKey(pay.date);
@@ -1911,13 +1913,9 @@ function calcCashflow(){
   }));
 
   console.group('%c💰 ArmabudPM — Касовий потік','color:#EAB94C;font-weight:bold;font-size:14px');
-  console.log('%c📈 ПРОГНОЗ на 6 місяців уперед','color:#4ade80;font-weight:bold');
-  console.log('  Прихід = revenue − отримані аванси (по expectedPaymentDate)');
-  console.log('  Виплати = cost − paid по секціях (по plannedPayDate) + quickPay цього місяця');
+  console.log(`%c📈 ПРОГНОЗ ${curKey} → ${fwdEnd}`,'color:#4ade80;font-weight:bold');
   console.table(forecast);
-  console.log('%c📊 РУХ КОШТІВ за 6 місяців назад','color:#38bdf8;font-weight:bold');
-  console.log('  ⚠️  Тільки реальні дати: аванси (advances[].date) + виплати (payments[].date)');
-  console.log('  Повний дохід/прибуток по місяцях неможливий — revenue не має помісячної деталізації');
+  console.log(`%c📊 РУХ КОШТІВ ${bwdStart} → ${curKey}`,'color:#38bdf8;font-weight:bold');
   console.table(history);
   console.groupEnd();
 
