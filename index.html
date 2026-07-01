@@ -1858,6 +1858,14 @@ function calcCashflow(){
     });
   });
 
+  // Minimum 6 months in each direction regardless of data
+  const minFwd=new Date(now.getFullYear(),now.getMonth()+5,1);
+  const minFwdKey=minFwd.getFullYear()+'-'+String(minFwd.getMonth()+1).padStart(2,'0');
+  if(fwdEnd<minFwdKey)fwdEnd=minFwdKey;
+  const minBwd=new Date(now.getFullYear(),now.getMonth()-5,1);
+  const minBwdKey=minBwd.getFullYear()+'-'+String(minBwd.getMonth()+1).padStart(2,'0');
+  if(bwdStart>minBwdKey)bwdStart=minBwdKey;
+
   const fwdKeys=monthRange(curKey,fwdEnd);
   const bwdKeys=monthRange(bwdStart,curKey);
 
