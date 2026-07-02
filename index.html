@@ -2085,7 +2085,8 @@ function renderCashflowCharts(){
     const hInv=cf.history.map(r=>r['Інвестиції партнерів']);
     const hPlanned=cf.history.map(r=>r['Заплановані виплати']);
     const adm=state.adminCosts||{};
-    const hNetProfit=cf.bwdKeys.map((k,i)=>hIncome[i]-hExp[i]-(+(adm[k])||0));
+    let _cum=0;
+    const hNetProfit=cf.bwdKeys.map((k,i)=>{_cum+=hIncome[i]-hExp[i]-(+(adm[k])||0);return _cum;});
     _cfCharts.history=new Chart(fc2,{
       type:'line',
       data:{
@@ -2107,12 +2108,12 @@ function renderCashflowCharts(){
            borderColor:'#A974E6',backgroundColor:'rgba(169,116,230,0.08)',
            borderWidth:2,borderDash:[6,4],pointBackgroundColor:'#A974E6',
            pointRadius:4,pointHoverRadius:6,tension:0.3,fill:false},
-          {label:'Чистий прибуток',data:hNetProfit,
+          {label:'Чистий прибуток (накоп.)',data:hNetProfit,
            borderWidth:2.5,backgroundColor:'transparent',
-           segment:{borderColor:ctx=>{const a=ctx.p0.parsed.y,b=ctx.p1.parsed.y;return(a>=0&&b>=0)?GREEN:CORAL;}},
-           pointBackgroundColor:hNetProfit.map(v=>v>=0?GREEN:CORAL),
-           pointBorderColor:hNetProfit.map(v=>v>=0?GREEN:CORAL),
-           pointRadius:5,pointHoverRadius:7,tension:0.3,fill:false}
+           segment:{borderColor:ctx=>{const a=ctx.p0.parsed.y,b=ctx.p1.parsed.y;return(a>=0&&b>=0)?'#22d3ee':'#f97316';}},
+           pointBackgroundColor:hNetProfit.map(v=>v>=0?'#22d3ee':'#f97316'),
+           pointBorderColor:hNetProfit.map(v=>v>=0?'#22d3ee':'#f97316'),
+           pointRadius:5,pointHoverRadius:7,tension:0.3,fill:false,yAxisID:'y2'}
         ]
       },
       options:{
@@ -2124,7 +2125,8 @@ function renderCashflowCharts(){
         },
         scales:{
           x:{grid:{color:GRID},ticks:{color:TICK}},
-          y:{grid:{color:GRID},ticks:{color:TICK,callback:v=>v===0?'0':fmt(v)},beginAtZero:true}
+          y:{grid:{color:GRID},ticks:{color:TICK,callback:v=>v===0?'0':fmt(v)},beginAtZero:true},
+          y2:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#22d3ee',callback:v=>v===0?'0':fmt(v)}}
         }
       }
     });
