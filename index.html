@@ -1333,7 +1333,15 @@ function saveAdminCost(key,val){
   if(n>0)state.adminCosts[key]=n;
   else delete state.adminCosts[key];
   save();
-  // оновити тільки графіки, не перемальовувати всю сторінку
+  requestAnimationFrame(renderCashflowCharts);
+}
+
+function savePartnerInvestment(key,val){
+  if(!state.partnerInvestments)state.partnerInvestments={};
+  const n=+val||0;
+  if(n>0)state.partnerInvestments[key]=n;
+  else delete state.partnerInvestments[key];
+  save();
   requestAnimationFrame(renderCashflowCharts);
 }
 
@@ -1901,13 +1909,28 @@ function calcCashflow(){
     });
   });
 
-  // Add admin costs to each forecast month
+  // Add admin costs and partner investments to each forecast month
   const adminCosts=state.adminCosts||{};
-  fwdKeys.forEach(k=>{if(adminCosts[k])fwd[k].expenses+=adminCosts[k];});
+  const partnerInv=state.partnerInvestments||{};
+  fwdKeys.forEach(k=>{
+    if(adminCosts[k])fwd[k].expenses+=adminCosts[k];
+    fwd[k].investments=+(partnerInv[k])||0;
+  });
 
-  const forecast=fwdKeys.map(k=>({
-    Місяць:k,'Прихід':fwd[k].income,'Виплати':fwd[k].expenses,'Баланс':fwd[k].income-fwd[k].expenses
-  }));
+  // Cumulative balance (running total from first month)
+  let cumulative=0;
+  const forecast=fwdKeys.map(k=>{
+    const monthBalance=fwd[k].income+fwd[k].investments-fwd[k].expenses;
+    cumulative+=monthBalance;
+    return{
+      Місяць:k,
+      'Прихід':fwd[k].income,
+      'Інвестиції':fwd[k].investments,
+      'Виплати':fwd[k].expenses,
+      'Баланс місяця':monthBalance,
+      'Наростаючий баланс':cumulative
+    };
+  });
 
   // ── HISTORY (earliest date → current month) ───────────────────────────────
   const bwd={};
@@ -1992,11 +2015,13 @@ function renderCashflowCharts(){
   const fc1=document.getElementById('cf-forecast-chart');
   if(fc1){
     const fIncome=cf.forecast.map(r=>r['Прихід']);
+    const fInv=cf.forecast.map(r=>r['Інвестиції']);
     const fExp=cf.forecast.map(r=>r['Виплати']);
-    const fBal=cf.forecast.map(r=>r['Баланс']);
+    const fBal=cf.forecast.map(r=>r['Баланс місяця']);
+    const fCum=cf.forecast.map(r=>r['Наростаючий баланс']);
 
     // Gap summary below chart
-    const gaps=cf.forecast.filter(r=>r['Баланс']<0);
+    const gaps=cf.forecast.filter(r=>r['Баланс місяця']<0);
     const gapEl=document.getElementById('cf-gap-summary');
     if(gapEl){
       if(gaps.length){
@@ -2004,8 +2029,8 @@ function renderCashflowCharts(){
           +'<div style="color:'+CORAL+';font-weight:700;font-size:12px;margin-bottom:6px">⚠️ Касові розриви</div>'
           +gaps.map(r=>`<div style="font-size:12px;color:var(--text);margin-bottom:3px">`
             +`<span style="color:var(--text2);min-width:70px;display:inline-block">${r['Місяць']}</span>`
-            +`<span style="color:${CORAL};font-weight:700">розрив ${fmt(Math.abs(r['Баланс']))} грн</span>`
-            +`<span style="color:var(--text3);font-size:11px;margin-left:8px">(прихід ${fmt(r['Прихід'])} − виплати ${fmt(r['Виплати'])})</span>`
+            +`<span style="color:${CORAL};font-weight:700">розрив ${fmt(Math.abs(r['Баланс місяця']))} грн</span>`
+            +`<span style="color:var(--text3);font-size:11px;margin-left:8px">(прихід ${fmt(r['Прихід'])}+інв ${fmt(r['Інвестиції'])} − виплати ${fmt(r['Виплати'])})</span>`
             +'</div>').join('')
           +'</div>';
       } else {
@@ -2018,14 +2043,21 @@ function renderCashflowCharts(){
         labels:cf.fwdKeys.map(monLabel),
         datasets:[
           {type:'bar',label:'Прихід від замовника',data:fIncome,
-           backgroundColor:'rgba(74,222,128,0.55)',borderColor:GREEN,borderWidth:1,borderRadius:4,order:2},
-          {type:'bar',label:'Виплати субпідрядникам',data:fExp,
-           backgroundColor:'rgba(248,113,113,0.55)',borderColor:CORAL,borderWidth:1,borderRadius:4,order:2},
-          {type:'line',label:'Баланс',data:fBal,
-           borderColor:GOLD,backgroundColor:'transparent',borderWidth:2.5,
+           backgroundColor:'rgba(74,222,128,0.55)',borderColor:GREEN,borderWidth:1,borderRadius:4,order:3},
+          {type:'bar',label:'Інвестиції партнерів',data:fInv,
+           backgroundColor:'rgba(234,185,76,0.55)',borderColor:GOLD,borderWidth:1,borderRadius:4,order:3},
+          {type:'bar',label:'Виплати',data:fExp,
+           backgroundColor:'rgba(248,113,113,0.55)',borderColor:CORAL,borderWidth:1,borderRadius:4,order:3},
+          {type:'line',label:'Баланс місяця',data:fBal,
+           borderColor:GOLD,backgroundColor:'transparent',borderWidth:2,borderDash:[4,3],
            pointBackgroundColor:fBal.map(v=>v<0?CORAL:GOLD),
            pointBorderColor:fBal.map(v=>v<0?CORAL:GOLD),
-           pointRadius:6,pointHoverRadius:8,tension:0.3,order:1,yAxisID:'y'},
+           pointRadius:5,pointHoverRadius:7,tension:0.3,order:2,yAxisID:'y'},
+          {type:'line',label:'Наростаючий баланс',data:fCum,
+           borderColor:'#A974E6',backgroundColor:'transparent',borderWidth:2.5,
+           pointBackgroundColor:fCum.map(v=>v<0?CORAL:'#A974E6'),
+           pointBorderColor:fCum.map(v=>v<0?CORAL:'#A974E6'),
+           pointRadius:5,pointHoverRadius:7,tension:0.3,order:1,yAxisID:'y'},
         ]
       },
       options:{
@@ -2100,6 +2132,7 @@ function renderEconomics(){
   ];
   const pls=state.projects.map(p=>({p,pl:calcPnl(p)}));
   const totalAdmin=Object.values(state.adminCosts||{}).reduce((a,v)=>a+(+v||0),0);
+  const totalInv=Object.values(state.partnerInvestments||{}).reduce((a,v)=>a+(+v||0),0);
   let cards='';
   metrics.forEach(m=>{
     const total=pls.reduce((a,x)=>a+(m.fn(x.pl)||0),0);
@@ -2111,6 +2144,9 @@ function renderEconomics(){
   cards+=`<div class="metric" style="--mc:#A974E6">`
     +`<div class="metric-label">\u0410\u0434\u043C\u0456\u043D\u0432\u0438\u0442\u0440\u0430\u0442\u0438 ${new Date().getFullYear()}</div>`
     +`<div class="metric-value" style="color:#A974E6">${fmt(totalAdmin)}</div></div>`;
+  cards+=`<div class="metric" style="--mc:#EAB94C">`
+    +`<div class="metric-label">\u0406\u043D\u0432\u0435\u0441\u0442\u0438\u0446\u0456\u0457 \u043F\u0430\u0440\u0442\u043D\u0435\u0440\u0456\u0432 ${new Date().getFullYear()}</div>`
+    +`<div class="metric-value" style="color:#EAB94C">${fmt(totalInv)}</div></div>`;
   let panel='';
   if(econActiveMetric){
     const m=metrics.find(x=>x.k===econActiveMetric);
@@ -2139,6 +2175,18 @@ function renderEconomics(){
     </div>`;
   }).join('');
 
+  const invInputs=MON_SHORT.map((mn,i)=>{
+    const key=year+'-'+String(i+1).padStart(2,'0');
+    const val=(state.partnerInvestments&&state.partnerInvestments[key])||'';
+    return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+      <span style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em">${mn}</span>
+      <input type="number" min="0" step="1000"
+        style="width:74px;padding:4px 6px;border-radius:5px;border:1px solid rgba(234,185,76,0.4);background:var(--bg2);color:var(--text);font-size:12px;text-align:right"
+        value="${val}" placeholder="0"
+        oninput="savePartnerInvestment('${key}',this.value)">
+    </div>`;
+  }).join('');
+
   const chartPanels=`
     <div class="card" style="margin-top:14px">
       <div class="card-head">
@@ -2147,6 +2195,15 @@ function renderEconomics(){
       </div>
       <div class="card-body">
         <div style="display:flex;flex-wrap:wrap;gap:8px 10px">${adminInputs}</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-head">
+        <span class="card-title">💛 Інвестиції партнерів</span>
+        <span style="font-size:11px;color:var(--text3)">${year} · власні кошти на покриття витрат, грн</span>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;flex-wrap:wrap;gap:8px 10px">${invInputs}</div>
       </div>
     </div>
     <div class="card" style="margin-top:14px">
