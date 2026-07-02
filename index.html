@@ -1934,7 +1934,7 @@ function calcCashflow(){
 
   // ── HISTORY (earliest date → current month) ───────────────────────────────
   const bwd={};
-  bwdKeys.forEach(k=>{bwd[k]={income:0,expenses:0,planned:0};});
+  bwdKeys.forEach(k=>{bwd[k]={income:0,expenses:0,planned:0,investments:+(partnerInv[k])||0};});
 
   (state.projects||[]).forEach(p=>{
     (p.advances||[]).forEach(a=>{
@@ -1959,9 +1959,10 @@ function calcCashflow(){
   const history=bwdKeys.map(k=>({
     Місяць:k,
     'Надходження (аванси)':bwd[k].income,
+    'Інвестиції партнерів':bwd[k].investments,
     'Виплати (quickPay)':bwd[k].expenses,
     'Заплановані виплати':bwd[k].planned,
-    'Баланс':bwd[k].income-bwd[k].expenses
+    'Баланс':bwd[k].income+bwd[k].investments-bwd[k].expenses
   }));
 
   console.group('%c💰 ArmabudPM — Касовий потік','color:#EAB94C;font-weight:bold;font-size:14px');
@@ -2081,6 +2082,7 @@ function renderCashflowCharts(){
   if(fc2){
     const hIncome=cf.history.map(r=>r['Надходження (аванси)']);
     const hExp=cf.history.map(r=>r['Виплати (quickPay)']);
+    const hInv=cf.history.map(r=>r['Інвестиції партнерів']);
     const hPlanned=cf.history.map(r=>r['Заплановані виплати']);
     _cfCharts.history=new Chart(fc2,{
       type:'line',
@@ -2090,6 +2092,10 @@ function renderCashflowCharts(){
           {label:'Надходження (аванси)',data:hIncome,
            borderColor:SKY,backgroundColor:'rgba(56,189,248,0.10)',
            borderWidth:2.5,pointBackgroundColor:SKY,pointRadius:5,pointHoverRadius:7,
+           tension:0.3,fill:true},
+          {label:'Інвестиції партнерів',data:hInv,
+           borderColor:GOLD,backgroundColor:'rgba(234,185,76,0.10)',
+           borderWidth:2.5,pointBackgroundColor:GOLD,pointRadius:5,pointHoverRadius:7,
            tension:0.3,fill:true},
           {label:'Виплати (quickPay)',data:hExp,
            borderColor:CORAL,backgroundColor:'rgba(248,113,113,0.10)',
