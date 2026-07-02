@@ -2020,7 +2020,6 @@ function renderCashflowCharts(){
     const fExp=cf.forecast.map(r=>r['Виплати']);
     const fBal=cf.forecast.map(r=>r['Баланс місяця']);
     const fCum=cf.forecast.map(r=>r['Наростаючий баланс']);
-    const fNetProfit=cf.forecast.map(r=>r['Прихід']-r['Виплати']);
 
     // Gap summary below chart
     const gaps=cf.forecast.filter(r=>r['Баланс місяця']<0);
@@ -2060,12 +2059,6 @@ function renderCashflowCharts(){
            pointBackgroundColor:fCum.map(v=>v<0?CORAL:'#A974E6'),
            pointBorderColor:fCum.map(v=>v<0?CORAL:'#A974E6'),
            pointRadius:5,pointHoverRadius:7,tension:0.3,order:1,yAxisID:'y'},
-          {type:'line',label:'Чистий прибуток',data:fNetProfit,
-           borderWidth:2.5,backgroundColor:'transparent',
-           segment:{borderColor:ctx=>{const a=ctx.p0.parsed.y,b=ctx.p1.parsed.y;return(a>=0&&b>=0)?GREEN:CORAL;}},
-           pointBackgroundColor:fNetProfit.map(v=>v>=0?GREEN:CORAL),
-           pointBorderColor:fNetProfit.map(v=>v>=0?GREEN:CORAL),
-           pointRadius:5,pointHoverRadius:7,tension:0.3,order:0,yAxisID:'y'},
         ]
       },
       options:{
@@ -2091,6 +2084,8 @@ function renderCashflowCharts(){
     const hExp=cf.history.map(r=>r['Виплати (quickPay)']);
     const hInv=cf.history.map(r=>r['Інвестиції партнерів']);
     const hPlanned=cf.history.map(r=>r['Заплановані виплати']);
+    const adm=state.adminCosts||{};
+    const hNetProfit=cf.bwdKeys.map((k,i)=>hIncome[i]-hExp[i]-(+(adm[k])||0));
     _cfCharts.history=new Chart(fc2,{
       type:'line',
       data:{
@@ -2111,7 +2106,13 @@ function renderCashflowCharts(){
           {label:'Заплановані виплати (plannedPayDate)',data:hPlanned,
            borderColor:'#A974E6',backgroundColor:'rgba(169,116,230,0.08)',
            borderWidth:2,borderDash:[6,4],pointBackgroundColor:'#A974E6',
-           pointRadius:4,pointHoverRadius:6,tension:0.3,fill:false}
+           pointRadius:4,pointHoverRadius:6,tension:0.3,fill:false},
+          {label:'Чистий прибуток',data:hNetProfit,
+           borderWidth:2.5,backgroundColor:'transparent',
+           segment:{borderColor:ctx=>{const a=ctx.p0.parsed.y,b=ctx.p1.parsed.y;return(a>=0&&b>=0)?GREEN:CORAL;}},
+           pointBackgroundColor:hNetProfit.map(v=>v>=0?GREEN:CORAL),
+           pointBorderColor:hNetProfit.map(v=>v>=0?GREEN:CORAL),
+           pointRadius:5,pointHoverRadius:7,tension:0.3,fill:false}
         ]
       },
       options:{
