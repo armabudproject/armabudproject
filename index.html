@@ -1911,7 +1911,7 @@ function calcCashflow(){
 
   // ── HISTORY (earliest date → current month) ───────────────────────────────
   const bwd={};
-  bwdKeys.forEach(k=>{bwd[k]={income:0,expenses:0};});
+  bwdKeys.forEach(k=>{bwd[k]={income:0,expenses:0,planned:0};});
 
   (state.projects||[]).forEach(p=>{
     (p.advances||[]).forEach(a=>{
@@ -1919,10 +1919,17 @@ function calcCashflow(){
       if(ak&&bwd[ak]!==undefined) bwd[ak].income+=+(a.amount)||0;
     });
     (p.sections||[]).forEach(s=>{
+      // Real quickPay payments
       (s.payments||[]).forEach(pay=>{
         const pk=monthKey(pay.date);
         if(pk&&bwd[pk]!==undefined) bwd[pk].expenses+=+(pay.amount)||0;
       });
+      // Planned payments by plannedPayDate
+      const ppKey=monthKey(s.plannedPayDate);
+      if(ppKey&&bwd[ppKey]!==undefined){
+        const toPaySec=(+(s.cost)||0)-(+(s.paid)||0);
+        if(toPaySec>0) bwd[ppKey].planned+=toPaySec;
+      }
     });
   });
 
@@ -1930,6 +1937,7 @@ function calcCashflow(){
     Місяць:k,
     'Надходження (аванси)':bwd[k].income,
     'Виплати (quickPay)':bwd[k].expenses,
+    'Заплановані виплати':bwd[k].planned,
     'Баланс':bwd[k].income-bwd[k].expenses
   }));
 
@@ -2041,6 +2049,7 @@ function renderCashflowCharts(){
   if(fc2){
     const hIncome=cf.history.map(r=>r['Надходження (аванси)']);
     const hExp=cf.history.map(r=>r['Виплати (quickPay)']);
+    const hPlanned=cf.history.map(r=>r['Заплановані виплати']);
     _cfCharts.history=new Chart(fc2,{
       type:'line',
       data:{
@@ -2053,7 +2062,11 @@ function renderCashflowCharts(){
           {label:'Виплати (quickPay)',data:hExp,
            borderColor:CORAL,backgroundColor:'rgba(248,113,113,0.10)',
            borderWidth:2.5,pointBackgroundColor:CORAL,pointRadius:5,pointHoverRadius:7,
-           tension:0.3,fill:true}
+           tension:0.3,fill:true},
+          {label:'Заплановані виплати (plannedPayDate)',data:hPlanned,
+           borderColor:'#A974E6',backgroundColor:'rgba(169,116,230,0.08)',
+           borderWidth:2,borderDash:[6,4],pointBackgroundColor:'#A974E6',
+           pointRadius:4,pointHoverRadius:6,tension:0.3,fill:false}
         ]
       },
       options:{
