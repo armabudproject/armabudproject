@@ -2091,8 +2091,17 @@ function renderCashflowCharts(){
     const hInv=cf.history.map(r=>r['Інвестиції партнерів']);
     const hPlanned=cf.history.map(r=>r['Заплановані виплати']);
     const adm=state.adminCosts||{};
+    // pl.net per month (same logic as metric): project net profit lands in expectedPaymentDate month
+    const plByMonth={};
+    (state.projects||[]).forEach(p=>{
+      const k=monthKey(p.expectedPaymentDate);
+      if(k) plByMonth[k]=(plByMonth[k]||0)+(calcPnl(p).net||0);
+    });
     let _cum=0;
-    const hNetProfit=cf.bwdKeys.map((k,i)=>{_cum+=hIncome[i]-hExp[i]-(+(adm[k])||0);return _cum;});
+    const hNetProfit=cf.bwdKeys.map(k=>{
+      _cum+=(plByMonth[k]||0)-(+(adm[k])||0);
+      return _cum;
+    });
     _cfCharts.history=new Chart(fc2,{
       type:'line',
       data:{
