@@ -1966,8 +1966,7 @@ function calcCashflow(){
     Місяць:k,
     'Надходження від Замовників':bwd[k].income,
     'Інвестиції партнерів':bwd[k].investments,
-    'Виплати (quickPay)':bwd[k].expenses,
-    'Заплановані виплати':bwd[k].planned,
+    'Виплати по проектах':bwd[k].expenses+bwd[k].planned,
     'Баланс':bwd[k].income+bwd[k].investments-bwd[k].expenses
   }));
 
@@ -2087,9 +2086,8 @@ function renderCashflowCharts(){
   const fc2=document.getElementById('cf-history-chart');
   if(fc2){
     const hIncome=cf.history.map(r=>r['Надходження від Замовників']);
-    const hExp=cf.history.map(r=>r['Виплати (quickPay)']);
+    const hExp=cf.history.map(r=>r['Виплати по проектах']);
     const hInv=cf.history.map(r=>r['Інвестиції партнерів']);
-    const hPlanned=cf.history.map(r=>r['Заплановані виплати']);
     const adm=state.adminCosts||{};
     // pl.net per month (same logic as metric): project net profit lands in expectedPaymentDate month
     const plByMonth={};
@@ -2115,14 +2113,10 @@ function renderCashflowCharts(){
            borderColor:GOLD,backgroundColor:'rgba(234,185,76,0.10)',
            borderWidth:2.5,pointBackgroundColor:GOLD,pointRadius:5,pointHoverRadius:7,
            tension:0.3,fill:true},
-          {label:'Виплати (quickPay)',data:hExp,
-           borderColor:CORAL,backgroundColor:'rgba(248,113,113,0.10)',
-           borderWidth:2.5,pointBackgroundColor:CORAL,pointRadius:5,pointHoverRadius:7,
+          {label:'Виплати по проектах',data:hExp,
+           borderColor:'#A974E6',backgroundColor:'rgba(169,116,230,0.10)',
+           borderWidth:2.5,pointBackgroundColor:'#A974E6',pointRadius:5,pointHoverRadius:7,
            tension:0.3,fill:true},
-          {label:'Заплановані виплати (plannedPayDate)',data:hPlanned,
-           borderColor:'#A974E6',backgroundColor:'rgba(169,116,230,0.08)',
-           borderWidth:2,borderDash:[6,4],pointBackgroundColor:'#A974E6',
-           pointRadius:4,pointHoverRadius:6,tension:0.3,fill:false},
           {label:'Чистий прибуток (накоп.)',data:hNetProfit,
            borderWidth:2.5,backgroundColor:'transparent',
            segment:{borderColor:ctx=>{const a=ctx.p0.parsed.y,b=ctx.p1.parsed.y;return(a>=0&&b>=0)?'#22d3ee':'#f97316';}},
