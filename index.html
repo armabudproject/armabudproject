@@ -1934,13 +1934,19 @@ function calcCashflow(){
 
   // ── HISTORY (earliest date → current month) ───────────────────────────────
   const bwd={};
-  bwdKeys.forEach(k=>{bwd[k]={income:0,expenses:0,planned:0,investments:+(partnerInv[k])||0};});
+  bwdKeys.forEach(k=>{bwd[k]={income:0,plannedIncome:0,expenses:0,planned:0,investments:+(partnerInv[k])||0};});
 
   (state.projects||[]).forEach(p=>{
     (p.advances||[]).forEach(a=>{
       const ak=monthKey(a.date);
       if(ak&&bwd[ak]!==undefined) bwd[ak].income+=+(a.amount)||0;
     });
+    // Expected client payment by expectedPaymentDate
+    const epKey=monthKey(p.expectedPaymentDate);
+    if(epKey&&bwd[epKey]!==undefined){
+      const pl=calcPnl(p);
+      if(pl.remaining>0) bwd[epKey].plannedIncome+=pl.remaining;
+    }
     (p.sections||[]).forEach(s=>{
       // Real quickPay payments
       (s.payments||[]).forEach(pay=>{
@@ -1959,6 +1965,7 @@ function calcCashflow(){
   const history=bwdKeys.map(k=>({
     Місяць:k,
     'Надходження (аванси)':bwd[k].income,
+    'Очікувані надходження':bwd[k].plannedIncome,
     'Інвестиції партнерів':bwd[k].investments,
     'Виплати (quickPay)':bwd[k].expenses,
     'Заплановані виплати':bwd[k].planned,
@@ -2081,6 +2088,7 @@ function renderCashflowCharts(){
   const fc2=document.getElementById('cf-history-chart');
   if(fc2){
     const hIncome=cf.history.map(r=>r['Надходження (аванси)']);
+    const hPlannedIncome=cf.history.map(r=>r['Очікувані надходження']);
     const hExp=cf.history.map(r=>r['Виплати (quickPay)']);
     const hInv=cf.history.map(r=>r['Інвестиції партнерів']);
     const hPlanned=cf.history.map(r=>r['Заплановані виплати']);
@@ -2096,6 +2104,10 @@ function renderCashflowCharts(){
            borderColor:SKY,backgroundColor:'rgba(56,189,248,0.10)',
            borderWidth:2.5,pointBackgroundColor:SKY,pointRadius:5,pointHoverRadius:7,
            tension:0.3,fill:true},
+          {label:'Очікувані надходження від замовника',data:hPlannedIncome,
+           borderColor:SKY,backgroundColor:'transparent',
+           borderWidth:2,borderDash:[6,4],pointBackgroundColor:SKY,
+           pointRadius:4,pointHoverRadius:6,tension:0.3,fill:false},
           {label:'Інвестиції партнерів',data:hInv,
            borderColor:GOLD,backgroundColor:'rgba(234,185,76,0.10)',
            borderWidth:2.5,pointBackgroundColor:GOLD,pointRadius:5,pointHoverRadius:7,
