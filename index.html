@@ -2086,6 +2086,7 @@ function renderEconomics(){
     {k:'toPay',label:'Залишок виконавцям',color:'var(--red)',fn:pl=>pl.toPay},
   ];
   const pls=state.projects.map(p=>({p,pl:calcPnl(p)}));
+  const totalAdmin=Object.values(state.adminCosts||{}).reduce((a,v)=>a+(+v||0),0);
   let cards='';
   metrics.forEach(m=>{
     const total=pls.reduce((a,x)=>a+(m.fn(x.pl)||0),0);
@@ -2094,6 +2095,9 @@ function renderEconomics(){
       +`<div class="metric-label">${m.label} <span style="opacity:.5;font-size:9px">${active?'\u25B2':'\u25BC'}</span></div>`
       +`<div class="metric-value" style="color:${m.color}">${fmt(total)}</div></div>`;
   });
+  cards+=`<div class="metric" style="--mc:#A974E6">`
+    +`<div class="metric-label">\u0410\u0434\u043C\u0456\u043D\u0432\u0438\u0442\u0440\u0430\u0442\u0438 ${new Date().getFullYear()}</div>`
+    +`<div class="metric-value" style="color:#A974E6">${fmt(totalAdmin)}</div></div>`;
   let panel='';
   if(econActiveMetric){
     const m=metrics.find(x=>x.k===econActiveMetric);
