@@ -2020,6 +2020,7 @@ function renderCashflowCharts(){
     const fExp=cf.forecast.map(r=>r['Виплати']);
     const fBal=cf.forecast.map(r=>r['Баланс місяця']);
     const fCum=cf.forecast.map(r=>r['Наростаючий баланс']);
+    const fNetProfit=cf.forecast.map(r=>r['Прихід']-r['Виплати']);
 
     // Gap summary below chart
     const gaps=cf.forecast.filter(r=>r['Баланс місяця']<0);
@@ -2059,6 +2060,12 @@ function renderCashflowCharts(){
            pointBackgroundColor:fCum.map(v=>v<0?CORAL:'#A974E6'),
            pointBorderColor:fCum.map(v=>v<0?CORAL:'#A974E6'),
            pointRadius:5,pointHoverRadius:7,tension:0.3,order:1,yAxisID:'y'},
+          {type:'line',label:'Чистий прибуток',data:fNetProfit,
+           borderWidth:2.5,backgroundColor:'transparent',
+           segment:{borderColor:ctx=>{const a=ctx.p0.parsed.y,b=ctx.p1.parsed.y;return(a>=0&&b>=0)?GREEN:CORAL;}},
+           pointBackgroundColor:fNetProfit.map(v=>v>=0?GREEN:CORAL),
+           pointBorderColor:fNetProfit.map(v=>v>=0?GREEN:CORAL),
+           pointRadius:5,pointHoverRadius:7,tension:0.3,order:0,yAxisID:'y'},
         ]
       },
       options:{
