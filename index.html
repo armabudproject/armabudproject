@@ -1370,6 +1370,7 @@ function uid(){return 'x'+Date.now()+Math.random().toString(36).slice(2,6);}
 function fmt(n){return new Intl.NumberFormat('uk-UA').format(Math.round(+n||0))+' ₴';}
 function fmtShort(n){n=+n||0;const s=n<0?'-':'';const a=Math.abs(n);if(a>=1e6)return s+(a/1e6).toFixed(a>=1e7?0:1).replace('.',',')+'М ₴';if(a>=1e3)return s+Math.round(a/1e3)+'К ₴';return s+Math.round(a)+' ₴';}
 function fmtD(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('uk-UA');}catch(e){return d;}}
+function esc(v){return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function ini(name){return(name||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();}
 
 // Стабільний колір аватара за іменем (з палітри в гамі теми)
