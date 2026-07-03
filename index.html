@@ -2151,13 +2151,19 @@ function renderGantt(){
   if(!el)return;
   const now=new Date();
   const todayStr=now.toISOString().slice(0,10);
-  const projs=(state.projects||[]).filter(p=>p.deadline);
-  if(!projs.length){el.innerHTML='<p style="color:var(--text3);padding:12px 0">Немає проектів з дедлайном</p>';return;}
+  // use deadline OR expectedPaymentDate as end; p.date as start
+  const projs=(state.projects||[])
+    .map(p=>({...p,_end:p.deadline||p.expectedPaymentDate}))
+    .filter(p=>p._end);
+  if(!projs.length){
+    el.innerHTML='<p style="color:var(--text3);padding:12px 0;font-size:13px">Заповніть поле «Дедлайн здачі проекту» або «Очікувана дата доплати» в картці проекту</p>';
+    return;
+  }
   const yr=now.getFullYear();
   let minD=yr+'-01-01',maxD=yr+'-12-31';
   projs.forEach(p=>{
     if(p.date&&p.date<minD)minD=p.date;
-    if(p.deadline&&p.deadline>maxD)maxD=p.deadline;
+    if(p._end>maxD)maxD=p._end;
   });
   const t0=new Date(minD).getTime(),t1=new Date(maxD).getTime(),span=t1-t0;
   const pct=d=>Math.max(0,Math.min(100,((new Date(d).getTime()-t0)/span*100)));
@@ -2165,8 +2171,8 @@ function renderGantt(){
   let ticks='';
   const mm=new Date(minD);mm.setDate(1);
   while(mm.getTime()<=t1){
-    const p=pct(mm.toISOString().slice(0,10));
-    ticks+=`<div style="position:absolute;left:${p.toFixed(2)}%;top:0;bottom:0;border-left:1px solid var(--border)">
+    const lp=pct(mm.toISOString().slice(0,10));
+    ticks+=`<div style="position:absolute;left:${lp.toFixed(2)}%;top:0;bottom:0;border-left:1px solid var(--border)">
       <span style="position:absolute;top:2px;left:3px;font-size:10px;color:var(--text3);white-space:nowrap">${MON[mm.getMonth()]} ${mm.getFullYear()}</span>
     </div>`;
     mm.setMonth(mm.getMonth()+1);
@@ -2175,21 +2181,21 @@ function renderGantt(){
   const todayLine=`<div style="position:absolute;left:${tp.toFixed(2)}%;top:0;bottom:0;border-left:2px solid #f87171;z-index:5">
     <span style="position:absolute;top:2px;left:3px;font-size:10px;color:#f87171;white-space:nowrap;font-weight:700">Сьогодні</span>
   </div>`;
-  const sorted=[...projs].sort((a,b)=>a.deadline<b.deadline?-1:1);
+  const sorted=[...projs].sort((a,b)=>a._end<b._end?-1:1);
   let rows='';
   sorted.forEach(p=>{
-    const start=p.date||p.deadline;
-    const end=p.deadline;
+    const end=p._end;
+    const start=p.date||end;
     const lp=pct(start),rp=pct(end);
-    const w=Math.max(1,rp-lp);
+    const w=Math.max(2,rp-lp);
     const dLeft=Math.round((new Date(end).getTime()-now.getTime())/86400000);
     const col=dLeft<0?'#f87171':dLeft<=30?'#fbbf24':'#4ade80';
     const badge=dLeft<0?`❗ ${Math.abs(dLeft)}д прострочено`:`✅ ще ${dLeft}д`;
-    rows+=`<div style="display:grid;grid-template-columns:180px 1fr;align-items:center;margin-bottom:10px">
+    rows+=`<div style="display:grid;grid-template-columns:180px 1fr;align-items:center;margin-bottom:12px">
       <div style="font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:10px" title="${esc(p.name)}">${esc(p.name)}</div>
-      <div style="position:relative;height:26px">
-        <div style="position:absolute;left:${lp.toFixed(2)}%;width:${w.toFixed(2)}%;height:100%;background:${col};opacity:0.85;border-radius:4px;min-width:6px"></div>
-        <div style="position:absolute;left:${rp.toFixed(2)}%;top:50%;transform:translateY(-50%);margin-left:4px;font-size:11px;color:${col};white-space:nowrap;font-weight:600">${fmtD(end)} · ${badge}</div>
+      <div style="position:relative;height:28px">
+        <div style="position:absolute;left:${lp.toFixed(2)}%;width:${w.toFixed(2)}%;height:100%;background:${col};opacity:0.82;border-radius:4px;min-width:6px"></div>
+        <div style="position:absolute;left:calc(${rp.toFixed(2)}% + 6px);top:50%;transform:translateY(-50%);font-size:11px;color:${col};white-space:nowrap;font-weight:600">${fmtD(end)} · ${badge}</div>
       </div>
     </div>`;
   });
