@@ -2191,8 +2191,8 @@ function renderGantt(){
     const w=Math.max(2,rp-lp);
     const dLeft=Math.round((new Date(end).getTime()-now.getTime())/86400000);
     const status=p.status||'active';
-    const col=status==='done'?'#38bdf8':status==='paused'?'#6b7280':dLeft<0?'#f87171':dLeft<=30?'#fbbf24':'#4ade80';
-    const badge=status==='done'?'✔ завершено':status==='paused'?'⏸ пауза':dLeft<0?`❗ ${Math.abs(dLeft)}д прострочено`:`✅ ще ${dLeft}д`;
+    const col=status==='done'?'#38bdf8':status==='pause'?'#6b7280':dLeft<0?'#f87171':dLeft<=30?'#fbbf24':'#4ade80';
+    const badge=status==='done'?'✔ завершено':status==='pause'?'⏸ пауза':dLeft<0?`❗ ${Math.abs(dLeft)}д прострочено`:`✅ ще ${dLeft}д`;
     rows+=`<div style="display:grid;grid-template-columns:150px 1fr;align-items:center;margin-bottom:3px">
       <div style="font-size:10px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px" title="${esc(p.name)}">${esc(p.name)}</div>
       <div style="position:relative;height:10px">
