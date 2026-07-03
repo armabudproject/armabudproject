@@ -2193,7 +2193,7 @@ function renderGantt(){
     const status=p.status||'active';
     const col=status==='done'?'#38bdf8':status==='pause'?'#6b7280':dLeft<0?'#f87171':dLeft<=30?'#fbbf24':'#4ade80';
     const badge=status==='done'?'✔ завершено':status==='pause'?'⏸ пауза':dLeft<0?`❗ ${Math.abs(dLeft)}д прострочено`:`✅ ще ${dLeft}д`;
-    rows+=`<div style="display:grid;grid-template-columns:150px 1fr;align-items:center;margin-bottom:3px">
+    rows+=`<div onclick="navigate('detail','${p.id}')" style="display:grid;grid-template-columns:150px 1fr;align-items:center;margin-bottom:3px;cursor:pointer;border-radius:3px;padding:2px 0" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">
       <div style="font-size:10px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px" title="${esc(p.name)}">${esc(p.name)}</div>
       <div style="position:relative;height:10px">
         <div style="position:absolute;left:${lp.toFixed(2)}%;width:${w.toFixed(2)}%;height:100%;background:${col};opacity:0.75;border-radius:3px;min-width:3px"></div>
