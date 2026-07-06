@@ -112,13 +112,22 @@ body{font-family:var(--font);color:var(--text);min-height:100vh;font-size:13px;l
 .mascot-tile{height:92px;width:114px;object-fit:contain}
 
 /* ── Режим перегляду (read-only) ── */
-body.ro [onclick*="openModal"],
-body.ro [onclick*="Modal"],
-body.ro [onclick*="del"],
-body.ro [onclick*="Del"],
-body.ro [onclick*="save"],
-body.ro [onclick*="remove"]{display:none!important}
 body.ro .modal,body.ro #overlay{display:none!important}
+body.ro .btn.primary,body.ro .btn.danger,body.ro .btn.success{display:none!important}
+body.ro [onclick*="Modal"],body.ro [onclick*="modal"],
+body.ro [onclick*="save"],body.ro [onclick*="Save"],
+body.ro [onclick*="del"],body.ro [onclick*="Del"],
+body.ro [onclick*="edit"],body.ro [onclick*="Edit"],
+body.ro [onclick*="add"],body.ro [onclick*="Add"],
+body.ro [onclick*="remove"],body.ro [onclick*="Remove"],
+body.ro [onclick*="export"],body.ro [onclick*="Export"],
+body.ro [onclick*="print"],body.ro [onclick*="Print"],
+body.ro [onclick*="google"],body.ro [onclick*="ics"],
+body.ro [onclick*="quickPay"],body.ro [onclick*="Quick"],
+body.ro [onclick*="toggle"],
+body.ro [onchange*="save"],body.ro [oninput*="save"]{display:none!important}
+body.ro input[type=text],body.ro input[type=number],body.ro input[type=date],
+body.ro input[type=datetime-local],body.ro textarea,body.ro select:not(.search-input):not([id*="filter"]){pointer-events:none!important;opacity:.7}
 .ro-badge{position:fixed;bottom:14px;left:14px;z-index:9999;background:rgba(240,180,41,.16);border:1px solid var(--accent);color:var(--accent);padding:7px 13px;border-radius:20px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:7px;backdrop-filter:blur(6px);box-shadow:0 4px 12px rgba(0,0,0,.3)}
 @media(max-width:560px){.mascot-img{height:66px}.mascot-tile{height:64px;width:82px}.mascot-icon{width:46px;height:46px}}
 .mascot-svg{overflow:visible}
@@ -1196,7 +1205,7 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
 
 <script>
 // ── РЕЖИМ ДОСТУПУ ── (true = тільки перегляд: без створення/редагування/видалення)
-var READONLY=new URLSearchParams(location.search).get('view')==='readonly'||false;
+var READONLY=new URLSearchParams(location.search).get('view')==='readonly';
 // ── FIREBASE CONFIG ──
 const FB_URL='https://armabudproject-d1573-default-rtdb.europe-west1.firebasedatabase.app';
 
@@ -1561,12 +1570,65 @@ function builderScene(kind){
 function applyReadonly(){
   if(!READONLY)return;
   document.body.classList.add('ro');
+
+  // Badge
   if(!document.getElementById('ro-badge')){
     var b=document.createElement('div');
     b.id='ro-badge';b.className='ro-badge';
     b.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Режим перегляду';
     document.body.appendChild(b);
   }
+
+  // ── Нейтралізуємо всі функції-мутатори ──
+  var noop=function(){};
+  var mutators=[
+    'saveProject','deleteCurrentProject','saveAdvance','editAdvance','delAdvance',
+    'saveSection','editSection','delSection','saveExecutor','delEx','delExCurrent',
+    'saveTask','editTask','editTaskGlobal','delTask','delTaskGlobal','delTaskFromPanel',
+    'saveTender','editTender','deleteTender',
+    'saveQuickPay','addPlanItem','delPlan','saveEditPlan',
+    'saveAdminCost','savePartnerInvestment',
+    'exportData','exportExcel','exportTasksExcel','exportTasksToICS',
+    'exportDashboardPdf','exportProjectsPdf','exportMeetingProtocolPdf','printProject',
+    'addToGoogleCalendar',
+  ];
+  mutators.forEach(function(fn){
+    if(typeof window[fn]==='function') window[fn]=noop;
+  });
+
+  // openModal вже перевіряє READONLY, але перекриємо для надійності
+  window.openModal=noop;
+
+  // ── MutationObserver: моментально ховаємо будь-який модал/оверлей що спробує відкритись ──
+  var obs=new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      // Якщо змінився style на елементі
+      if(m.type==='attributes'&&m.attributeName==='style'){
+        var el=m.target;
+        if(el.classList&&(el.classList.contains('modal')||el.id==='overlay')){
+          el.style.cssText='display:none!important';
+        }
+      }
+      // Якщо додались нові DOM-вузли — перевіряємо на модали
+      if(m.type==='childList'){
+        m.addedNodes.forEach(function(n){
+          if(n.nodeType!==1)return;
+          if(n.classList&&n.classList.contains('modal')){n.style.cssText='display:none!important';}
+          n.querySelectorAll&&n.querySelectorAll('.modal').forEach(function(mo){mo.style.cssText='display:none!important';});
+        });
+      }
+    });
+  });
+  obs.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class']});
+
+  // ── Блокуємо всі події click/submit/change на input/select/textarea ──
+  document.addEventListener('submit',function(e){e.preventDefault();e.stopPropagation();},true);
+  document.addEventListener('change',function(e){
+    var t=e.target;
+    // Дозволяємо фільтри (select.filter-btn / .search-input), блокуємо решту
+    if(t.tagName==='SELECT'&&(t.className.indexOf('search-input')>=0||t.id.indexOf('filter')>=0))return;
+    if(t.tagName==='INPUT'&&t.type==='date')e.stopImmediatePropagation();
+  },true);
 }
 
 function initMascots(){
