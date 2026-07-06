@@ -1196,7 +1196,7 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
 
 <script>
 // ── РЕЖИМ ДОСТУПУ ── (true = тільки перегляд: без створення/редагування/видалення)
-var READONLY=false;
+var READONLY=new URLSearchParams(location.search).get('view')==='readonly'||false;
 // ── FIREBASE CONFIG ──
 const FB_URL='https://armabudproject-d1573-default-rtdb.europe-west1.firebasedatabase.app';
 
