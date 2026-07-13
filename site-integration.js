@@ -98,6 +98,7 @@ async function renderDzoFeed(containerId) {
           ${escapeHtml(it.title)}
         </a>
         ${it.summary ? `<p class="dzo-summary">${escapeHtml(it.summary)}</p>` : ""}
+        ${it.amount ? `<span class="dzo-amount">💰 ${escapeHtml(it.amount)}</span>` : ""}
         ${it.deadline ? `<span class="dzo-deadline">⏳ ${escapeHtml(it.deadline)}</span>` : ""}
         ${it.added ? `<time class="dzo-added">${escapeHtml(it.added)}</time>` : ""}
       </article>`;
