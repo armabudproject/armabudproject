@@ -256,9 +256,25 @@ def update_feed(records):
 
 
 # ── Головний потік ───────────────────────────────────────────────────
+def should_reset_monthly(state):
+    """Повертає True якщо з останнього скидання минув місяць."""
+    last = state.get("last_reset")
+    if not last:
+        return True
+    return dt.date.today() >= dt.date.fromisoformat(last) + dt.timedelta(days=30)
+
+
 def main():
     state = load_state()
-    seen = load_seen()
+
+    # ── Щомісячне скидання: seen + offset → скрипт знову проходить весь фід
+    if should_reset_monthly(state):
+        print("[info] місячне скидання seen.json та offset — починаємо спочатку.")
+        seen = set()
+        state["offset"] = None
+        state["last_reset"] = dt.date.today().isoformat()
+    else:
+        seen = load_seen()
 
     ids, new_offset = fetch_candidate_ids(state.get("offset"))
     print(f"[info] кандидатів з фіда (статус+регіон пройшли): {len(ids)}.")
@@ -288,7 +304,7 @@ def main():
     save_seen(seen)
     if new_offset:
         state["offset"] = new_offset
-        save_state(state)
+    save_state(state)
     print("[done]")
 
 
