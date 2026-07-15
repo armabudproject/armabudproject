@@ -1398,6 +1398,7 @@ function calcPnl(p){
 let curExId=null;
 
 function navigate(page,pid){
+  if(page!=='detail'&&page!=='executor-detail') localStorage.setItem('armabud_page',page);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const pageMap={'dashboard':'dashboard','projects':'projects','detail':'detail','executors':'executors','executor-detail':'executor-detail','workload':'workload','tasks':'tasks','radar':'radar','economics':'economics','service':'service'};
@@ -4448,7 +4449,7 @@ try{initMascots();}catch(e){}
 try{applyReadonly();}catch(e){}
 try{updateRadarBadge();}catch(e){}
 
-load().then(()=>navigate('dashboard'));
+load().then(()=>navigate(localStorage.getItem('armabud_page')||'dashboard'));
 
 // ═══════════════════════════════════════════════════
 // Вбудований генератор XLSX (без зовнішніх залежностей)
