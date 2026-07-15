@@ -4338,7 +4338,17 @@ function sendTaskEmail(task, isEdit){
   var PR_LABEL={urgent:'Терміново',high:'Високий',normal:'Звичайний'};
   var ST_LABEL={todo:'Не почато',progress:'В роботі',done:'Виконано'};
 
+  var MANAGER_EMAIL='data@armabudproject.com';
   var subject=encodeURIComponent((isEdit?'[Оновлення задачі] ':'[Нова задача] ')+task.name);
+
+  var confirmSubj=encodeURIComponent('✅ Готовий: '+task.name);
+  var confirmBody=encodeURIComponent('Підтверджую готовність до виконання задачі "'+task.name+'".\n\nВиконавець: '+(ex.name||ex.email));
+  var confirmLink='mailto:'+MANAGER_EMAIL+'?subject='+confirmSubj+'&body='+confirmBody;
+
+  var propSubj=encodeURIComponent('✏️ Пропозиція: '+task.name);
+  var propBody=encodeURIComponent('Моя пропозиція по редагуванню задачі "'+task.name+'":\n\n[Введіть вашу пропозицію тут]\n\nВиконавець: '+(ex.name||ex.email));
+  var propLink='mailto:'+MANAGER_EMAIL+'?subject='+propSubj+'&body='+propBody;
+
   var body=encodeURIComponent(
     (isEdit?'Задачу оновлено':'Вам призначено нову задачу')+'\n\n'+
     'Задача: '+task.name+'\n'+
@@ -4347,7 +4357,12 @@ function sendTaskEmail(task, isEdit){
     'Пріоритет: '+(PR_LABEL[task.priority||'normal'])+'\n'+
     'Статус: '+(ST_LABEL[task.status||'todo'])+'\n'+
     (task.note?'Примітка: '+task.note+'\n':'')+
-    '\n— АрмаБуд Проджект\ndata@armabudproject.com'
+    '\n─────────────────────────────\n'+
+    'ЩОБ ВІДПОВІСТИ, НАТИСНІТЬ ОДНЕ З ПОСИЛАНЬ:\n\n'+
+    '✅ ПІДТВЕРДИТИ ГОТОВНІСТЬ:\n'+confirmLink+'\n\n'+
+    '✏️ ВНЕСТИ ПРОПОЗИЦІЮ ПРО РЕДАГУВАННЯ:\n'+propLink+'\n'+
+    '─────────────────────────────\n'+
+    '\n— АрмаБуд Проджект\n'+MANAGER_EMAIL
   );
 
   var to=encodeURIComponent(ex.email);
