@@ -4132,33 +4132,48 @@ function renderTasksPage(){
 
   var rows = '<thead><tr><th>Задача</th><th>Виконавець</th><th>Дедлайн</th><th>Пріоритет</th><th>Статус</th><th></th></tr></thead><tbody>';
 
+  function sortTasksGroup(tasks){
+    tasks.sort(function(a,b){
+      if(a.status==='done'&&b.status!=='done')return 1;
+      if(a.status!=='done'&&b.status==='done')return -1;
+      var po={urgent:0,high:1,normal:2};
+      return (po[a.priority||'normal'])-(po[b.priority||'normal']);
+    });
+  }
+  function renderGroup(pid, tasks, isGeneral){
+    var proj = isGeneral ? null : (state.projects.find(function(p){return p.id===pid;})||null);
+    sortTasksGroup(tasks);
+    if(isGeneral){
+      rows += '<tr><td colspan="6" style="padding:8px 14px;background:rgba(139,92,246,0.1);border-top:2px solid #8b5cf6;border-bottom:1px solid var(--border)">';
+      rows += '<span style="font-size:11px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.07em">🗂 Загальні питання</span>';
+    } else {
+      rows += '<tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)">';
+      rows += '<span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(\'detail\',\''+pid+'\')">';
+      rows += '📁 '+(proj?(proj.type?typeBadge(proj.type)+' ':'')+proj.name:'')+'</span>';
+    }
+    rows += '<span style="font-size:10px;color:var(--text3);margin-left:8px">'+tasks.length+' задач</span></td></tr>';
+    tasks.forEach(function(t){ rows += renderTaskRow(t,PR_COLOR,PR_LABEL,ST_BADGE,ST_LABEL,false); });
+  }
+
   if(taskSort==='project'){
-    // Групуємо по проектах
+    var generalTasks = [];
     var byProj = {};
     var projOrder = [];
     allTasks.forEach(function(t){
-      var pid = t.pid||'_';
-      if(!byProj[pid]){byProj[pid]=[];projOrder.push(pid);}
-      byProj[pid].push(t);
+      var hasProj = t.pid && state.projects.find(function(p){return p.id===t.pid;});
+      if(!hasProj){ generalTasks.push(t); return; }
+      if(!byProj[t.pid]){byProj[t.pid]=[];projOrder.push(t.pid);}
+      byProj[t.pid].push(t);
     });
-    projOrder.forEach(function(pid){
-      var proj = state.projects.find(function(p){return p.id===pid;})||null;
-      var tasks = byProj[pid];
-      tasks.sort(function(a,b){
-        if(a.status==='done'&&b.status!=='done')return 1;
-        if(a.status!=='done'&&b.status==='done')return -1;
-        var po={urgent:0,high:1,normal:2};
-        return (po[a.priority||'normal'])-(po[b.priority||'normal']);
-      });
-      rows += '<tr><td colspan="6" style="padding:8px 14px;background:rgba(240,180,41,0.06);border-top:2px solid rgba(240,180,41,0.35);border-bottom:1px solid var(--border)">';
-      rows += '<span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;cursor:pointer" onclick="navigate(\'detail\',\''+pid+'\')">';
-      rows += '📁 '+(proj?(proj.type?typeBadge(proj.type)+' ':'')+proj.name:'Без проекту')+'</span>';
-      rows += '<span style="font-size:10px;color:var(--text3);margin-left:8px">'+tasks.length+' задач</span></td></tr>';
-      tasks.forEach(function(t){ rows += renderTaskRow(t,PR_COLOR,PR_LABEL,ST_BADGE,ST_LABEL,false); });
-    });
+    // Загальні питання — завжди першими
+    if(generalTasks.length) renderGroup('_', generalTasks, true);
+    projOrder.forEach(function(pid){ renderGroup(pid, byProj[pid], false); });
   } else {
-    // По дедлайну
-    allTasks.sort(function(a,b){
+    // По дедлайну — загальні питання все одно зверху, потім решта
+    var generalTasks2 = allTasks.filter(function(t){return !t.pid||!state.projects.find(function(p){return p.id===t.pid;});});
+    var projTasks2 = allTasks.filter(function(t){return t.pid&&state.projects.find(function(p){return p.id===t.pid;});});
+    if(generalTasks2.length) renderGroup('_', generalTasks2, true);
+    projTasks2.sort(function(a,b){
       if(a.status==='done'&&b.status!=='done')return 1;
       if(a.status!=='done'&&b.status==='done')return -1;
       if(!a.deadline&&!b.deadline)return 0;
@@ -4166,7 +4181,7 @@ function renderTasksPage(){
       return a.deadline<b.deadline?-1:1;
     });
     var prevWasDone=false;
-    allTasks.forEach(function(t){
+    projTasks2.forEach(function(t){
       if(t.status==='done'&&!prevWasDone){
         rows+='<tr><td colspan="6" style="padding:6px 14px;background:var(--bg3);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;border-top:1px solid var(--border)">✓ Виконані задачі</td></tr>';
         prevWasDone=true;
