@@ -1138,8 +1138,8 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
   <div class="modal-title" id="modal-task-title">Нова задача</div>
   <input type="hidden" id="edit-task-idx">
   <input type="hidden" id="edit-task-pid">
-  <div class="form-group"><label class="form-label">Проект *</label>
-    <select class="form-input" id="task-project"><option value="">— оберіть проект —</option></select>
+  <div class="form-group"><label class="form-label">Проект</label>
+    <select class="form-input" id="task-project"><option value="">🗂 Загальні питання (без проекту)</option></select>
   </div>
   <div class="form-group"><label class="form-label">Задача *</label><input class="form-input" id="task-name" placeholder="Опис задачі"></div>
   <div class="form-row2">
@@ -4088,13 +4088,14 @@ function renderTasksPage(){
   var pSel = document.getElementById('tasks-filter-proj');
   if(pSel){
     var curPVal = pSel.value;
-    var pOpts = '<option value="">Всі проекти</option>';
+    var pOpts = '<option value="">Всі проекти</option><option value="__general__"'+(curPVal==='__general__'?' selected':'')+'>🗂 Загальні питання</option>';
     state.projects.forEach(function(p){
       pOpts += '<option value="'+p.id+'"'+(p.id===curPVal?' selected':'')+'>'+p.name+'</option>';
     });
     pSel.innerHTML = pOpts;
     pSel.value = curPVal;
-    if(pSel.value) allTasks = allTasks.filter(function(t){return t.pid===pSel.value;});
+    if(pSel.value==='__general__') allTasks = allTasks.filter(function(t){return !t.pid||!state.projects.find(function(p){return p.id===t.pid;});});
+    else if(pSel.value) allTasks = allTasks.filter(function(t){return t.pid===pSel.value;});
   }
 
   // Fill executor filter
@@ -4186,9 +4187,12 @@ function renderTaskRow(t, PR_COLOR, PR_LABEL, ST_BADGE, ST_LABEL, showProj){
   var st = t.status||'todo';
   var origIdx = (state.tasks||[]).indexOf(t);
   var isDone = st==='done';
-  var row = '<tr class="'+(od?'overdue':'')+'" style="'+(isDone?'opacity:.55':'')+'">';
+  var isGeneral = !t.pid || !proj;
+  var rowBg = isGeneral ? 'background:rgba(139,92,246,0.07);border-left:3px solid #8b5cf6;' : '';
+  var row = '<tr class="'+(od?'overdue':'')+'" style="'+(isDone?'opacity:.55':'')+rowBg+'">';
   row += '<td><div style="font-weight:600;'+(isDone?'text-decoration:line-through':'')+'">'+(t.name||'')+'</div>';
-  if(showProj&&proj) row += '<div style="font-size:10px;color:var(--accent);margin-top:2px">📁 '+(proj.type?typeBadge(proj.type)+' ':'')+proj.name+'</div>';
+  if(isGeneral) row += '<div style="font-size:10px;color:#a78bfa;margin-top:2px;font-weight:600">🗂 Загальні питання</div>';
+  else if(showProj&&proj) row += '<div style="font-size:10px;color:var(--accent);margin-top:2px">📁 '+(proj.type?typeBadge(proj.type)+' ':'')+proj.name+'</div>';
   if(t.note) row += '<div style="font-size:11px;color:var(--text2)">'+t.note+'</div>';
   row += '</td>';
   row += '<td style="font-size:12px;color:var(--text2)">'+(ex?ex.name:'—')+'</td>';
@@ -4260,7 +4264,6 @@ function renderTasks(){
 function saveTask(){
   var pid = document.getElementById('task-project').value;
   var name = document.getElementById('task-name').value.trim();
-  if(!pid){alert('Оберіть проект');return;}
   if(!name){alert('Введіть назву задачі');return;}
   var task = {
     id: uid(),
