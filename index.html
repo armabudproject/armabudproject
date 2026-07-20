@@ -967,8 +967,8 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
     <button class="btn primary" onclick="openModal(&#39;new-executor&#39;)">+ Виконавець</button>
   </div>
   <div class="filter-bar">
-    <input class="search-input" id="ex-search" placeholder="🔍 Пошук за ПІБ, роллю, телефоном..." oninput="renderExecutors()" style="min-width:200px">
-    <select class="dash-select" id="ex-filter" onchange="renderExecutors()"><option value="">Всі виконавці</option></select>
+    <input class="search-input" id="ex-search" placeholder="🔍 Пошук за ПІБ, спеціалізацією, телефоном..." oninput="renderExecutors()" style="min-width:200px">
+    <select class="dash-select" id="ex-filter" onchange="renderExecutors()"><option value="">Всі спеціалізації</option></select>
     <span id="ex-filter-active"></span>
   </div>
   <div id="executors-cards"></div>
@@ -1082,6 +1082,9 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
   <div class="form-group"><label class="form-label">Назва розділу *</label><input class="form-input" id="sec-name" placeholder="напр. АР — Архітектурні рішення"></div>
   <div class="form-row2">
     <div class="form-group"><label class="form-label">Виконавець</label>
+      <select class="form-input" id="sec-spec-filter" onchange="filterExSelect('sec-executor','sec-spec-filter')" style="margin-bottom:5px">
+        <option value="">— всі спеціалізації —</option>
+      </select>
       <select class="form-input" id="sec-executor"><option value="">— не призначено —</option></select>
     </div>
     <div class="form-group"><label class="form-label">Статус</label>
@@ -1119,9 +1122,15 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
 <div class="modal" id="modal-new-executor" style="display:none">
   <div class="modal-title" id="modal-executor-title">Новий виконавець</div>
   <input type="hidden" id="edit-executor-id">
-  <div class="form-row2">
-    <div class="form-group"><label class="form-label">ПІБ *</label><input class="form-input" id="ex-name" placeholder="Прізвище Ім&#39;я"></div>
-    <div class="form-group"><label class="form-label">Спеціальність / роль</label><input class="form-input" id="ex-role" placeholder="напр. Конструктор"></div>
+  <div class="form-group"><label class="form-label">ПІБ / Назва *</label><input class="form-input" id="ex-name" placeholder="Прізвище Ім'я або Назва компанії"></div>
+  <div class="form-group">
+    <label class="form-label">Спеціалізації</label>
+    <div id="ex-specs-tags" style="display:flex;flex-wrap:wrap;gap:5px;min-height:10px;margin-bottom:6px"></div>
+    <div style="display:flex;gap:6px">
+      <input class="form-input" id="ex-spec-input" placeholder="напр. Конструктор" style="flex:1"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();addExSpec();}">
+      <button class="btn sm" type="button" onclick="addExSpec()" style="white-space:nowrap">+ Додати</button>
+    </div>
   </div>
   <div class="form-row2">
     <div class="form-group"><label class="form-label">Телефон</label><input class="form-input" type="tel" id="ex-phone" placeholder="+380 XX XXX XXXX"></div>
@@ -1144,6 +1153,9 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
   <div class="form-group"><label class="form-label">Задача *</label><input class="form-input" id="task-name" placeholder="Опис задачі"></div>
   <div class="form-row2">
     <div class="form-group"><label class="form-label">Виконавець</label>
+      <select class="form-input" id="task-spec-filter" onchange="filterExSelect('task-executor','task-spec-filter')" style="margin-bottom:5px">
+        <option value="">— всі спеціалізації —</option>
+      </select>
       <select class="form-input" id="task-executor"><option value="">— не призначено —</option></select>
     </div>
     <div class="form-group"><label class="form-label">Статус</label>
@@ -2918,7 +2930,7 @@ function renderDetail(){
         <td>${ex?`
           <div class="ex-card">
             <div class="ex-card-name">${ex.name}</div>
-            <div class="ex-card-role">${ex.role||''}</div>
+            <div class="ex-card-role">${(ex.specs&&ex.specs.length?ex.specs:ex.role?[ex.role]:[]).join(' · ')}</div>
             <div class="ex-card-contacts">
               ${ex.phone?`<div class="ex-card-contact">📞 ${ex.phone}</div>`:''}
               ${ex.email?`<div class="ex-card-contact">✉ ${ex.email}</div>`:''}
@@ -3022,13 +3034,12 @@ function renderExecutors(){
     return;
   }
 
-  // Заповнюємо випадайку «фільтр за виконавцем»
+  // Заповнюємо випадайку «фільтр за спеціалізацією»
   const filterSel=document.getElementById('ex-filter');
   if(filterSel){
     const cur=filterSel.value;
-    const sorted=[...state.executors].sort((a,b)=>(a.name||'').localeCompare(b.name||'','uk'));
-    filterSel.innerHTML='<option value="">Всі виконавці</option>'+sorted.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
-    if(state.executors.some(e=>e.id===cur))filterSel.value=cur;
+    const allSpecs=[...new Set(state.executors.flatMap(e=>e.specs&&e.specs.length?e.specs:(e.role?[e.role]:[])))].sort((a,b)=>a.localeCompare(b,'uk'));
+    filterSel.innerHTML='<option value="">Всі спеціалізації</option>'+allSpecs.map(s=>`<option value="${s}"${s===cur?' selected':''}>${s}</option>`).join('');
   }
 
   // Збираємо статистику по кожному
@@ -3049,10 +3060,14 @@ function renderExecutors(){
   const exInd=document.getElementById('ex-filter-active');
   if(exInd)exInd.innerHTML=(q||fId)?`<span class="filter-active" onclick="resetExFilters()" title="Скинути фільтри"><span class="dot"></span>Фільтр активний<span class="x">✕</span></span>`:'';
   let view=rows;
-  if(fId)view=view.filter(r=>r.e.id===fId);
+  if(fId)view=view.filter(r=>{
+    const e=r.e;
+    return(e.specs&&e.specs.includes(fId))||(e.role===fId);
+  });
   if(q)view=view.filter(r=>{
     const e=r.e;
-    return[e.name,e.role,e.phone,e.email,e.telegram].filter(Boolean).some(v=>String(v).toLowerCase().includes(q));
+    const specStr=(e.specs&&e.specs.join(' '))||e.role||'';
+    return[e.name,specStr,e.phone,e.email,e.telegram].filter(Boolean).some(v=>String(v).toLowerCase().includes(q));
   });
 
   // Сортування
@@ -3613,13 +3628,43 @@ function openModal(name){
     document.getElementById('modal-new-executor').style.display='block';
     document.getElementById('modal-executor-title').textContent='Новий виконавець';
     document.getElementById('edit-executor-id').value='';
-    ['ex-name','ex-role','ex-phone','ex-email'].forEach(id=>document.getElementById(id).value='');
+    ['ex-name','ex-phone','ex-email'].forEach(id=>document.getElementById(id).value='');
+    _exSpecs=[];renderExSpecTags();
+    document.getElementById('ex-spec-input').value='';
   }
 }
 
 function fillExSelect(selId,selected){
+  const specFilterId=selId==='sec-executor'?'sec-spec-filter':selId==='task-executor'?'task-spec-filter':null;
+  // Заповнюємо фільтр спеціалізацій
+  if(specFilterId){
+    const sf=document.getElementById(specFilterId);
+    if(sf){
+      const allSpecs=[...new Set(state.executors.flatMap(e=>e.specs&&e.specs.length?e.specs:(e.role?[e.role]:[])))].sort((a,b)=>a.localeCompare(b,'uk'));
+      sf.innerHTML='<option value="">— всі спеціалізації —</option>'+allSpecs.map(s=>`<option value="${s}">${s}</option>`).join('');
+      // Якщо вибраний виконавець має спеціалізацію — підсвітимо її
+      if(selected){
+        const ex=state.executors.find(e=>e.id===selected);
+        const firstSpec=ex&&(ex.specs&&ex.specs[0]||ex.role)||'';
+        if(firstSpec&&allSpecs.includes(firstSpec))sf.value=firstSpec;
+      }
+    }
+  }
+  // Заповнюємо список виконавців (з урахуванням активного фільтра спеціалізації)
+  const activeSpec=specFilterId?(document.getElementById(specFilterId)||{}).value||'':'';
+  const exList=activeSpec
+    ?state.executors.filter(e=>(e.specs&&e.specs.includes(activeSpec))||(e.role===activeSpec))
+    :state.executors;
   document.getElementById(selId).innerHTML='<option value="">— не призначено —</option>'+
-    state.executors.map(e=>`<option value="${e.id}" ${e.id===selected?'selected':''}>${e.name}${e.role?' ('+e.role+')':''}</option>`).join('');
+    exList.map(e=>{
+      const specLabel=(e.specs&&e.specs.length?e.specs:e.role?[e.role]:[]).join(', ');
+      return `<option value="${e.id}" ${e.id===selected?'selected':''}>${e.name}${specLabel?' ('+specLabel+')':''}</option>`;
+    }).join('');
+}
+
+function filterExSelect(selId,specFilterId){
+  const selected=(document.getElementById(selId)||{}).value||'';
+  fillExSelect(selId,selected);
 }
 
 function closeOverlay(e){if(e.target===document.getElementById('overlay'))closeModal();}
@@ -4022,10 +4067,28 @@ function saveQuickPay(){
 }
 
 // ── EXECUTORS CRUD ──
+// ── Спеціалізації виконавця (теги) ──
+var _exSpecs=[];
+function renderExSpecTags(){
+  document.getElementById('ex-specs-tags').innerHTML=_exSpecs.map((s,i)=>
+    `<span style="background:var(--accent);color:#fff;border-radius:20px;padding:3px 10px;font-size:12px;display:inline-flex;align-items:center;gap:5px">
+      ${esc(s)}<span onclick="removeExSpec(${i})" style="cursor:pointer;opacity:.75;font-size:15px;line-height:1">×</span>
+    </span>`).join('');
+}
+function addExSpec(){
+  const inp=document.getElementById('ex-spec-input');
+  const v=inp.value.trim();
+  if(!v)return;
+  if(!_exSpecs.includes(v))_exSpecs.push(v);
+  inp.value='';
+  renderExSpecTags();
+}
+function removeExSpec(i){_exSpecs.splice(i,1);renderExSpecTags();}
+
 function saveExecutor(){
   const name=document.getElementById('ex-name').value.trim();
-  if(!name){alert('Введіть ПІБ');return;}
-  const data={name,role:document.getElementById('ex-role').value,
+  if(!name){alert('Введіть ПІБ або назву');return;}
+  const data={name,specs:[..._exSpecs],role:_exSpecs[0]||'',
     phone:document.getElementById('ex-phone').value,
     email:document.getElementById('ex-email').value,
     telegram:'',rate:'',note:''};
@@ -4043,9 +4106,10 @@ function openEditEx(id){
   document.getElementById('modal-executor-title').textContent='Редагувати виконавця';
   document.getElementById('edit-executor-id').value=e.id;
   document.getElementById('ex-name').value=e.name||'';
-  document.getElementById('ex-role').value=e.role||'';
   document.getElementById('ex-phone').value=e.phone||'';
   document.getElementById('ex-email').value=e.email||'';
+  _exSpecs=[...(e.specs||(e.role?[e.role]:[]))];
+  renderExSpecTags();
 }
 
 function delEx(id){
