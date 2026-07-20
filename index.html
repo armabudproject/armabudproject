@@ -4085,7 +4085,7 @@ function saveQuickPay(){
 var _exSpecs=[];
 function renderExSpecTags(){
   document.getElementById('ex-specs-tags').innerHTML=_exSpecs.map((s,i)=>
-    `<span style="background:var(--accent);color:#fff;border-radius:20px;padding:3px 10px;font-size:12px;display:inline-flex;align-items:center;gap:5px">
+    `<span style="background:#1a3a5c;color:#7eb8e8;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:5px">
       ${esc(s)}<span onclick="removeExSpec(${i})" style="cursor:pointer;opacity:.75;font-size:15px;line-height:1">×</span>
     </span>`).join('');
 }
