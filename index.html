@@ -995,6 +995,11 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
   </div>
   <!-- Summary metrics -->
   <div class="metrics" id="ex-detail-metrics"></div>
+  <!-- Notes -->
+  <div class="card" id="ex-detail-note" style="display:none;margin-bottom:16px">
+    <div class="card-head"><span class="card-title">📝 Нотатки</span></div>
+    <p style="padding:12px 16px;margin:0;white-space:pre-wrap;color:var(--text2);line-height:1.6"></p>
+  </div>
   <!-- Projects table -->
   <div class="card">
     <div class="card-head"><span class="card-title">Проекти виконавця</span></div>
@@ -1136,6 +1141,7 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
     <div class="form-group"><label class="form-label">Телефон</label><input class="form-input" type="tel" id="ex-phone" placeholder="+380 XX XXX XXXX"></div>
     <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="ex-email" placeholder="email@..."></div>
   </div>
+  <div class="form-group"><label class="form-label">Нотатки</label><textarea class="form-input" id="ex-note" rows="3" placeholder="Довільні нотатки про виконавця..." style="resize:vertical;min-height:70px"></textarea></div>
   <div class="modal-footer">
     <button class="btn" onclick="closeModal()">Скасувати</button>
     <button class="btn primary" onclick="saveExecutor()">Зберегти</button>
@@ -3456,14 +3462,16 @@ function renderExecutorDetail(){
   document.getElementById('ex-detail-avatar').textContent=ini(e.name);
   (function(){var c=exColor(e.name),a=document.getElementById('ex-detail-avatar');a.style.background=c+'22';a.style.color=c;})();
   document.getElementById('ex-detail-name').textContent=e.name;
-  document.getElementById('ex-detail-role').textContent=e.role||'';
+  const specList=(e.specs&&e.specs.length?e.specs:e.role?[e.role]:[]);
+  document.getElementById('ex-detail-role').innerHTML=specList.map(s=>`<span style="background:var(--accent);color:#fff;border-radius:20px;padding:2px 10px;font-size:12px;margin-right:4px">${esc(s)}</span>`).join('');
   document.getElementById('ex-detail-contacts').innerHTML=[
     e.phone?`<span style="font-size:13px;color:var(--text2)">📞 ${e.phone}</span>`:'',
     e.email?`<span style="font-size:13px;color:var(--text2)">✉ ${e.email}</span>`:'',
     e.telegram?`<span style="font-size:13px;color:var(--text2)">✈ ${e.telegram}</span>`:'',
     e.rate?`<span style="font-size:13px;color:var(--accent)">💲 ${e.rate}</span>`:'',
-    e.note?`<span style="font-size:13px;color:var(--text3)">${e.note}</span>`:'',
   ].filter(Boolean).join('');
+  const noteEl=document.getElementById('ex-detail-note');
+  if(noteEl)noteEl.style.display=e.note?'':'none',noteEl.querySelector('p').textContent=e.note||'';
 
   // Збираємо всі розділи по проектах де є цей виконавець
   const rows=[];
@@ -3628,7 +3636,7 @@ function openModal(name){
     document.getElementById('modal-new-executor').style.display='block';
     document.getElementById('modal-executor-title').textContent='Новий виконавець';
     document.getElementById('edit-executor-id').value='';
-    ['ex-name','ex-phone','ex-email'].forEach(id=>document.getElementById(id).value='');
+    ['ex-name','ex-phone','ex-email','ex-note'].forEach(id=>document.getElementById(id).value='');
     _exSpecs=[];renderExSpecTags();
     document.getElementById('ex-spec-input').value='';
   }
@@ -4097,7 +4105,8 @@ function saveExecutor(){
   const data={name,specs:[..._exSpecs],role:_exSpecs[0]||'',
     phone:document.getElementById('ex-phone').value,
     email:document.getElementById('ex-email').value,
-    telegram:'',rate:'',note:''};
+    note:document.getElementById('ex-note').value.trim(),
+    telegram:'',rate:''};
   const id=document.getElementById('edit-executor-id').value;
   if(id){const ex=state.executors.find(e=>e.id===id);Object.assign(ex,data);}
   else{data.id=uid();state.executors.push(data);}
@@ -4114,6 +4123,7 @@ function openEditEx(id){
   document.getElementById('ex-name').value=e.name||'';
   document.getElementById('ex-phone').value=e.phone||'';
   document.getElementById('ex-email').value=e.email||'';
+  document.getElementById('ex-note').value=e.note||'';
   _exSpecs=[...(e.specs||(e.role?[e.role]:[]))];
   renderExSpecTags();
 }
