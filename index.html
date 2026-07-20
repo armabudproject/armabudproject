@@ -3097,7 +3097,7 @@ function renderExecutors(){
   <div class="tbl-wrap"><table>
     <thead><tr>
       ${th('Виконавець','name')}
-      ${th('Роль','role')}
+      ${th('Спеціалізація','role')}
       ${th('Проектів','projects','center')}
       ${th('Розділів','sections','center')}
       ${th('Задачі','tasks','center')}
@@ -3119,7 +3119,7 @@ function renderExecutors(){
             </div>
           </div>
         </td>
-        <td style="color:var(--text2)">${e.role||'—'}</td>
+        <td style="color:var(--text2)">${(e.specs&&e.specs.length?e.specs:e.role?[e.role]:[]).join(' · ')||'—'}</td>
         <td style="text-align:center">${d.projectCount}</td>
         <td style="text-align:center">${d.sectionCount}</td>
         <td style="text-align:center">
@@ -3636,22 +3636,28 @@ function openModal(name){
 
 function fillExSelect(selId,selected){
   const specFilterId=selId==='sec-executor'?'sec-spec-filter':selId==='task-executor'?'task-spec-filter':null;
-  // Заповнюємо фільтр спеціалізацій
+  const allSpecs=[...new Set(state.executors.flatMap(e=>e.specs&&e.specs.length?e.specs:(e.role?[e.role]:[])))].sort((a,b)=>a.localeCompare(b,'uk'));
+
+  // Заповнюємо фільтр спеціалізацій — зберігаємо поточний вибір
+  let activeSpec='';
   if(specFilterId){
     const sf=document.getElementById(specFilterId);
     if(sf){
-      const allSpecs=[...new Set(state.executors.flatMap(e=>e.specs&&e.specs.length?e.specs:(e.role?[e.role]:[])))].sort((a,b)=>a.localeCompare(b,'uk'));
+      const prevSpec=sf.value; // зберігаємо до перезапису
       sf.innerHTML='<option value="">— всі спеціалізації —</option>'+allSpecs.map(s=>`<option value="${s}">${s}</option>`).join('');
-      // Якщо вибраний виконавець має спеціалізацію — підсвітимо її
-      if(selected){
+      // Відновлюємо попередній вибір (або ставимо спеціалізацію вибраного виконавця)
+      if(prevSpec&&allSpecs.includes(prevSpec)){
+        sf.value=prevSpec;
+        activeSpec=prevSpec;
+      } else if(selected){
         const ex=state.executors.find(e=>e.id===selected);
         const firstSpec=ex&&(ex.specs&&ex.specs[0]||ex.role)||'';
-        if(firstSpec&&allSpecs.includes(firstSpec))sf.value=firstSpec;
+        if(firstSpec&&allSpecs.includes(firstSpec)){sf.value=firstSpec;activeSpec=firstSpec;}
       }
     }
   }
-  // Заповнюємо список виконавців (з урахуванням активного фільтра спеціалізації)
-  const activeSpec=specFilterId?(document.getElementById(specFilterId)||{}).value||'':'';
+
+  // Фільтруємо виконавців за активною спеціалізацією
   const exList=activeSpec
     ?state.executors.filter(e=>(e.specs&&e.specs.includes(activeSpec))||(e.role===activeSpec))
     :state.executors;
@@ -3662,7 +3668,7 @@ function fillExSelect(selId,selected){
     }).join('');
 }
 
-function filterExSelect(selId,specFilterId){
+function filterExSelect(selId){
   const selected=(document.getElementById(selId)||{}).value||'';
   fillExSelect(selId,selected);
 }
