@@ -108,8 +108,19 @@ def fetch_candidate_ids(offset):
         params["offset"] = offset
 
     while pages < MAX_PAGES:
-        r = SESSION.get(url, params=params, timeout=40)
-        r.raise_for_status()
+        try:
+            r = SESSION.get(url, params=params, timeout=40)
+            r.raise_for_status()
+        except Exception as e:
+            status = getattr(getattr(e, 'response', None), 'status_code', None)
+            if status in (429, 404, 400) and offset:
+                # недійсний або протермінований offset — починаємо спочатку
+                print(f"[warn] offset error ({status}), resetting offset and retrying from start.")
+                params = dict(base_params)
+                offset = None
+                time.sleep(2)
+                continue
+            raise
         body = r.json()
         data = body.get("data", [])
         if not data:
