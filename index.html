@@ -3858,7 +3858,7 @@ function renderPlan(){
         <button class="btn sm" onclick="cancelEditPlan()">✕</button>
       </div>`;
     }
-    return`<div class="plan-item ${p.done?'done':''}">
+    return`<div class="plan-item ${p.done?'done':''}" style="background:color-mix(in srgb,var(--accent) 8%,var(--bg3));border-color:color-mix(in srgb,var(--accent) 35%,transparent);border-left:3px solid var(--accent)">
       <input type="checkbox" ${p.done?'checked':''} onclick="togglePlanDone('${p.id}')">
       <div class="plan-item-body">
         <div class="plan-item-title">${p.time?'<strong style="color:var(--accent)">'+p.time+'</strong> ':''}${p.text}</div>
