@@ -73,6 +73,42 @@ FEED_LIMIT = 50
 SESSION = requests.Session()
 SESSION.headers.update({"User-Agent": "ArmabudProzorroBot/1.0"})
 
+RETRY_DELAYS = [5, 15, 45]  # секунди між повторними спробами
+
+
+def api_get(url, params=None, timeout=40):
+    """GET з автоматичним retry (3 спроби) та обробкою 429."""
+    for attempt, delay in enumerate([0] + RETRY_DELAYS, 1):
+        if delay:
+            print(f"[retry] спроба {attempt}, чекаємо {delay}с…")
+            time.sleep(delay)
+        try:
+            r = SESSION.get(url, params=params, timeout=timeout)
+            if r.status_code == 429:
+                retry_after = int(r.headers.get("Retry-After", delay or 30))
+                print(f"[warn] 429 Too Many Requests, чекаємо {retry_after}с…")
+                time.sleep(retry_after)
+                continue
+            r.raise_for_status()
+            return r
+        except requests.exceptions.Timeout:
+            print(f"[warn] timeout на {url}")
+            if attempt > len(RETRY_DELAYS):
+                raise
+        except requests.exceptions.ConnectionError as e:
+            print(f"[warn] connection error: {e}")
+            if attempt > len(RETRY_DELAYS):
+                raise
+        except requests.exceptions.HTTPError as e:
+            code = e.response.status_code if e.response is not None else 0
+            if code in (500, 502, 503, 504):
+                print(f"[warn] server error {code}")
+                if attempt > len(RETRY_DELAYS):
+                    raise
+            else:
+                raise  # 4xx (крім 429) — не повторюємо
+    raise RuntimeError(f"api_get failed after retries: {url}")
+
 
 # ── Стан фіда (offset) ───────────────────────────────────────────────
 def load_state():
@@ -109,18 +145,19 @@ def fetch_candidate_ids(offset):
 
     while pages < MAX_PAGES:
         try:
-            r = SESSION.get(url, params=params, timeout=40)
-            r.raise_for_status()
-        except Exception as e:
-            status = getattr(getattr(e, 'response', None), 'status_code', None)
-            if status in (429, 404, 400) and offset:
-                # недійсний або протермінований offset — починаємо спочатку
-                print(f"[warn] offset error ({status}), resetting offset and retrying from start.")
+            r = api_get(url, params=params)
+        except requests.exceptions.HTTPError as e:
+            code = e.response.status_code if e.response is not None else 0
+            if code in (400, 404) and offset:
+                print(f"[warn] offset недійсний ({code}), скидаємо і починаємо спочатку.")
                 params = dict(base_params)
                 offset = None
-                time.sleep(2)
                 continue
-            raise
+            print(f"[error] fetch_candidate_ids: {e}")
+            break
+        except Exception as e:
+            print(f"[error] fetch_candidate_ids: {e}")
+            break
         body = r.json()
         data = body.get("data", [])
         if not data:
@@ -149,8 +186,7 @@ def fetch_candidate_ids(offset):
 
 # ── Деталі одного тендера ────────────────────────────────────────────
 def fetch_tender(tid):
-    r = SESSION.get(f"{PROZORRO_FEED}/{tid}", timeout=40)
-    r.raise_for_status()
+    r = api_get(f"{PROZORRO_FEED}/{tid}")
     return r.json().get("data", {})
 
 
@@ -277,46 +313,58 @@ def should_reset_monthly(state):
 
 def main():
     state = load_state()
+    seen = set()
 
-    # ── Щомісячне скидання: seen + offset → скрипт знову проходить весь фід
-    if should_reset_monthly(state):
-        print("[info] місячне скидання seen.json та offset — починаємо спочатку.")
-        seen = set()
+    try:
+        # ── Щомісячне скидання ────────────────────────────────────────
+        if should_reset_monthly(state):
+            print("[info] місячне скидання seen.json та offset — починаємо спочатку.")
+            state["offset"] = None
+            state["last_reset"] = dt.date.today().isoformat()
+        else:
+            seen = load_seen()
+
+        ids, new_offset = fetch_candidate_ids(state.get("offset"))
+        print(f"[info] кандидатів з фіда (статус+регіон пройшли): {len(ids)}.")
+
+        fresh_ids = [i for i in ids if i not in seen][:MAX_DETAIL_FETCH]
+        print(f"[info] нових для перевірки: {len(fresh_ids)} (ліміт {MAX_DETAIL_FETCH}).")
+
+        matched = []
+        for i, tid in enumerate(fresh_ids, 1):
+            try:
+                t = fetch_tender(tid)
+                if matches(t):
+                    matched.append(to_record(t))
+            except Exception as e:
+                print(f"[warn] tender {tid}: {e}")
+            seen.add(tid)
+            if i % 200 == 0:
+                print(f"[info] оброблено {i}/{len(fresh_ids)}…")
+            time.sleep(REQUEST_PAUSE)
+
+        print(f"[info] під критерії підійшло: {len(matched)}.")
+
+        if matched:
+            try:
+                send_telegram(matched)
+            except Exception as e:
+                print(f"[warn] Telegram: {e}")
+            update_feed(matched)
+
+        if new_offset:
+            state["offset"] = new_offset
+
+    except Exception as e:
+        print(f"[error] несподівана помилка: {e}")
+        # скидаємо offset щоб наступний запуск почав спочатку
         state["offset"] = None
-        state["last_reset"] = dt.date.today().isoformat()
-    else:
-        seen = load_seen()
 
-    ids, new_offset = fetch_candidate_ids(state.get("offset"))
-    print(f"[info] кандидатів з фіда (статус+регіон пройшли): {len(ids)}.")
-
-    fresh_ids = [i for i in ids if i not in seen][:MAX_DETAIL_FETCH]
-    print(f"[info] нових для перевірки: {len(fresh_ids)} (ліміт {MAX_DETAIL_FETCH}).")
-
-    matched = []
-    for i, tid in enumerate(fresh_ids, 1):
-        try:
-            t = fetch_tender(tid)
-            if matches(t):
-                matched.append(to_record(t))
-        except Exception as e:
-            print(f"[warn] tender {tid}: {e}")
-        seen.add(tid)
-        if i % 200 == 0:
-            print(f"[info] оброблено {i}/{len(fresh_ids)}…")
-        time.sleep(REQUEST_PAUSE)
-
-    print(f"[info] під критерії підійшло: {len(matched)}.")
-
-    if matched:
-        send_telegram(matched)
-        update_feed(matched)
-
-    save_seen(seen)
-    if new_offset:
-        state["offset"] = new_offset
-    save_state(state)
-    print("[done]")
+    finally:
+        # зберігаємо стан і seen завжди — навіть при помилці
+        save_seen(seen)
+        save_state(state)
+        print("[done]")
 
 
 if __name__ == "__main__":
