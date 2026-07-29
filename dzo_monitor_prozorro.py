@@ -74,6 +74,7 @@ SESSION = requests.Session()
 SESSION.headers.update({"User-Agent": "ArmabudProzorroBot/1.0"})
 
 RETRY_DELAYS = [5, 15, 45]  # секунди між повторними спробами
+RESET_DAYS   = 7            # скидаємо offset кожні 7 днів
 
 
 def api_get(url, params=None, timeout=40):
@@ -304,11 +305,11 @@ def update_feed(records):
 
 # ── Головний потік ───────────────────────────────────────────────────
 def should_reset_monthly(state):
-    """Повертає True якщо з останнього скидання минув місяць."""
+    """Повертає True якщо з останнього скидання минуло RESET_DAYS днів."""
     last = state.get("last_reset")
     if not last:
         return True
-    return dt.date.today() >= dt.date.fromisoformat(last) + dt.timedelta(days=30)
+    return dt.date.today() >= dt.date.fromisoformat(last) + dt.timedelta(days=RESET_DAYS)
 
 
 def main():
