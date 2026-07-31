@@ -4023,6 +4023,7 @@ function delAdvance(i){const p=state.projects.find(x=>x.id===curPid);p.advances.
 
 function saveSection(){
   const p=state.projects.find(x=>x.id===curPid);
+  if(!p){alert('Проект не знайдено. Спробуйте перезавантажити сторінку.');return;}
   const name=document.getElementById('sec-name').value.trim();
   if(!name){alert('Введіть назву розділу');return;}
   const data={name,executorId:document.getElementById('sec-executor').value,
@@ -4032,6 +4033,7 @@ function saveSection(){
     deadline:document.getElementById('sec-deadline').value,
     plannedPayDate:document.getElementById('sec-planned-pay').value,
     note:document.getElementById('sec-note').value};
+  if(!p.sections)p.sections=[];
   const idx=document.getElementById('edit-section-idx').value;
   if(idx!=='')p.sections[+idx]=data;else p.sections.push(data);
   save();closeModal();renderDetail();
