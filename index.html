@@ -2327,10 +2327,10 @@ function renderEconomics(){
   let panel='';
   if(econActiveMetric){
     const m=metrics.find(x=>x.k===econActiveMetric);
-    const rows=pls.map(x=>({id:x.p.id,name:x.p.name,client:x.p.client,val:m.fn(x.pl)||0})).filter(r=>r.val!==0).sort((a,b)=>b.val-a.val);
+    const rows=pls.map(x=>({id:x.p.id,name:x.p.name,client:x.p.client,type:x.p.type,val:m.fn(x.pl)||0})).filter(r=>r.val!==0).sort((a,b)=>b.val-a.val);
     const total=rows.reduce((a,r)=>a+r.val,0);
     const body=rows.length
-      ? rows.map(r=>`<tr style="cursor:pointer" onclick="navigate('detail','${r.id}')"><td><div style="font-weight:600">${r.name}</div>${r.client?`<div style="font-size:11px;color:var(--text2);margin-top:2px">${r.client}</div>`:''}</td><td class="mono" style="text-align:right;color:${m.color}">${fmt(r.val)}</td></tr>`).join('')
+      ? rows.map(r=>`<tr style="cursor:pointer" onclick="navigate('detail','${r.id}')"><td><div style="font-weight:600;display:flex;align-items:center;gap:6px">${r.type?typeBadge(r.type):''}${r.name}</div>${r.client?`<div style="font-size:11px;color:var(--text2);margin-top:2px">${r.client}</div>`:''}</td><td class="mono" style="text-align:right;color:${m.color}">${fmt(r.val)}</td></tr>`).join('')
         +`<tr style="border-top:2px solid var(--border)"><td style="font-weight:700">Разом</td><td class="mono" style="text-align:right;font-weight:800;color:${m.color}">${fmt(total)}</td></tr>`
       : '<tr><td colspan="2" style="padding:22px;text-align:center;color:var(--text3)">Немає проектів із цим значенням</td></tr>';
     panel=`<div class="card" style="margin-top:14px"><div class="card-head"><span class="card-title">Розшифровка: ${m.label}</span><span style="font-size:12px;color:var(--text3)">${rows.length} проєкт${rows.length===1?'':(rows.length<5?'и':'ів')}</span></div>`
