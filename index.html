@@ -2422,12 +2422,15 @@ function renderDashboard(){
     return;
   }
 
-  // Підсумки
+  // Підсумки (без БП)
   let tR=0,tCosts=0,tAdv=0,tRemain=0,tPaid=0,tToPay=0,tTax=0,tNet=0;
-  // Розбивка за типами {count, rev}
+  // БП окремо
+  let bpCount=0,bpRev=0,bpCosts=0;
+  // Розбивка за типами {count, rev} — без БП
   const byType={};
   state.projects.forEach(p=>{
     const pl=calcPnl(p);
+    if(p.type==='БП'){bpCount++;bpRev+=pl.rev;bpCosts+=pl.totalCosts;return;}
     tR+=pl.rev;tCosts+=pl.totalCosts;tAdv+=pl.adv;tRemain+=pl.remaining;tPaid+=pl.paid;tToPay+=pl.toPay;tTax+=pl.tax;tNet+=pl.net;
     const t=p.type||'—';
     if(!byType[t])byType[t]={count:0,rev:0};
@@ -2518,9 +2521,14 @@ function renderDashboard(){
     </div>
   </div>`;
 
+  const cBP=bpCount>0?card('#9aa3b2','Проекти БП',bpCount,ic.proj,
+    `<div class="metric-bd">`+
+    `<span class="bd-item"><span class="bd-dot" style="background:#4a9eff"></span>Дохід<b>${fmt(bpRev)}</b></span>`+
+    `<span class="bd-item"><span class="bd-dot" style="background:var(--amber)"></span>Витрати<b>${fmt(bpCosts)}</b></span>`+
+    `</div>`,false,'#9aa3b2'):'';
   el.innerHTML=
     '<div class="dash-grid">'+
-      '<div class="dash-col">'+cVsogo+cMarzha+'</div>'+
+      '<div class="dash-col">'+cVsogo+cMarzha+(cBP?cBP:'')+'</div>'+
       '<div class="dash-col">'+cDohid+cPodatky+'</div>'+
       '<div class="dash-col">'+cVytraty+cPrybutok+cBest+'</div>'+
       '<div class="dash-col">'+cOtrymano+cZalZam+cCollect+'</div>'+
