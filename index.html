@@ -2469,16 +2469,31 @@ function renderDashboard(){
       ${extra}
     </div>`;
 
-  const activeProjects=state.projects.filter(p=>{const s=p.status||'active';return s!=='done'&&s!=='pause';});
-  const cVsogo=card('var(--accent)','Всього проектів в роботі',activeProjects.length,ic.proj,(function(){
-    const byTypeActive={};
-    activeProjects.forEach(p=>{const t=p.type||'—';if(!byTypeActive[t])byTypeActive[t]=0;byTypeActive[t]++;});
-    const typeItems=Object.keys(byTypeActive).sort((a,b)=>byTypeActive[b]-byTypeActive[a]).map(t=>{
-      const col=t==='—'?'#9aa3b2':(TYPE_COLOR[t]||'#9aa3b2');
-      return`<span class="bd-item"><span class="bd-dot" style="background:${col}"></span>${t==='—'?'Без типу':t}<b>${byTypeActive[t]}</b></span>`;
-    }).join('');
-    return`<div class="metric-bd">${typeItems||'<span class="bd-item">Немає активних</span>'}</div>`;
-  })(),false,'var(--green)');
+  const cntAll=state.projects.length;
+  const cntActive=state.projects.filter(p=>(p.status||'active')==='active').length;
+  const cntDone=state.projects.filter(p=>(p.status||'active')==='done').length;
+  const cntPause=state.projects.filter(p=>(p.status||'active')==='pause').length;
+  const cntBP=state.projects.filter(p=>p.type==='БП').length;
+  const cntAN=state.projects.filter(p=>p.type==='АН').length;
+  const cntRP=state.projects.filter(p=>p.type==='РП').length;
+  const cntKP=state.projects.filter(p=>p.type==='КП').length;
+  const cntEP=state.projects.filter(p=>p.type==='ЕП').length;
+  const cVsogo=card('var(--accent)','Всього проектів',cntAll,ic.proj,`
+    <div class="metric-bd" style="display:flex;flex-direction:column;gap:3px">
+      <div style="display:flex;flex-wrap:wrap;gap:4px 10px;margin-bottom:2px">
+        <span class="bd-item"><span class="bd-dot" style="background:var(--accent)"></span>Всього<b>${cntAll}</b></span>
+        <span class="bd-item"><span class="bd-dot" style="background:var(--green)"></span>В роботі<b>${cntActive}</b></span>
+        <span class="bd-item"><span class="bd-dot" style="background:#38bdf8"></span>Завершені<b>${cntDone}</b></span>
+        <span class="bd-item"><span class="bd-dot" style="background:#6b7280"></span>Пауза<b>${cntPause}</b></span>
+        <span class="bd-item"><span class="bd-dot" style="background:#9aa3b2"></span>БП<b>${cntBP}</b></span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px 10px;border-top:1px solid rgba(255,255,255,0.07);padding-top:4px">
+        ${cntAN?`<span class="bd-item"><span class="bd-dot" style="background:${TYPE_COLOR['АН']}"></span>АН<b>${cntAN}</b></span>`:''}
+        ${cntRP?`<span class="bd-item"><span class="bd-dot" style="background:${TYPE_COLOR['РП']}"></span>РП<b>${cntRP}</b></span>`:''}
+        ${cntKP?`<span class="bd-item"><span class="bd-dot" style="background:${TYPE_COLOR['КП']}"></span>КП<b>${cntKP}</b></span>`:''}
+        ${cntEP?`<span class="bd-item"><span class="bd-dot" style="background:${TYPE_COLOR['ЕП']}"></span>ЕП<b>${cntEP}</b></span>`:''}
+      </div>
+    </div>`,false,'var(--green)');
   const cDohid=card('#4a9eff','Загальний дохід',fmt(tR),ic.rev,bd(x=>x.rev,x=>fmt(x.rev)),false,'#4a9eff');
   const cVytraty=card('var(--text2)','Витрати (план)',fmt(tCosts),ic.cost);
   const cOtrymano=card('var(--purple)','Отримано від замовників',fmt(tAdv),ic.inbox,'',false,'var(--purple)');
