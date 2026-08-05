@@ -3677,26 +3677,25 @@ function fillExSelect(selId,selected){
   const specFilterId=selId==='sec-executor'?'sec-spec-filter':selId==='task-executor'?'task-spec-filter':null;
   const allSpecs=[...new Set(state.executors.flatMap(e=>e.specs&&e.specs.length?e.specs:(e.role?[e.role]:[])))].sort((a,b)=>a.localeCompare(b,'uk'));
 
-  // Заповнюємо фільтр спеціалізацій — зберігаємо поточний вибір
+  // Заповнюємо фільтр спеціалізацій — зберігаємо поточний вибір користувача
+  // ВАЖЛИВО: НЕ ставимо автоматично spec за вибраним виконавцем —
+  // це призводило до того що виконавець вилітав якщо фільтр відрізав його
   let activeSpec='';
   if(specFilterId){
     const sf=document.getElementById(specFilterId);
     if(sf){
       const prevSpec=sf.value; // зберігаємо до перезапису
       sf.innerHTML='<option value="">— всі спеціалізації —</option>'+allSpecs.map(s=>`<option value="${s}">${s}</option>`).join('');
-      // Відновлюємо попередній вибір (або ставимо спеціалізацію вибраного виконавця)
       if(prevSpec&&allSpecs.includes(prevSpec)){
         sf.value=prevSpec;
         activeSpec=prevSpec;
-      } else if(selected){
-        const ex=state.executors.find(e=>e.id===selected);
-        const firstSpec=ex&&(ex.specs&&ex.specs[0]||ex.role)||'';
-        if(firstSpec&&allSpecs.includes(firstSpec)){sf.value=firstSpec;activeSpec=firstSpec;}
       }
+      // Якщо prevSpec порожній (нова модалка або редагування) — залишаємо "всі"
+      // і показуємо всіх виконавців, щоб вибраний завжди був у списку
     }
   }
 
-  // Фільтруємо виконавців за активною спеціалізацією
+  // Фільтруємо виконавців тільки якщо користувач явно вибрав спеціалізацію
   const exList=activeSpec
     ?state.executors.filter(e=>(e.specs&&e.specs.includes(activeSpec))||(e.role===activeSpec))
     :state.executors;
