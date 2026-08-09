@@ -3647,6 +3647,7 @@ function openModal(name){
     document.getElementById('sec-deadline').value='';
     document.getElementById('sec-planned-pay').value='';
     document.getElementById('sec-status').value='todo';
+    const _ssfN=document.getElementById('sec-spec-filter');if(_ssfN)_ssfN.style.display='';
     fillExSelect('sec-executor','');
   }else if(name==='add-task'){
     document.getElementById('modal-task-title').textContent='Нова задача';
@@ -3662,6 +3663,7 @@ function openModal(name){
     const projSel=document.getElementById('task-project');
     projSel.innerHTML='<option value="">— оберіть проект —</option>'+
       state.projects.map(p=>`<option value="${p.id}" ${p.id===curPid?'selected':''}>${p.name}</option>`).join('');
+    const _tsfN=document.getElementById('task-spec-filter');if(_tsfN)_tsfN.style.display='';
     fillExSelect('task-executor','');
   }else if(name==='new-executor'){
     document.getElementById('modal-new-executor').style.display='block';
@@ -4073,7 +4075,7 @@ function editSection(i){
   document.getElementById('sec-deadline').value=s.deadline||'';
   document.getElementById('sec-planned-pay').value=s.plannedPayDate||'';
   document.getElementById('sec-status').value=s.status||'todo';
-  const _ssf=document.getElementById('sec-spec-filter');if(_ssf)_ssf.value='';
+  const _ssf=document.getElementById('sec-spec-filter');if(_ssf){_ssf.value='';_ssf.style.display='none';}
   fillExSelect('sec-executor',s.executorId);
 }
 
@@ -4500,7 +4502,7 @@ function editTaskGlobal(idx){
   document.getElementById('task-deadline').value=t.deadline||'';
   document.getElementById('task-status').value=t.status||'todo';
   document.getElementById('task-priority').value=t.priority||'normal';
-  const _tsf1=document.getElementById('task-spec-filter');if(_tsf1)_tsf1.value='';
+  const _tsf1=document.getElementById('task-spec-filter');if(_tsf1){_tsf1.value='';_tsf1.style.display='none';}
   fillExSelect('task-executor',t.executorId);
 }
 
@@ -4539,7 +4541,7 @@ function editTask(i,pid){
   document.getElementById('task-deadline').value=t.deadline||'';
   document.getElementById('task-status').value=t.status||'todo';
   document.getElementById('task-priority').value=t.priority||'normal';
-  const _tsf2=document.getElementById('task-spec-filter');if(_tsf2)_tsf2.value='';
+  const _tsf2=document.getElementById('task-spec-filter');if(_tsf2){_tsf2.value='';_tsf2.style.display='none';}
   fillExSelect('task-executor',t.executorId);
 }
 
