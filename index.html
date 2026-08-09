@@ -4073,6 +4073,7 @@ function editSection(i){
   document.getElementById('sec-deadline').value=s.deadline||'';
   document.getElementById('sec-planned-pay').value=s.plannedPayDate||'';
   document.getElementById('sec-status').value=s.status||'todo';
+  const _ssf=document.getElementById('sec-spec-filter');if(_ssf)_ssf.value='';
   fillExSelect('sec-executor',s.executorId);
 }
 
@@ -4499,6 +4500,7 @@ function editTaskGlobal(idx){
   document.getElementById('task-deadline').value=t.deadline||'';
   document.getElementById('task-status').value=t.status||'todo';
   document.getElementById('task-priority').value=t.priority||'normal';
+  const _tsf1=document.getElementById('task-spec-filter');if(_tsf1)_tsf1.value='';
   fillExSelect('task-executor',t.executorId);
 }
 
@@ -4537,6 +4539,7 @@ function editTask(i,pid){
   document.getElementById('task-deadline').value=t.deadline||'';
   document.getElementById('task-status').value=t.status||'todo';
   document.getElementById('task-priority').value=t.priority||'normal';
+  const _tsf2=document.getElementById('task-spec-filter');if(_tsf2)_tsf2.value='';
   fillExSelect('task-executor',t.executorId);
 }
 
