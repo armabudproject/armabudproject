@@ -2811,6 +2811,9 @@ function importAdminExcel(event, targetMonth){
       const iContr   =findCol(['контраг','contr','постач','одержувач','recipient']);
       const iArticle =findCol(['статт','article','витрат','призначен']);
 
+      // DEBUG — тимчасово показуємо заголовки і знайдені індекси
+      alert(`🔍 DEBUG заголовки файлу (рядок ${headerRowIdx+1}):\n${headers.map((h,i)=>`[${i}] "${h}" → норм: "${h.toLowerCase().replace(/\s/g,'')}"`).join('\n')}\n\nЗнайдено:\nДата: ${iDate}\nСума: ${iAmount}\nРахунок: ${iAccount}\nКатегорія: ${iCat}\nКонтрагент: ${iContr}\nСтаття: ${iArticle}`);
+
       if(iAmount===null){
         alert(`Не знайдено колонку з сумою.\n\nЗаголовки у файлі (рядок ${headerRowIdx+1}):\n${headers.join(' | ')}\n\nПеревірте формат файлу.`);
         return;
