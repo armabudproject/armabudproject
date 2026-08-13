@@ -2795,24 +2795,23 @@ function importAdminExcel(event, targetMonth){
       }
       const headers=(rawArr[headerRowIdx]||[]).map(h=>h==null?'':String(h).trim());
 
-      // Пошук колонки по індексу (ігноруємо регістр і невидимі символи)
+      // Нормалізація: схожі латинські → кириличні (Excel часто мішає символи)
+      const latinToCyr={'a':'а','e':'е','o':'о','p':'р','c':'с','x':'х','y':'у','k':'к','i':'і',
+        'A':'А','B':'В','C':'С','E':'Е','H':'Н','I':'І','K':'К','M':'М','O':'О','P':'Р','T':'Т','X':'Х','Y':'У'};
+      const normHeader=h=>h.split('').map(ch=>latinToCyr[ch]||ch).join('').toLowerCase().replace(/\s+/g,'');
+
+      // Пошук колонки по індексу
       const findCol=(patterns)=>{
-        const idx=headers.findIndex(h=>{
-          const norm=h.toLowerCase().replace(/[\s ​]/g,'');
-          return patterns.some(p=>norm.includes(p));
-        });
+        const idx=headers.findIndex(h=>patterns.some(p=>normHeader(h).includes(p)));
         return idx>=0?idx:null;
       };
 
       const iDate    =findCol(['дата','date']);
-      const iAmount  =findCol(['сум','amount']);
-      const iAccount =findCol(['рахун','account','вид рух','тип рах']);
+      const iAmount  =findCol(['сум','сума','amount']);
+      const iAccount =findCol(['рахун','вид','тип','account']);
       const iCat     =findCol(['катег','category']);
-      const iContr   =findCol(['контраг','contr','постач','одержувач','recipient']);
-      const iArticle =findCol(['статт','article','витрат','призначен']);
-
-      // DEBUG — тимчасово показуємо заголовки і знайдені індекси
-      alert(`🔍 DEBUG заголовки файлу (рядок ${headerRowIdx+1}):\n${headers.map((h,i)=>`[${i}] "${h}" → норм: "${h.toLowerCase().replace(/\s/g,'')}"`).join('\n')}\n\nЗнайдено:\nДата: ${iDate}\nСума: ${iAmount}\nРахунок: ${iAccount}\nКатегорія: ${iCat}\nКонтрагент: ${iContr}\nСтаття: ${iArticle}`);
+      const iContr   =findCol(['контраг','постач','одерж','contr','recipient']);
+      const iArticle =findCol(['статт','витрат','article','признач']);
 
       if(iAmount===null){
         alert(`Не знайдено колонку з сумою.\n\nЗаголовки у файлі (рядок ${headerRowIdx+1}):\n${headers.join(' | ')}\n\nПеревірте формат файлу.`);
