@@ -2752,11 +2752,11 @@ function showAdminMonth(monthKey){
     const cat=adminCatOf(r);const c=catMap[cat]||catMap.other;
     return`<tr>
       <td>${r.date?r.date.slice(0,10):'—'}</td>
-      <td><span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;background:color-mix(in srgb,${c.color} 20%,transparent);color:${c.color}">${c.label}</span></td>
+      <td class="mono" style="text-align:right;font-weight:700">${fmt(r.amount)}</td>
+      <td><span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;background:rgba(74,158,255,0.15);color:#4a9eff">${c.label}</span></td>
       <td>${r.contractor||'—'}</td>
       <td>${r.account||'—'}</td>
       <td>${r.article||'—'}</td>
-      <td class="mono" style="text-align:right;font-weight:700">${fmt(r.amount)}</td>
     </tr>`;}).join('');
   const [y,mo]=monthKey.split('-');
   const MON_UA={1:'Січень',2:'Лютий',3:'Березень',4:'Квітень',5:'Травень',6:'Червень',7:'Липень',8:'Серпень',9:'Вересень',10:'Жовтень',11:'Листопад',12:'Грудень'};
@@ -2766,7 +2766,7 @@ function showAdminMonth(monthKey){
       <span style="font-size:11px;color:var(--text3)">${rows.length} записів · <span style="cursor:pointer;color:var(--accent)" onclick="showAdminMonth('${monthKey}')">✕ закрити</span></span>
     </div>
     <div class="tbl-wrap"><table>
-      <thead><tr><th>Дата</th><th>Категорія</th><th>Контрагент</th><th>Рахунок</th><th>Стаття</th><th style="text-align:right">Сума</th></tr></thead>
+      <thead><tr><th>Дата</th><th style="text-align:right">Сума</th><th>Категорія</th><th>Контрагент</th><th>Рахунок</th><th>Стаття</th></tr></thead>
       <tbody>${tbody}</tbody>
     </table></div>
   </div>`;
@@ -2782,83 +2782,78 @@ function importAdminExcel(event, targetMonth){
     try{
       const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
       const ws=wb.Sheets[wb.SheetNames[0]];
-      const raw=XLSX.utils.sheet_to_json(ws,{defval:null,raw:true});
-      if(!raw.length){alert('Файл порожній або формат не розпізнано');return;}
 
-      // Detect columns (flexible matching)
-      const sample=raw[0];
-      const keys=Object.keys(sample);
-      const find=(patterns)=>keys.find(k=>patterns.some(p=>k.toLowerCase().replace(/\s/g,'').includes(p)))||null;
-      const colDate    =find(['дата','date']);
-      const colAmount  =find(['сум','amount','сума']);
-      const colAccount =find(['рахун','account','вид','тип']);
-      const colCat     =find(['катег','category']);
-      // Контрагент — тільки конкретні патерни, без широких збігів
-      const colContr   =find(['контраг','contr','постач','одержувач','recipient']);
-      const colArticle =find(['статт','article','витрат','призначен']);
+      // Читаємо заголовки напряму з першого рядка (надійніше ніж через ключі об'єктів)
+      const rawArr=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});
+      if(rawArr.length<2){alert('Файл порожній або формат не розпізнано');return;}
 
-      // Якщо контрагент не знайдено — показуємо список колонок, але НЕ робимо широкий fallback
-      const colContrFallback=colContr;
-      if(!colContr){
-        console.warn('Колонку Контрагент не знайдено. Колонки файлу:',keys);
+      // Знаходимо рядок-заголовок (перший де є ≥3 непустих комірок)
+      let headerRowIdx=0;
+      for(let i=0;i<Math.min(5,rawArr.length);i++){
+        const nonEmpty=(rawArr[i]||[]).filter(v=>v!=null&&String(v).trim()!='');
+        if(nonEmpty.length>=3){headerRowIdx=i;break;}
       }
+      const headers=(rawArr[headerRowIdx]||[]).map(h=>h==null?'':String(h).trim());
 
-      if(!colAmount){
-        alert(`Не знайдено колонку з сумою.\n\nКолонки у файлі:\n${keys.join(', ')}\n\nПеревірте формат файлу.`);
+      // Пошук колонки по індексу (ігноруємо регістр і невидимі символи)
+      const findCol=(patterns)=>{
+        const idx=headers.findIndex(h=>{
+          const norm=h.toLowerCase().replace(/[\s ​]/g,'');
+          return patterns.some(p=>norm.includes(p));
+        });
+        return idx>=0?idx:null;
+      };
+
+      const iDate    =findCol(['дата','date']);
+      const iAmount  =findCol(['сум','amount']);
+      const iAccount =findCol(['рахун','account','вид рух','тип рах']);
+      const iCat     =findCol(['катег','category']);
+      const iContr   =findCol(['контраг','contr','постач','одержувач','recipient']);
+      const iArticle =findCol(['статт','article','витрат','призначен']);
+
+      if(iAmount===null){
+        alert(`Не знайдено колонку з сумою.\n\nЗаголовки у файлі (рядок ${headerRowIdx+1}):\n${headers.join(' | ')}\n\nПеревірте формат файлу.`);
         return;
       }
 
+      // Дані — рядки після заголовка
+      const dataRows=rawArr.slice(headerRowIdx+1);
+      const raw=dataRows.map(row=>{
+        const get=(i)=>i!==null&&i<row.length?row[i]:null;
+        return{_date:get(iDate),_amount:get(iAmount),_account:get(iAccount),_cat:get(iCat),_contr:get(iContr),_article:get(iArticle)};
+      });
+
       // Парсинг рядків
       const parsedRows=[];
+      const parseDate=v=>{
+        if(!v)return'';
+        if(v instanceof Date&&!isNaN(v))return v.toISOString().slice(0,10);
+        if(typeof v==='number'){const d=new Date(Math.round((v-25569)*86400*1000));return isNaN(d)?'':d.toISOString().slice(0,10);}
+        const d=new Date(String(v));
+        if(!isNaN(d))return d.toISOString().slice(0,10);
+        const m=String(v).match(/(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{4})/);
+        return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}` :'';
+      };
+      const parseAmt=v=>{
+        if(v==null)return 0;
+        if(typeof v==='number')return Math.abs(v);
+        const s=String(v).replace(/\s/g,'');
+        const lc=s.lastIndexOf(','),ld=s.lastIndexOf('.');
+        if(lc>ld)return Math.abs(parseFloat(s.replace(/\./g,'').replace(',','.'))||0);
+        return Math.abs(parseFloat(s.replace(/,/g,''))||0);
+      };
+      const str=v=>v==null?'':String(v).trim();
+
       raw.forEach(row=>{
-        // Дата
-        const dateRaw=colDate?row[colDate]:null;
-        let dateStr='';
-        if(dateRaw){
-          if(dateRaw instanceof Date&&!isNaN(dateRaw)){
-            dateStr=dateRaw.toISOString().slice(0,10);
-          }else if(typeof dateRaw==='number'){
-            // Excel serial date
-            const d=new Date(Math.round((dateRaw-25569)*86400*1000));
-            if(!isNaN(d))dateStr=d.toISOString().slice(0,10);
-          }else{
-            const d=new Date(String(dateRaw));
-            if(!isNaN(d)){
-              dateStr=d.toISOString().slice(0,10);
-            }else{
-              const m=String(dateRaw).match(/(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{4})/);
-              if(m)dateStr=`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
-            }
-          }
-        }
-        // Сума
-        const rawAmt=colAmount?row[colAmount]:0;
-        let amount=0;
-        if(typeof rawAmt==='number'){
-          amount=Math.abs(rawAmt);
-        }else if(rawAmt){
-          const s=String(rawAmt).replace(/\s/g,'');
-          const lastComma=s.lastIndexOf(',');
-          const lastDot=s.lastIndexOf('.');
-          if(lastComma>lastDot){
-            amount=Math.abs(parseFloat(s.replace(/\./g,'').replace(',','.'))||0);
-          }else{
-            amount=Math.abs(parseFloat(s.replace(/,/g,''))||0);
-          }
-        }
+        const amount=parseAmt(row._amount);
         if(!amount)return;
-
-        // Контрагент — читаємо як рядок
-        const rawContr=colContrFallback?row[colContrFallback]:null;
-        const contractor=rawContr!=null&&rawContr!==''?String(rawContr):'';
-
         parsedRows.push({
-          date:dateStr,
+          date:parseDate(row._date),
           amount,
-          account:colAccount?String(row[colAccount]||''):'',
-          category:colCat?String(row[colCat]||''):'',
-          contractor,
-          article:colArticle?String(row[colArticle]||''):''
+          account:str(row._account),
+          category:str(row._cat),
+          contractor:str(row._contr),
+          article:str(row._article)
         });
       });
 
