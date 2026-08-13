@@ -2364,6 +2364,11 @@ function renderEconomics(){
     </div>`;
   }).join('');
 
+  const totalInput=(label,total,color)=>`
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+      <span style="font-size:10px;color:${color};text-transform:uppercase;letter-spacing:.04em;font-weight:700">${label}</span>
+      <div style="width:90px;padding:4px 6px;border-radius:5px;border:1px solid ${color};background:color-mix(in srgb,${color} 10%,var(--bg2));color:${color};font-size:12px;text-align:right;font-weight:700">${fmt(total)}</div>
+    </div>`;
   const chartPanels=`
     <div class="card" style="margin-top:14px">
       <div class="card-head">
@@ -2371,7 +2376,7 @@ function renderEconomics(){
         <span style="font-size:11px;color:var(--text3)">${year} · фіксовані витрати по місяцях, грн</span>
       </div>
       <div class="card-body">
-        <div style="display:flex;flex-wrap:wrap;gap:8px 10px">${adminInputs}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px 10px;align-items:flex-end">${adminInputs}${totalInput('Разом',totalAdmin,'#A974E6')}</div>
       </div>
     </div>
     <div class="card" style="margin-top:14px">
@@ -2380,7 +2385,7 @@ function renderEconomics(){
         <span style="font-size:11px;color:var(--text3)">${year} · власні кошти на покриття витрат, грн</span>
       </div>
       <div class="card-body">
-        <div style="display:flex;flex-wrap:wrap;gap:8px 10px">${invInputs}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px 10px;align-items:flex-end">${invInputs}${totalInput('Разом',totalInv,'#EAB94C')}</div>
       </div>
     </div>
     <div class="card" style="margin-top:14px">
