@@ -2055,162 +2055,121 @@ let _cfCharts={};
 function renderCashflowCharts(){
   if(typeof Chart==='undefined')return;
   const cf=calcCashflow();
-  // Destroy old instances before re-creating (economics re-renders on metric click)
   ['forecast','history'].forEach(k=>{if(_cfCharts[k]){_cfCharts[k].destroy();delete _cfCharts[k];}});
 
   const MON=['Січ','Лют','Бер','Кві','Тра','Чер','Лип','Сер','Вер','Жов','Лис','Гру'];
   const monLabel=k=>{const[y,m]=k.split('-');return MON[+m-1]+' '+y.slice(2);};
-  const GREEN='#4ade80',CORAL='#f87171',GOLD='#EAB94C',SKY='#38bdf8';
+  const GREEN='#4ade80',RED='#f87171',BLUE='#38bdf8',YELLOW='#EAB94C';
   const GRID='rgba(127,168,230,0.10)',TICK='#7a96b8';
   Chart.defaults.color=TICK;
 
-  // Custom plugin: draw gap amount labels below negative balance points
-  const gapLabelPlugin={
-    id:'gapLabels',
-    afterDatasetsDraw(chart){
-      const ds=chart.data.datasets;
-      const balIdx=ds.findIndex(d=>d.label==='Баланс');
-      if(balIdx<0)return;
-      const meta=chart.getDatasetMeta(balIdx);
-      const ctx=chart.ctx;
-      ds[balIdx].data.forEach((val,i)=>{
-        if(val>=0)return;
-        const pt=meta.data[i];
-        ctx.save();
-        ctx.font='bold 11px monospace';
-        ctx.fillStyle=CORAL;
-        ctx.textAlign='center';
-        ctx.fillText('−'+fmt(Math.abs(val)),pt.x,pt.y+18);
-        ctx.restore();
-      });
-    }
-  };
-
-  // ── Panel 1: Forecast (grouped bars + balance line) ───────────────────────
+  // ── Новий графік: Дохід / Витрати / Баланс місяця ────────────────────────
   const fc1=document.getElementById('cf-forecast-chart');
   if(fc1){
-    const fIncome=cf.forecast.map(r=>r['Прихід']);
-    const fInv=cf.forecast.map(r=>r['Інвестиції']);
-    const fExp=cf.forecast.map(r=>r['Виплати']);
-    const fBal=cf.forecast.map(r=>r['Баланс місяця']);
-    const fCum=cf.forecast.map(r=>r['Наростаючий баланс']);
+    const labels=cf.fwdKeys.map(monLabel);
+    // Дохід = прихід від замовників + інвестиції партнерів (позитивні стовпці)
+    const income=cf.forecast.map(r=>r['Прихід']+r['Інвестиції']);
+    // Витрати = виплати виконавцям + адмін (негативні стовпці, нижче нуля)
+    const expenses=cf.forecast.map(r=>-r['Виплати']);
+    // Баланс місяця
+    const balance=cf.forecast.map(r=>r['Баланс місяця']);
 
-    // Gap summary below chart
-    const gaps=cf.forecast.filter(r=>r['Баланс місяця']<0);
+    // ── Річний підсумок ──────────────────────────────────────────────────
+    const yearIncome=income.reduce((a,v)=>a+v,0);
+    const yearExpenses=cf.forecast.reduce((a,r)=>a+r['Виплати'],0);
+    const yearBalance=cf.forecast.reduce((a,r)=>a+r['Баланс місяця'],0);
+    const negMonths=cf.forecast.filter(r=>r['Баланс місяця']<0);
+    const balColor=yearBalance>=0?GREEN:RED;
+
     const gapEl=document.getElementById('cf-gap-summary');
     if(gapEl){
-      if(gaps.length){
-        gapEl.innerHTML='<div style="margin-top:10px;padding:10px 14px;border-radius:6px;background:rgba(248,113,113,0.10);border:1px solid rgba(248,113,113,0.30)">'
-          +'<div style="color:'+CORAL+';font-weight:700;font-size:12px;margin-bottom:6px">⚠️ Касові розриви</div>'
-          +gaps.map(r=>`<div style="font-size:12px;color:var(--text);margin-bottom:3px">`
-            +`<span style="color:var(--text2);min-width:70px;display:inline-block">${r['Місяць']}</span>`
-            +`<span style="color:${CORAL};font-weight:700">розрив ${fmt(Math.abs(r['Баланс місяця']))} грн</span>`
-            +`<span style="color:var(--text3);font-size:11px;margin-left:8px">(прихід ${fmt(r['Прихід'])}+інв ${fmt(r['Інвестиції'])} − виплати ${fmt(r['Виплати'])})</span>`
-            +'</div>').join('')
-          +'</div>';
-      } else {
-        gapEl.innerHTML='<div style="margin-top:8px;font-size:12px;color:var(--text3)">✅ Касових розривів не виявлено</div>';
-      }
+      gapEl.innerHTML=
+        `<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;padding:0 2px">
+          <div style="flex:1;min-width:130px;padding:10px 14px;border-radius:7px;background:rgba(56,189,248,0.10);border:1px solid rgba(56,189,248,0.28)">
+            <div style="color:${BLUE};font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">📥 Річний дохід</div>
+            <div style="color:${BLUE};font-size:16px;font-weight:800">${fmt(yearIncome)} грн</div>
+          </div>
+          <div style="flex:1;min-width:130px;padding:10px 14px;border-radius:7px;background:rgba(234,185,76,0.10);border:1px solid rgba(234,185,76,0.28)">
+            <div style="color:${YELLOW};font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">📤 Річні витрати</div>
+            <div style="color:${YELLOW};font-size:16px;font-weight:800">${fmt(yearExpenses)} грн</div>
+          </div>
+          <div style="flex:1;min-width:130px;padding:10px 14px;border-radius:7px;background:${yearBalance>=0?'rgba(74,222,128,0.10)':'rgba(248,113,113,0.10)'};border:1px solid ${yearBalance>=0?'rgba(74,222,128,0.28)':'rgba(248,113,113,0.28)'}">
+            <div style="color:${balColor};font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">⚖️ Річний баланс</div>
+            <div style="color:${balColor};font-size:16px;font-weight:800">${yearBalance>=0?'+':''}${fmt(yearBalance)} грн</div>
+          </div>
+        </div>`
+        +(negMonths.length
+          ?`<div style="margin-top:10px;padding:8px 14px;border-radius:7px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.22)">
+              <span style="color:${RED};font-weight:700;font-size:12px;margin-right:10px">⚠️ Дефіцитні місяці:</span>`
+              +negMonths.map(r=>`<span style="font-size:12px;color:var(--text2);margin-right:14px">${monLabel(r['Місяць'])}: <b style="color:${RED}">${fmt(r['Баланс місяця'])} грн</b></span>`).join('')
+            +'</div>'
+          :`<div style="margin-top:10px;font-size:12px;color:var(--text3);padding:0 2px">✅ Щомісяця баланс позитивний — касових розривів не виявлено</div>`);
     }
+
+    // Plugin: підписи балансу на точках
+    const balanceLabelPlugin={
+      id:'balanceLabels',
+      afterDatasetsDraw(chart){
+        const ds=chart.data.datasets;
+        const bi=ds.findIndex(d=>d._isBalance);
+        if(bi<0)return;
+        const meta=chart.getDatasetMeta(bi);
+        const ctx=chart.ctx;
+        ds[bi].data.forEach((val,i)=>{
+          const pt=meta.data[i];if(!pt)return;
+          const color=val>=0?GREEN:RED;
+          const label=(val>=0?'+':'')+Math.round(val/1000)+'т';
+          ctx.save();
+          ctx.font='bold 10px sans-serif';
+          ctx.fillStyle=color;
+          ctx.textAlign='center';
+          ctx.fillText(label,pt.x,val>=0?pt.y-8:pt.y+16);
+          ctx.restore();
+        });
+      }
+    };
 
     _cfCharts.forecast=new Chart(fc1,{
       data:{
-        labels:cf.fwdKeys.map(monLabel),
+        labels,
         datasets:[
-          {type:'bar',label:'Прихід від замовника',data:fIncome,
-           backgroundColor:'rgba(74,222,128,0.55)',borderColor:GREEN,borderWidth:1,borderRadius:4,order:3},
-          {type:'bar',label:'Інвестиції партнерів',data:fInv,
-           backgroundColor:'rgba(234,185,76,0.55)',borderColor:GOLD,borderWidth:1,borderRadius:4,order:3},
-          {type:'bar',label:'Виплати',data:fExp,
-           backgroundColor:'rgba(248,113,113,0.55)',borderColor:CORAL,borderWidth:1,borderRadius:4,order:3},
-          {type:'line',label:'Баланс місяця',data:fBal,
-           borderColor:GOLD,backgroundColor:'transparent',borderWidth:2,borderDash:[4,3],
-           pointBackgroundColor:fBal.map(v=>v<0?CORAL:GOLD),
-           pointBorderColor:fBal.map(v=>v<0?CORAL:GOLD),
-           pointRadius:5,pointHoverRadius:7,tension:0.3,order:2,yAxisID:'y'},
-          {type:'line',label:'Наростаючий баланс',data:fCum,
-           borderColor:'#A974E6',backgroundColor:'transparent',borderWidth:2.5,
-           pointBackgroundColor:fCum.map(v=>v<0?CORAL:'#A974E6'),
-           pointBorderColor:fCum.map(v=>v<0?CORAL:'#A974E6'),
-           pointRadius:5,pointHoverRadius:7,tension:0.3,order:1,yAxisID:'y'},
+          {type:'bar',label:'Дохід (замовники + інвестиції)',data:income,
+           backgroundColor:'rgba(56,189,248,0.50)',borderColor:BLUE,borderWidth:1.5,
+           borderRadius:5,order:2},
+          {type:'bar',label:'Витрати (проекти + адмін)',data:expenses,
+           backgroundColor:'rgba(234,185,76,0.45)',borderColor:YELLOW,borderWidth:1.5,
+           borderRadius:5,order:2},
+          {type:'line',label:'Баланс місяця',data:balance,_isBalance:true,
+           borderColor:'transparent',borderWidth:0,
+           pointBackgroundColor:balance.map(v=>v>=0?GREEN:RED),
+           pointBorderColor:balance.map(v=>v>=0?GREEN:RED),
+           pointBorderWidth:2,pointRadius:7,pointHoverRadius:9,
+           tension:0,order:1,yAxisID:'y'},
         ]
       },
       options:{
         responsive:true,maintainAspectRatio:false,
         interaction:{mode:'index',intersect:false},
         plugins:{
-          legend:{labels:{color:TICK,boxWidth:12,padding:16,font:{size:12}}},
-          tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.parsed.y)+' грн'}}
+          legend:{labels:{color:TICK,boxWidth:12,padding:16,font:{size:12},
+            filter:item=>item.text!=='Баланс місяця'}},
+          tooltip:{callbacks:{
+            label:ctx=>{
+              const v=ctx.parsed.y;
+              if(ctx.dataset._isBalance)return'Баланс: '+(v>=0?'+':'')+fmt(v)+' грн';
+              return ctx.dataset.label+': '+(v<0?'−':'')+fmt(Math.abs(v))+' грн';
+            }
+          }}
         },
         scales:{
-          x:{grid:{color:GRID},ticks:{color:TICK}},
-          y:{grid:{color:ctx=>ctx.tick.value===0?'rgba(255,255,255,0.45)':GRID,lineWidth:ctx=>ctx.tick.value===0?2:1},
-             ticks:{color:TICK,callback:v=>v===0?'0':(v/1000).toFixed(0)+' тис.'},
+          x:{grid:{color:GRID},ticks:{color:TICK,font:{size:11}}},
+          y:{grid:{color:ctx=>ctx.tick.value===0?'rgba(255,255,255,0.35)':GRID,
+                   lineWidth:ctx=>ctx.tick.value===0?2:1},
+             ticks:{color:TICK,callback:v=>(Math.abs(v)/1000).toFixed(0)+(v<0?' тис.':v===0?'':' тис.')},
              title:{display:true,text:'тис. грн',color:TICK,font:{size:11}}}
         }
       },
-      plugins:[gapLabelPlugin]
-    });
-  }
-
-  // ── Panel 2: History (two filled lines) ───────────────────────────────────
-  const fc2=document.getElementById('cf-history-chart');
-  if(fc2){
-    const hIncome=cf.history.map(r=>r['Надходження від Замовників']);
-    const hExp=cf.history.map(r=>r['Виплати по проектах']);
-    const hInv=cf.history.map(r=>r['Інвестиції партнерів']);
-    const adm=state.adminCosts||{};
-    // pl.net per month (same logic as metric): project net profit lands in expectedPaymentDate month
-    const plByMonth={};
-    (state.projects||[]).forEach(p=>{
-      const k=monthKey(p.expectedPaymentDate);
-      if(k) plByMonth[k]=(plByMonth[k]||0)+(calcPnl(p).net||0);
-    });
-    const inv=state.partnerInvestments||{};
-    let _cum=0;
-    const hNetProfit=cf.bwdKeys.map(k=>{
-      _cum+=(plByMonth[k]||0)-(+(adm[k])||0)-(+(inv[k])||0);
-      return _cum;
-    });
-    _cfCharts.history=new Chart(fc2,{
-      type:'line',
-      data:{
-        labels:cf.bwdKeys.map(monLabel),
-        datasets:[
-          {label:'Надходження від Замовників',data:hIncome,
-           borderColor:SKY,backgroundColor:'rgba(56,189,248,0.10)',
-           borderWidth:2.5,pointBackgroundColor:SKY,pointRadius:5,pointHoverRadius:7,
-           tension:0.3,fill:true},
-          {label:'Інвестиції партнерів',data:hInv,
-           borderColor:GOLD,backgroundColor:'rgba(234,185,76,0.10)',
-           borderWidth:2.5,pointBackgroundColor:GOLD,pointRadius:5,pointHoverRadius:7,
-           tension:0.3,fill:true},
-          {label:'Виплати по проектах',data:hExp,
-           borderColor:'#A974E6',backgroundColor:'rgba(169,116,230,0.10)',
-           borderWidth:2.5,pointBackgroundColor:'#A974E6',pointRadius:5,pointHoverRadius:7,
-           tension:0.3,fill:true},
-          {label:'Чистий прибуток (накоп.)',data:hNetProfit,
-           borderWidth:2.5,backgroundColor:'transparent',
-           segment:{borderColor:ctx=>{const a=ctx.p0.parsed.y,b=ctx.p1.parsed.y;return(a>=0&&b>=0)?'#22d3ee':'#f97316';}},
-           pointBackgroundColor:hNetProfit.map(v=>v>=0?'#22d3ee':'#f97316'),
-           pointBorderColor:hNetProfit.map(v=>v>=0?'#22d3ee':'#f97316'),
-           pointRadius:5,pointHoverRadius:7,tension:0.3,fill:false}
-        ]
-      },
-      options:{
-        responsive:true,maintainAspectRatio:false,
-        interaction:{mode:'index',intersect:false},
-        plugins:{
-          legend:{labels:{color:TICK,boxWidth:12,padding:16,font:{size:12}}},
-          tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.parsed.y)+' грн'}}
-        },
-        scales:{
-          x:{grid:{color:GRID},ticks:{color:TICK}},
-          y:{grid:{color:ctx=>ctx.tick.value===0?'rgba(255,255,255,0.55)':GRID,lineWidth:ctx=>ctx.tick.value===0?2:1},
-             ticks:{color:TICK,callback:v=>v===0?'0':(v/1000).toFixed(0)+' тис.'},
-             title:{display:true,text:'тис. грн',color:TICK,font:{size:11}}}
-        }
-      }
+      plugins:[balanceLabelPlugin]
     });
   }
 }
@@ -2390,22 +2349,13 @@ function renderEconomics(){
     </div>
     <div class="card" style="margin-top:14px">
       <div class="card-head">
-        <span class="card-title">📈 Прогноз касового потоку</span>
-        <span style="font-size:11px;color:var(--text3)">прихід vs виплати + адмін</span>
+        <span class="card-title">📈 Касовий потік по місяцях</span>
+        <span style="font-size:11px;color:var(--text3)">🔵 дохід · 🟡 витрати · ● баланс місяця</span>
       </div>
-      <div class="card-body" style="position:relative;height:260px;padding-top:8px">
+      <div class="card-body" style="position:relative;height:300px;padding-top:8px">
         <canvas id="cf-forecast-chart"></canvas>
       </div>
-      <div id="cf-gap-summary" style="padding:0 14px 12px"></div>
-    </div>
-    <div class="card" style="margin-top:14px">
-      <div class="card-head">
-        <span class="card-title">📊 Рух коштів по місяцях</span>
-        <span style="font-size:11px;color:var(--text3)">реальні надходження та виплати</span>
-      </div>
-      <div class="card-body" style="position:relative;height:260px;padding-top:8px">
-        <canvas id="cf-history-chart"></canvas>
-      </div>
+      <div id="cf-gap-summary" style="padding:0 14px 14px"></div>
     </div>
     <div class="card" style="margin-top:14px">
       <div class="card-head">
