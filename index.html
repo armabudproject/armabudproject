@@ -2607,118 +2607,121 @@ function animateMetricCounts(){
 // ── АДМІНВИТРАТИ ─────────────────────────────────────────────────────────────
 
 // Категорії та правила маппінгу з Excel
-const ADMIN_CATS=[
-  {id:'zp',      label:'ЗП (готівка)',    color:'#4a9eff', rule:r=>(r.article||'').includes('ЗП')&&(r.account||'').toLowerCase().includes('каса')},
-  {id:'zpCard',  label:'ЗП на картки',   color:'#38bdf8', rule:r=>(r.article||'').includes('ЗП')&&!(r.account||'').toLowerCase().includes('каса')},
-  {id:'taxZp',   label:'Податки на ЗП',  color:'#f87171', rule:r=>{const a=(r.article||'').toLowerCase();const cat=(r.category||'').toLowerCase();return a.includes('2 -')||a.includes('податк')||cat.includes('податк');}},
-  {id:'office',  label:'Офіс',           color:'#A974E6', rule:r=>{const a=(r.article||'').toLowerCase();return a.includes('1 -')||a.includes('адмін');}},
-  {id:'google',  label:'Google service', color:'#34d399', rule:r=>(r.contractor||'').toLowerCase().includes('google')},
-];
-function adminCatOf(row){
-  for(const c of ADMIN_CATS)if(c.rule(row))return c.id;
-  return'other';
-}
-
 const MON_UA={1:'Січень',2:'Лютий',3:'Березень',4:'Квітень',5:'Травень',6:'Червень',7:'Липень',8:'Серпень',9:'Вересень',10:'Жовтень',11:'Листопад',12:'Грудень'};
-const MON_SHORT={1:'Січ',2:'Лют',3:'Бер',4:'Кві',5:'Тра',6:'Чер',7:'Лип',8:'Сер',9:'Вер',10:'Жов',11:'Лис',12:'Гру'};
+
+// Палітра кольорів для категорій з Excel
+const CAT_PALETTE=['#4a9eff','#EAB94C','#A974E6','#f87171','#34d399','#38bdf8','#fb923c','#a78bfa','#e879f9','#4ade80'];
+const _catColorMap={};
+let _catColorIdx=0;
+function catColor(name){
+  const key=(name||'').trim().toLowerCase();
+  if(!_catColorMap[key])_catColorMap[key]=CAT_PALETTE[_catColorIdx++%CAT_PALETTE.length];
+  return _catColorMap[key];
+}
 
 function renderAdminCosts(){
   const el=document.getElementById('admin-costs-content');if(!el)return;
   const imports=state.adminImports||{};
   const curYear=new Date().getFullYear();
-  const allCats=[...ADMIN_CATS,{id:'other',label:'Інше',color:'#9aa3b2'}];
 
-  // Підрахунок сум по всіх місяцях поточного року
-  const totals={};allCats.forEach(c=>{totals[c.id]=0;});
-  const byMonth={};
+  // Підрахунок по місяцях
+  const monthTotals={};   // {mKey: total}
+  const catTotalsYear={}; // {catName: total}
   for(let mo=1;mo<=12;mo++){
     const m=`${curYear}-${String(mo).padStart(2,'0')}`;
-    byMonth[m]={};allCats.forEach(c=>{byMonth[m][c.id]=0;});
-    (imports[m]||[]).forEach(row=>{
-      const cat=adminCatOf(row);
-      byMonth[m][cat]=(byMonth[m][cat]||0)+row.amount;
-      totals[cat]=(totals[cat]||0)+row.amount;
+    let mSum=0;
+    (imports[m]||[]).forEach(r=>{
+      mSum+=r.amount;
+      const c=(r.category||'Інше').trim();
+      catTotalsYear[c]=(catTotalsYear[c]||0)+r.amount;
     });
+    monthTotals[m]=mSum;
   }
-  const grandTotal=Object.values(totals).reduce((a,v)=>a+v,0);
+  const grandTotal=Object.values(monthTotals).reduce((a,v)=>a+v,0);
 
-  // ── Summary tiles ──
-  const summaryTiles=allCats.filter(c=>totals[c.id]>0).map(c=>`
-    <div style="flex:1;min-width:130px;padding:12px 14px;border-radius:8px;background:color-mix(in srgb,${c.color} 10%,var(--bg2));border:1px solid color-mix(in srgb,${c.color} 30%,transparent)">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:${c.color};margin-bottom:6px">${c.label}</div>
-      <div style="font-size:18px;font-weight:800;color:${c.color}">${fmt(totals[c.id])}</div>
-      <div style="font-size:10px;color:var(--text3);margin-top:3px">${grandTotal>0?Math.round(totals[c.id]/grandTotal*100):0}%</div>
-    </div>`).join('');
+  // ── Топ категорій за рік ──
+  const topCats=Object.entries(catTotalsYear).sort((a,b)=>b[1]-a[1]);
+  const summaryTiles=topCats.map(([cat,sum])=>{
+    const col=catColor(cat);
+    return`<div style="flex:1;min-width:120px;padding:12px 14px;border-radius:8px;background:color-mix(in srgb,${col} 10%,var(--bg2));border:1px solid color-mix(in srgb,${col} 30%,transparent)">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:${col};margin-bottom:6px">${cat}</div>
+      <div style="font-size:18px;font-weight:800;color:${col}">${fmt(sum)}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:3px">${grandTotal>0?Math.round(sum/grandTotal*100):0}%</div>
+    </div>`;
+  }).join('');
 
   // ── 12 місячних карток ──
   const monthCards=Array.from({length:12},(_,i)=>{
     const mo=i+1;
     const mKey=`${curYear}-${String(mo).padStart(2,'0')}`;
-    const mTotal=allCats.reduce((a,c)=>a+(byMonth[mKey][c.id]||0),0);
-    const hasData=mTotal>0;
+    const mTotal=monthTotals[mKey]||0;
     const rows=imports[mKey]||[];
+    const hasData=mTotal>0;
     const now=new Date();
     const isFuture=(curYear>now.getFullYear())||(curYear===now.getFullYear()&&mo>now.getMonth()+1);
     const isCurrentMonth=curYear===now.getFullYear()&&mo===now.getMonth()+1;
 
-    // Міні-бар по категоріях
-    const activeCatBars=hasData?allCats.filter(c=>byMonth[mKey][c.id]>0).map(c=>{
-      const pct=mTotal>0?byMonth[mKey][c.id]/mTotal*100:0;
-      return`<div title="${c.label}: ${fmt(byMonth[mKey][c.id])}" style="flex:${pct};background:${c.color};height:4px;border-radius:2px;min-width:4px"></div>`;
+    // Топ категорій місяця
+    const mCats={};
+    rows.forEach(r=>{const c=(r.category||'Інше').trim();mCats[c]=(mCats[c]||0)+r.amount;});
+    const mCatList=Object.entries(mCats).sort((a,b)=>b[1]-a[1]);
+
+    // Міні-бар
+    const miniBar=hasData?mCatList.map(([cat,s])=>{
+      const pct=mTotal>0?s/mTotal*100:0;
+      return`<div title="${cat}: ${fmt(s)}" style="flex:${pct};background:${catColor(cat)};height:4px;border-radius:2px;min-width:3px"></div>`;
     }).join(''):'';
 
     const borderColor=isCurrentMonth?'var(--accent)':hasData?'color-mix(in srgb,#4a9eff 25%,var(--border))':'var(--border)';
-    const bgColor=hasData?'var(--bg2)':'var(--bg1)';
 
-    return`<div style="border:1px solid ${borderColor};border-radius:10px;background:${bgColor};padding:14px;display:flex;flex-direction:column;gap:8px;position:relative;${isFuture&&!hasData?'opacity:0.55':''}">
-      ${isCurrentMonth?`<div style="position:absolute;top:8px;right:10px;font-size:9px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em">Поточний</div>`:''}
+    return`<div style="border:1px solid ${borderColor};border-radius:10px;background:${hasData?'var(--bg2)':'var(--bg1)'};padding:14px;display:flex;flex-direction:column;gap:8px;position:relative;${isFuture&&!hasData?'opacity:0.55':''}">
+      ${isCurrentMonth?`<div style="position:absolute;top:8px;right:10px;font-size:9px;font-weight:700;color:var(--accent);text-transform:uppercase">Поточний</div>`:''}
       <div style="font-size:13px;font-weight:700;color:var(--text1)">${MON_UA[mo]}</div>
       ${hasData?`
         <div style="font-size:17px;font-weight:800;color:#4a9eff">${fmt(mTotal)} <span style="font-size:11px;font-weight:400;color:var(--text3)">грн</span></div>
         <div style="font-size:10px;color:var(--text3)">${rows.length} записів</div>
-        <div style="display:flex;gap:2px;height:4px;border-radius:2px;overflow:hidden;background:var(--bg3)">${activeCatBars}</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:2px">
-          ${allCats.filter(c=>byMonth[mKey][c.id]>0).map(c=>`<span style="font-size:9px;color:${c.color};font-weight:600">${c.label.split(' ')[0]}: ${fmt(byMonth[mKey][c.id])}</span>`).join('')}
+        <div style="display:flex;gap:2px;height:4px;border-radius:2px;overflow:hidden;background:var(--bg3)">${miniBar}</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">
+          ${mCatList.slice(0,4).map(([cat,s])=>`<span style="font-size:9px;color:${catColor(cat)};font-weight:600">${cat}: ${fmt(s)}</span>`).join('')}
         </div>
         <div style="display:flex;gap:6px;margin-top:4px">
           <button class="btn" style="flex:1;font-size:11px;padding:5px 8px" onclick="showAdminMonth('${mKey}')">📋 Деталі</button>
           <label class="btn" style="flex:1;font-size:11px;padding:5px 8px;cursor:pointer;text-align:center">
-            🔄 Замінити
-            <input type="file" accept=".xlsx,.xls" style="display:none" onchange="importAdminExcel(event,'${mKey}')">
+            🔄 Замінити<input type="file" accept=".xlsx,.xls" style="display:none" onchange="importAdminExcel(event,'${mKey}')">
           </label>
         </div>
       `:`
         <div style="font-size:12px;color:var(--text3);flex:1">Немає даних</div>
         <label class="btn primary" style="font-size:11px;padding:6px 8px;cursor:pointer;text-align:center;display:block">
-          📥 Завантажити
-          <input type="file" accept=".xlsx,.xls" style="display:none" onchange="importAdminExcel(event,'${mKey}')">
+          📥 Завантажити<input type="file" accept=".xlsx,.xls" style="display:none" onchange="importAdminExcel(event,'${mKey}')">
         </label>
       `}
     </div>`;
   }).join('');
 
-  // ── Підсумкова таблиця (тільки місяці з даними) ──
-  const filledMonths=Array.from({length:12},(_,i)=>`${curYear}-${String(i+1).padStart(2,'0')}`).filter(m=>allCats.some(c=>byMonth[m][c.id]>0));
-  const activeCats=allCats.filter(c=>filledMonths.some(m=>byMonth[m][c.id]>0));
+  // ── Зведена таблиця по місяцях ──
+  const filledMonths=Array.from({length:12},(_,i)=>`${curYear}-${String(i+1).padStart(2,'0')}`).filter(m=>monthTotals[m]>0);
   let tableSection='';
   if(filledMonths.length){
-    const thead='<tr><th>Місяць</th>'+activeCats.map(c=>`<th style="text-align:right;color:${c.color}">${c.label}</th>`).join('')+'<th style="text-align:right">Разом</th></tr>';
     const tbody=filledMonths.map(m=>{
       const [,mo]=m.split('-');
-      const mTotal=activeCats.reduce((a,c)=>a+(byMonth[m][c.id]||0),0);
+      const mCats2={};
+      (imports[m]||[]).forEach(r=>{const c=(r.category||'Інше').trim();mCats2[c]=(mCats2[c]||0)+r.amount;});
+      const catStr=Object.entries(mCats2).sort((a,b)=>b[1]-a[1]).map(([cat,s])=>`<span style="color:${catColor(cat)};font-size:10px">${cat}: <b>${fmt(s)}</b></span>`).join(' &nbsp;');
       return`<tr style="cursor:pointer" onclick="showAdminMonth('${m}')">
         <td><b>${MON_UA[+mo]}</b></td>
-        ${activeCats.map(c=>`<td class="mono" style="text-align:right">${byMonth[m][c.id]>0?fmt(byMonth[m][c.id]):'—'}</td>`).join('')}
-        <td class="mono" style="text-align:right;font-weight:700">${fmt(mTotal)}</td>
+        <td>${catStr}</td>
+        <td class="mono" style="text-align:right;font-weight:700">${fmt(monthTotals[m])}</td>
       </tr>`;
-    }).join('')+`<tr style="border-top:2px solid var(--border);background:var(--bg3)">
-      <td style="font-weight:800">РАЗОМ</td>
-      ${activeCats.map(c=>`<td class="mono" style="text-align:right;font-weight:700;color:${c.color}">${totals[c.id]>0?fmt(totals[c.id]):'—'}</td>`).join('')}
-      <td class="mono" style="text-align:right;font-weight:800;color:var(--accent)">${fmt(grandTotal)}</td>
-    </tr>`;
+    }).join('');
+    const totalRow=Object.entries(catTotalsYear).sort((a,b)=>b[1]-a[1]).map(([cat,s])=>`<span style="color:${catColor(cat)};font-size:10px">${cat}: <b>${fmt(s)}</b></span>`).join(' &nbsp;');
     tableSection=`<div class="card" style="margin-top:16px">
       <div class="card-head"><span class="card-title">📊 Зведена таблиця ${curYear}</span><span style="font-size:11px;color:var(--text3)">натисніть на місяць для деталей</span></div>
-      <div class="tbl-wrap"><table><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Місяць</th><th>По категоріям</th><th style="text-align:right">Разом</th></tr></thead>
+        <tbody>${tbody}</tbody>
+        <tfoot><tr style="background:var(--bg3)"><td style="font-weight:800">РАЗОМ</td><td>${totalRow}</td><td class="mono" style="text-align:right;font-weight:800;color:var(--accent)">${fmt(grandTotal)}</td></tr></tfoot>
+      </table></div>
     </div>`;
   }
 
@@ -2745,32 +2748,32 @@ function showAdminMonth(monthKey){
   _adminDetailMonth=monthKey;
   const rows=(state.adminImports&&state.adminImports[monthKey])||[];
   if(!rows.length){el.innerHTML='';return;}
-  const allCats=[...ADMIN_CATS,{id:'other',label:'Інше',color:'#9aa3b2'}];
-  const catMap={};allCats.forEach(c=>{catMap[c.id]=c;});
+  const [y,mo]=monthKey.split('-');
   const sorted=[...rows].sort((a,b)=>new Date(b.date)-new Date(a.date));
   const tbody=sorted.map(r=>{
-    const cat=adminCatOf(r);const c=catMap[cat]||catMap.other;
+    const cat=(r.category||'').trim();
+    const col=catColor(cat);
     return`<tr>
       <td>${r.date?r.date.slice(0,10):'—'}</td>
       <td class="mono" style="text-align:right;font-weight:700">${fmt(r.amount)}</td>
-      <td><span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;background:rgba(74,158,255,0.15);color:#4a9eff">${c.label}</span></td>
+      <td><span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;background:color-mix(in srgb,${col} 18%,transparent);color:${col}">${cat||'—'}</span></td>
       <td>${r.contractor||'—'}</td>
       <td>${r.account||'—'}</td>
       <td>${r.article||'—'}</td>
-    </tr>`;}).join('');
-  const [y,mo]=monthKey.split('-');
-  const MON_UA={1:'Січень',2:'Лютий',3:'Березень',4:'Квітень',5:'Травень',6:'Червень',7:'Липень',8:'Серпень',9:'Вересень',10:'Жовтень',11:'Листопад',12:'Грудень'};
+    </tr>`;
+  }).join('');
   el.innerHTML=`<div class="card">
     <div class="card-head">
       <span class="card-title">🧾 Транзакції: ${MON_UA[+mo]||monthKey} ${y}</span>
       <span style="font-size:11px;color:var(--text3)">${rows.length} записів · <span style="cursor:pointer;color:var(--accent)" onclick="showAdminMonth('${monthKey}')">✕ закрити</span></span>
     </div>
     <div class="tbl-wrap"><table>
-      <thead><tr><th>Дата</th><th style="text-align:right">Сума</th><th>Категорія</th><th>Контрагент</th><th>Рахунок</th><th>Стаття</th></tr></thead>
+      <thead><tr><th>Дата</th><th style="text-align:right">Сума</th><th>Категорія</th><th>Контрагент</th><th>Рахунок</th><th>Стаття/Проект</th></tr></thead>
       <tbody>${tbody}</tbody>
     </table></div>
   </div>`;
 }
+
 
 function importAdminExcel(event, targetMonth){
   // targetMonth: 'YYYY-MM' — якщо передано, всі рядки файлу йдуть у цей місяць
@@ -2811,7 +2814,7 @@ function importAdminExcel(event, targetMonth){
       const iAccount =findCol(['рахун','вид','тип','account']);
       const iCat     =findCol(['катег','category']);
       const iContr   =findCol(['контраг','постач','одерж','contr','recipient']);
-      const iArticle =findCol(['статт','витрат','article','признач']);
+      const iArticle =findCol(['статт','витрат','проект','article','признач','project']);
 
       if(iAmount===null){
         alert(`Не знайдено колонку з сумою.\n\nЗаголовки у файлі (рядок ${headerRowIdx+1}):\n${headers.join(' | ')}\n\nПеревірте формат файлу.`);
