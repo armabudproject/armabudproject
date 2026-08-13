@@ -2593,46 +2593,79 @@ function renderDashExtra(){
   const el=document.getElementById('dash-extra');if(!el)return;
   if(!state.projects.length){el.innerHTML='';return;}
 
-  // Зведення за типами + загальні
-  const byType={};let tRev=0,tTax=0,tCosts=0,tNet=0;
-  state.projects.forEach(p=>{const pl=calcPnl(p);const t=p.type||'—';if(!byType[t])byType[t]={rev:0,net:0};byType[t].rev+=pl.rev;byType[t].net+=pl.net;tRev+=pl.rev;tTax+=pl.tax;tCosts+=pl.totalCosts;tNet+=pl.net;});
-  const colorOf=t=>t==='—'?'#9aa3b2':(TYPE_COLOR[t]||'#9aa3b2');
-  const types=Object.keys(byType);
+  // ── Річні показники для діаграм ──────────────────────────────────────
+  const curYear=new Date().getFullYear();
+  const yearProjectRev=(state.projects||[]).filter(p=>p.type!=='БП').reduce((a,p)=>{
+    const ep=p.expectedPaymentDate||p.deadline||'';
+    if(!ep.startsWith(curYear+'-')&&!ep.startsWith(curYear+'/'))return a;
+    return a+(+(p.revenue)||0);
+  },0);
+  const yearInv=Object.entries(state.partnerInvestments||{}).filter(([k])=>k.startsWith(curYear+'-')).reduce((a,[,v])=>a+(+(v)||0),0);
+  const yearAdminTotal=Object.entries(state.adminCosts||{}).filter(([k])=>k.startsWith(curYear+'-')).reduce((a,[,v])=>a+(+(v)||0),0);
+  const yearTax=(state.projects||[]).filter(p=>p.type!=='БП').reduce((a,p)=>{
+    const ep=p.expectedPaymentDate||p.deadline||'';
+    if(!ep.startsWith(curYear+'-')&&!ep.startsWith(curYear+'/'))return a;
+    return a+(calcPnl(p).tax||0);
+  },0);
+  const yearProjectCosts=(state.projects||[]).filter(p=>p.type!=='БП').reduce((a,p)=>{
+    const ep=p.expectedPaymentDate||p.deadline||'';
+    if(!ep.startsWith(curYear+'-')&&!ep.startsWith(curYear+'/'))return a;
+    return a+(p.sections||[]).reduce((s,sec)=>s+(+(sec.cost)||0),0);
+  },0);
+  const yearTotalIncome=yearProjectRev+yearInv;
+  const yearTotalExpenses=yearProjectCosts+yearAdminTotal+yearTax+yearInv;
 
-  // Кругова діаграма (donut) зі stroke-dasharray
-  function donut(getVal){
-    const segs=types.map(t=>({t,val:getVal(byType[t]),color:colorOf(t)}))
-      .filter(s=>s.val>0).sort((a,b)=>b.val-a.val);
-    const total=segs.reduce((a,s)=>a+s.val,0);
-    const r=42,C=2*Math.PI*r;let acc=0;
-    const ring=segs.map((s,i)=>{
+  // ── Побудова donut-діаграми зі списком статей ─────────────────────────
+  function buildDonut(segs,total,centerLabel,centerColor,navTarget){
+    const r=48,C=2*Math.PI*r;let acc=0;
+    const ring=segs.filter(s=>s.val>0).map((s,i)=>{
       const f=total>0?s.val/total:0;
       const dash=`${(f*C).toFixed(2)} ${(C-f*C).toFixed(2)}`;
       const off=(-acc*C).toFixed(2);acc+=f;
-      return`<circle class="donut-seg" cx="50" cy="50" r="${r}" fill="none" stroke="${s.color}" stroke-width="15" stroke-dasharray="0 ${C.toFixed(2)}" data-dash="${dash}" stroke-dashoffset="${off}" transform="rotate(-90 50 50)" stroke-linecap="butt" style="transition-delay:${(i*0.1).toFixed(2)}s"/>`;
+      return`<circle class="donut-seg" cx="60" cy="60" r="${r}" fill="none" stroke="${s.color}" stroke-width="16" stroke-dasharray="0 ${C.toFixed(2)}" data-dash="${dash}" stroke-dashoffset="${off}" transform="rotate(-90 60 60)" stroke-linecap="butt" style="transition-delay:${(i*0.08).toFixed(2)}s"/>`;
     }).join('');
-    return total>0
-      ? `<svg viewBox="0 0 100 100" class="donut-svg"><circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--bg4)" stroke-width="15"/>${ring}</svg>`
-      : `<svg viewBox="0 0 100 100" class="donut-svg"><circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--bg4)" stroke-width="15"/></svg>`;
-  }
-  // Легенда: відсоток від загального (сортована від більшого)
-  function legend(getVal,total){
-    return types.map(t=>({t,val:getVal(byType[t])})).sort((a,b)=>b.val-a.val).map(({t,val})=>{
-      const pct=total?Math.round(val/total*100):0;
-      return`<span class="bd-item"><span class="bd-dot" style="background:${colorOf(t)}"></span>${t==='—'?'Без типу':t}<b style="color:${pct<0?'var(--red)':'var(--text)'}">${pct}%</b></span>`;
+    const svg=`<svg viewBox="0 0 120 120" style="width:140px;height:140px;cursor:pointer" onclick="navigate('economics')">
+      <circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--bg4)" stroke-width="16"/>
+      ${ring}
+      <text x="60" y="55" text-anchor="middle" font-size="8" font-weight="700" fill="var(--text3)" font-family="sans-serif">${centerLabel}</text>
+      <text x="60" y="68" text-anchor="middle" font-size="10" font-weight="800" fill="${centerColor}" font-family="sans-serif">${fmtShort(total)}</text>
+    </svg>`;
+    const rows=segs.map(s=>{
+      const pct=total>0?Math.round(s.val/total*100):0;
+      return`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer" onclick="navigate('economics')">
+        <span style="width:10px;height:10px;border-radius:50%;background:${s.color};flex-shrink:0"></span>
+        <span style="flex:1;font-size:12px;color:var(--text2)">${s.label}</span>
+        <span style="font-size:13px;font-weight:700;color:${s.color};min-width:32px;text-align:right">${pct}%</span>
+        <span style="font-size:11px;color:var(--text3);min-width:70px;text-align:right">${fmt(s.val)}</span>
+      </div>`;
     }).join('');
+    return`<div style="display:flex;gap:20px;align-items:flex-start">
+      <div style="flex-shrink:0">${svg}</div>
+      <div style="flex:1;padding-top:4px">${rows}</div>
+    </div>`;
   }
 
+  const expSegs=[
+    {label:'Витрати по проектах',val:yearProjectCosts,color:'#EAB94C'},
+    {label:'Адмінвитрати',       val:yearAdminTotal,  color:'#A974E6'},
+    {label:'Повернення інвест.',  val:yearInv,         color:'#38bdf8'},
+    {label:'Податки',             val:yearTax,         color:'#f87171'},
+  ];
+  const incSegs=[
+    {label:'Від проектів', val:yearProjectRev, color:'#4a9eff'},
+    {label:'Інвестиції',   val:yearInv,        color:'#EAB94C'},
+  ];
+
   const donutCard=`<div class="card dash-card">
-    <div class="card-head"><span class="card-title">Розбивка за типами</span></div>
-    <div class="card-body donut-wrap">
-      <div class="donut-block">
-        <div class="donut-ring">${donut(o=>o.rev)}<div class="donut-center"><span>Дохід</span><b style="color:#4a9eff">${fmtShort(tRev)}</b></div></div>
-        <div class="donut-legend">${legend(o=>o.rev,tRev)}</div>
+    <div class="card-head"><span class="card-title">📊 Річні показники ${curYear}</span><span style="font-size:11px;color:var(--text3)">натисніть → Економіка</span></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:18px;padding-bottom:14px">
+      <div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);margin-bottom:8px">📤 Витрати</div>
+        ${buildDonut(expSegs,yearTotalExpenses,'Витрати','#EAB94C','economics')}
       </div>
-      <div class="donut-block">
-        <div class="donut-ring">${donut(o=>Math.max(o.net,0))}<div class="donut-center"><span>Прибуток</span><b style="color:${tNet>=0?'var(--green)':'var(--red)'}">${fmtShort(tNet)}</b></div></div>
-        <div class="donut-legend">${legend(o=>o.net,tNet)}</div>
+      <div style="border-top:1px solid var(--border);padding-top:14px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4a9eff;margin-bottom:8px">📥 Дохід</div>
+        ${buildDonut(incSegs,yearTotalIncome,'Дохід','#4a9eff','economics')}
       </div>
     </div>
   </div>`;
