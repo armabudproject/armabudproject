@@ -1960,10 +1960,11 @@ function calcCashflow(){
   fwdKeys.forEach(k=>{fwd[k]={income:0,expenses:0};});
 
   (state.projects||[]).forEach(p=>{
-    const pl=calcPnl(p);
+    if(p.type==='БП')return; // БП не рахуємо в доходах
+    // Дохід: повна сума договору → на дату очікуваної оплати від замовника
     const epKey=monthKey(p.expectedPaymentDate);
-    if(epKey&&fwd[epKey]!==undefined&&pl.remaining>0){
-      fwd[epKey].income+=pl.remaining;
+    if(epKey&&fwd[epKey]!==undefined&&(+(p.revenue)||0)>0){
+      fwd[epKey].income+=+(p.revenue)||0;
     }
     (p.sections||[]).forEach(s=>{
       const ppKey=monthKey(s.plannedPayDate);
@@ -2106,24 +2107,35 @@ function renderCashflowCharts(){
           :`<div style="margin-top:10px;font-size:12px;color:var(--text3);padding:0 2px">✅ Щомісяця баланс позитивний — касових розривів не виявлено</div>`);
     }
 
-    // Plugin: підписи балансу на точках
+    // Plugin: великі цифри балансу над/під кожним місяцем
     const balanceLabelPlugin={
       id:'balanceLabels',
       afterDatasetsDraw(chart){
         const ds=chart.data.datasets;
-        const bi=ds.findIndex(d=>d._isBalance);
-        if(bi<0)return;
-        const meta=chart.getDatasetMeta(bi);
+        const incIdx=ds.findIndex(d=>d._isIncome);
+        const expIdx=ds.findIndex(d=>d._isExpenses);
+        if(incIdx<0||expIdx<0)return;
         const ctx=chart.ctx;
-        ds[bi].data.forEach((val,i)=>{
-          const pt=meta.data[i];if(!pt)return;
+        const incMeta=chart.getDatasetMeta(incIdx);
+        const expMeta=chart.getDatasetMeta(expIdx);
+        balance.forEach((val,i)=>{
+          const incPt=incMeta.data[i];
+          const expPt=expMeta.data[i];
+          if(!incPt||!expPt)return;
+          const x=(incPt.x+expPt.x)/2; // між двома стовпцями
           const color=val>=0?GREEN:RED;
-          const label=(val>=0?'+':'')+Math.round(val/1000)+'т';
+          const sign=val>=0?'+':'';
+          const label=sign+Math.round(val/1000)+' т';
+          // Позиція: вгорі якщо плюс, знизу якщо мінус
+          const baseY=chart.scales.y.getPixelForValue(0);
+          const y=val>=0?Math.min(incPt.y,expPt.y)-6:baseY+18;
           ctx.save();
-          ctx.font='bold 10px sans-serif';
+          ctx.font='bold 12px sans-serif';
           ctx.fillStyle=color;
           ctx.textAlign='center';
-          ctx.fillText(label,pt.x,val>=0?pt.y-8:pt.y+16);
+          ctx.shadowColor=color;
+          ctx.shadowBlur=3;
+          ctx.fillText(label,x,y);
           ctx.restore();
         });
       }
@@ -2133,39 +2145,33 @@ function renderCashflowCharts(){
       data:{
         labels,
         datasets:[
-          {type:'bar',label:'Дохід (замовники + інвестиції)',data:income,
-           backgroundColor:'rgba(56,189,248,0.50)',borderColor:BLUE,borderWidth:1.5,
-           borderRadius:5,order:2},
-          {type:'bar',label:'Витрати (проекти + адмін)',data:expenses,
-           backgroundColor:'rgba(234,185,76,0.45)',borderColor:YELLOW,borderWidth:1.5,
-           borderRadius:5,order:2},
-          {type:'line',label:'Баланс місяця',data:balance,_isBalance:true,
-           borderColor:'transparent',borderWidth:0,
-           pointBackgroundColor:balance.map(v=>v>=0?GREEN:RED),
-           pointBorderColor:balance.map(v=>v>=0?GREEN:RED),
-           pointBorderWidth:2,pointRadius:7,pointHoverRadius:9,
-           tension:0,order:1,yAxisID:'y'},
+          {type:'bar',label:'Дохід (договори + інвестиції)',data:income,_isIncome:true,
+           backgroundColor:'rgba(56,189,248,0.55)',borderColor:BLUE,borderWidth:1.5,
+           borderRadius:5,categoryPercentage:0.7,barPercentage:0.48,order:1},
+          {type:'bar',label:'Витрати (проекти + адмін)',data:expenses,_isExpenses:true,
+           backgroundColor:'rgba(234,185,76,0.50)',borderColor:YELLOW,borderWidth:1.5,
+           borderRadius:5,categoryPercentage:0.7,barPercentage:0.48,order:1},
         ]
       },
       options:{
         responsive:true,maintainAspectRatio:false,
         interaction:{mode:'index',intersect:false},
         plugins:{
-          legend:{labels:{color:TICK,boxWidth:12,padding:16,font:{size:12},
-            filter:item=>item.text!=='Баланс місяця'}},
+          legend:{labels:{color:TICK,boxWidth:12,padding:16,font:{size:12}}},
           tooltip:{callbacks:{
-            label:ctx=>{
-              const v=ctx.parsed.y;
-              if(ctx.dataset._isBalance)return'Баланс: '+(v>=0?'+':'')+fmt(v)+' грн';
-              return ctx.dataset.label+': '+(v<0?'−':'')+fmt(Math.abs(v))+' грн';
-            }
+            afterBody:items=>{
+              const i=items[0].dataIndex;
+              const v=balance[i];
+              return['','Баланс: '+(v>=0?'+':'')+fmt(v)+' грн'];
+            },
+            label:ctx=>ctx.dataset.label+': '+fmt(Math.abs(ctx.parsed.y))+' грн'
           }}
         },
         scales:{
           x:{grid:{color:GRID},ticks:{color:TICK,font:{size:11}}},
           y:{grid:{color:ctx=>ctx.tick.value===0?'rgba(255,255,255,0.35)':GRID,
                    lineWidth:ctx=>ctx.tick.value===0?2:1},
-             ticks:{color:TICK,callback:v=>(Math.abs(v)/1000).toFixed(0)+(v<0?' тис.':v===0?'':' тис.')},
+             ticks:{color:TICK,callback:v=>(Math.abs(v)/1000).toFixed(0)+' тис.'},
              title:{display:true,text:'тис. грн',color:TICK,font:{size:11}}}
         }
       },
