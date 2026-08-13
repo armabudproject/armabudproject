@@ -2793,15 +2793,14 @@ function importAdminExcel(event, targetMonth){
       const colAmount  =find(['сум','amount','сума']);
       const colAccount =find(['рахун','account','вид','тип']);
       const colCat     =find(['катег','category']);
-      // Контрагент: перевіряємо всі можливі назви
-      const colContr   =find(['контраг','contr','постач','одержувач','отримув','recipient','organiz','partner','найменув','назв']);
+      // Контрагент — тільки конкретні патерни, без широких збігів
+      const colContr   =find(['контраг','contr','постач','одержувач','recipient']);
       const colArticle =find(['статт','article','витрат','призначен']);
 
-      // Якщо контрагент не знайдено — беремо першу колонку яка не є датою/сумою/рахунком/категорією/статтею і має рядкові значення
-      let colContrFallback=colContr;
-      if(!colContrFallback){
-        const usedCols=[colDate,colAmount,colAccount,colCat,colArticle].filter(Boolean);
-        colContrFallback=keys.find(k=>!usedCols.includes(k)&&raw.slice(0,5).some(r=>typeof r[k]==='string'&&r[k].length>1))||null;
+      // Якщо контрагент не знайдено — показуємо список колонок, але НЕ робимо широкий fallback
+      const colContrFallback=colContr;
+      if(!colContr){
+        console.warn('Колонку Контрагент не знайдено. Колонки файлу:',keys);
       }
 
       if(!colAmount){
