@@ -2067,25 +2067,41 @@ function renderCashflowCharts(){
     const balance=cf.forecast.map(r=>r['Баланс місяця']);
 
     // ── Річний підсумок ──────────────────────────────────────────────────
-    const yearIncome=income.reduce((a,v)=>a+v,0);
+    const yearProjectRev=cf.forecast.reduce((a,r)=>a+r['Прихід'],0);
+    const yearInv=cf.forecast.reduce((a,r)=>a+r['Інвестиції'],0);
+    const yearIncome=yearProjectRev+yearInv;
     const yearExpenses=cf.forecast.reduce((a,r)=>a+r['Виплати'],0);
-    const yearBalance=cf.forecast.reduce((a,r)=>a+r['Баланс місяця'],0);
+    // Адмін витрати за поточний рік
+    const curYear=new Date().getFullYear();
+    const yearAdminTotal=Object.entries(state.adminCosts||{}).filter(([k])=>k.startsWith(curYear+'-')).reduce((a,[,v])=>a+(+(v)||0),0);
+    const yearProjectCosts=yearExpenses-yearAdminTotal;
+    // Річні витрати з поверненням інвестицій
+    const yearExpensesTotal=yearExpenses+yearInv;
+    // Баланс: дохід від проектів мінус витрати (інвестиції взаємно скасовуються)
+    const yearBalance=yearProjectRev-yearExpenses;
     const negMonths=cf.forecast.filter(r=>r['Баланс місяця']<0);
     const balColor=yearBalance>=0?GREEN:RED;
+
+    const subLine=(label,val,color)=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;padding-top:4px;border-top:1px solid rgba(128,128,128,0.15)"><span style="font-size:10px;color:var(--text3)">${label}</span><span style="font-size:10px;font-weight:600;color:${color||'var(--text2)'}">${fmt(val)} грн</span></div>`;
 
     const gapEl=document.getElementById('cf-gap-summary');
     if(gapEl){
       gapEl.innerHTML=
         `<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;padding:0 2px">
-          <div style="flex:1;min-width:130px;padding:10px 14px;border-radius:7px;background:rgba(56,189,248,0.10);border:1px solid rgba(56,189,248,0.28)">
+          <div style="flex:1;min-width:150px;padding:10px 14px;border-radius:7px;background:rgba(56,189,248,0.10);border:1px solid rgba(56,189,248,0.28)">
             <div style="color:${BLUE};font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">📥 Річний дохід</div>
             <div style="color:${BLUE};font-size:16px;font-weight:800">${fmt(yearIncome)} грн</div>
+            ${subLine('від проектів',yearProjectRev,BLUE)}
+            ${subLine('інвестиції',yearInv,BLUE)}
           </div>
-          <div style="flex:1;min-width:130px;padding:10px 14px;border-radius:7px;background:rgba(234,185,76,0.10);border:1px solid rgba(234,185,76,0.28)">
+          <div style="flex:1;min-width:150px;padding:10px 14px;border-radius:7px;background:rgba(234,185,76,0.10);border:1px solid rgba(234,185,76,0.28)">
             <div style="color:${YELLOW};font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">📤 Річні витрати</div>
-            <div style="color:${YELLOW};font-size:16px;font-weight:800">${fmt(yearExpenses)} грн</div>
+            <div style="color:${YELLOW};font-size:16px;font-weight:800">${fmt(yearExpensesTotal)} грн</div>
+            ${subLine('витрати по проектах',yearProjectCosts,YELLOW)}
+            ${subLine('адмінвитрати',yearAdminTotal,YELLOW)}
+            ${subLine('повернення інвестицій',yearInv,YELLOW)}
           </div>
-          <div style="flex:1;min-width:130px;padding:10px 14px;border-radius:7px;background:${yearBalance>=0?'rgba(74,222,128,0.10)':'rgba(248,113,113,0.10)'};border:1px solid ${yearBalance>=0?'rgba(74,222,128,0.28)':'rgba(248,113,113,0.28)'}">
+          <div style="flex:1;min-width:150px;padding:10px 14px;border-radius:7px;background:${yearBalance>=0?'rgba(74,222,128,0.10)':'rgba(248,113,113,0.10)'};border:1px solid ${yearBalance>=0?'rgba(74,222,128,0.28)':'rgba(248,113,113,0.28)'}">
             <div style="color:${balColor};font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">⚖️ Річний баланс</div>
             <div style="color:${balColor};font-size:16px;font-weight:800">${yearBalance>=0?'+':''}${fmt(yearBalance)} грн</div>
           </div>
