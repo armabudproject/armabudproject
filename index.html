@@ -912,6 +912,7 @@ th.sortable.sorted .sort-arrow{opacity:1;color:var(--accent)}
   <div class="page-header">
     <span class="page-mascot"><svg class="mascot-icon" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><g transform="translate(-552,-58)" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="580" cy="86" r="22" fill="#EAB94C" fill-opacity="0.14" stroke="#EAB94C" stroke-width="5"/><text x="580" y="96" text-anchor="middle" font-size="28" font-weight="700" fill="#A974E6" font-family="sans-serif">₴</text></g></svg></span>
     <div style="flex:1"><div class="page-title">Економіка</div><div class="page-sub">Грошовий потік, касовий розрив і платіжний календар</div></div>
+    <button class="btn" onclick="exportEconomicsPdf()">⬇ PDF</button>
   </div>
   <div id="economics-content"></div>
 </div>
@@ -5075,6 +5076,113 @@ function exportProjectsPdf(){
   const table='<table><thead><tr><th>Проект / Замовник</th><th>Статус</th><th>Дедлайн</th><th class="num">Дохід</th><th class="num">Витрати</th><th class="num">Податки</th><th class="num">Виплачено</th><th class="num">Прибуток</th><th class="num">Маржа</th></tr></thead><tbody>'+rows+'</tbody></table>';
   const inner=pdfHead('Звіт по проектах')+'<div class="rep-title">Проекти</div><div class="rep-cards" style="grid-template-columns:repeat(5,1fr)">'+cards+'</div>'+table+'<div class="rep-foot">Сформовано в системі АрмаБуд Проджект</div>';
   openPrint('АрмаБуд — Проекти',inner);
+}
+
+// ── ЕКОНОМІКА (PDF) ──
+function exportEconomicsPdf(){
+  if(!state.projects.length){alert('Немає даних для звіту');return;}
+  const curYear=new Date().getFullYear();
+  const pls=state.projects.filter(p=>p.type!=='БП').map(p=>({p,pl:calcPnl(p)}));
+  const bpProjects=state.projects.filter(p=>p.type==='БП');
+
+  // Загальні показники (всі проекти без БП)
+  const tR=pls.reduce((a,x)=>a+x.pl.rev,0);
+  const tCosts=pls.reduce((a,x)=>a+x.pl.totalCosts,0);
+  const tTax=pls.reduce((a,x)=>a+x.pl.tax,0);
+  const tNet=pls.reduce((a,x)=>a+x.pl.net,0);
+  const tAdv=pls.reduce((a,x)=>a+x.pl.adv,0);
+  const tPaid=pls.reduce((a,x)=>a+x.pl.paid,0);
+  const tToPay=pls.reduce((a,x)=>a+x.pl.toPay,0);
+  const tRemain=pls.reduce((a,x)=>a+x.pl.remaining,0);
+  const totalAdmin=Object.values(state.adminCosts||{}).reduce((a,v)=>a+(+v||0),0);
+  const totalInv=Object.values(state.partnerInvestments||{}).reduce((a,v)=>a+(+v||0),0);
+  const netAfterAdmin=tNet-totalAdmin;
+  const margin=tR>0?Math.round(tNet/tR*100):0;
+
+  // Річні показники
+  const yearProjectRev=pls.reduce((a,x)=>{const ep=x.p.expectedPaymentDate||x.p.deadline||'';return ep.startsWith(curYear+'-')?a+(+(x.p.revenue)||0):a;},0);
+  const yearInv=Object.entries(state.partnerInvestments||{}).filter(([k])=>k.startsWith(curYear+'-')).reduce((a,[,v])=>a+(+(v)||0),0);
+  const yearAdminTotal=Object.entries(state.adminCosts||{}).filter(([k])=>k.startsWith(curYear+'-')).reduce((a,[,v])=>a+(+(v)||0),0);
+  const yearTax=pls.reduce((a,x)=>{const ep=x.p.expectedPaymentDate||x.p.deadline||'';return ep.startsWith(curYear+'-')?a+(x.pl.tax||0):a;},0);
+  const yearProjectCosts=pls.reduce((a,x)=>{const ep=x.p.expectedPaymentDate||x.p.deadline||'';return ep.startsWith(curYear+'-')?a+(x.p.sections||[]).reduce((s,sec)=>s+(+(sec.cost)||0),0):a;},0);
+  const yearTotalIncome=yearProjectRev+yearInv;
+  const yearTotalExpenses=yearProjectCosts+yearAdminTotal+yearTax+yearInv;
+  const yearBalance=yearProjectRev-yearProjectCosts-yearAdminTotal-yearTax;
+
+  // Картки KPI
+  const cards=
+    pdfCard('Загальний дохід',fmt(tR),'#2563eb')+
+    pdfCard('Витрати (план)',fmt(tCosts),'#d97706')+
+    pdfCard('Податки ЄП',fmt(tTax),'#dc2626')+
+    pdfCard('Прибуток',fmt(tNet),'#16a34a')+
+    pdfCard('Маржа',margin+'%','#16a34a')+
+    pdfCard('Адмінвитрати '+curYear,fmt(totalAdmin),'#7c3aed')+
+    pdfCard('Інвестиції '+curYear,fmt(totalInv),'#d97706')+
+    pdfCard('Баланс (після адмін)',fmt(netAfterAdmin),netAfterAdmin>=0?'#16a34a':'#dc2626')+
+    pdfCard('Отримано від замовників',fmt(tAdv),'#0ea5e9')+
+    pdfCard('Залишок від замовника',fmt(tRemain),'#d97706')+
+    pdfCard('Оплачено виконавцям',fmt(tPaid),'#16a34a')+
+    pdfCard('Залишок виконавцям',fmt(tToPay),'#dc2626');
+
+  // Таблиця проектів
+  let rows='';
+  pls.sort((a,b)=>b.pl.rev-a.pl.rev).forEach(({p,pl})=>{
+    const st=PDF_PST[p.status||'active']||PDF_PST.active;
+    rows+='<tr><td><b>'+(p.name||'')+'</b>'+(p.client?'<br><span style="color:#6b7280;font-size:10px">'+p.client+'</span>':'')+'</td>'+
+      '<td><span class="pill" style="background:'+st.c+'">'+st.l+'</span></td>'+
+      '<td>'+(p.type||'—')+'</td>'+
+      '<td>'+(p.expectedPaymentDate||p.deadline||'—')+'</td>'+
+      '<td class="num">'+fmt(pl.rev)+'</td>'+
+      '<td class="num">'+fmt(pl.totalCosts)+'</td>'+
+      '<td class="num">'+fmt(pl.tax)+'</td>'+
+      '<td class="num '+(pl.net>=0?'pos':'neg')+'">'+fmt(pl.net)+'</td>'+
+      '<td class="num">'+pl.margin+'%</td></tr>';
+  });
+  rows+='<tr class="total"><td colspan="4">РАЗОМ ('+pls.length+' проектів)</td>'+
+    '<td class="num">'+fmt(tR)+'</td>'+
+    '<td class="num">'+fmt(tCosts)+'</td>'+
+    '<td class="num">'+fmt(tTax)+'</td>'+
+    '<td class="num '+(tNet>=0?'pos':'neg')+'">'+fmt(tNet)+'</td>'+
+    '<td class="num">'+margin+'%</td></tr>';
+  const table='<h3>Проекти (без БП)</h3><table><thead><tr><th>Проект / Замовник</th><th>Статус</th><th>Тип</th><th>Дата оплати</th><th class="num">Дохід</th><th class="num">Витрати</th><th class="num">Податки</th><th class="num">Прибуток</th><th class="num">Маржа</th></tr></thead><tbody>'+rows+'</tbody></table>';
+
+  // Таблиця БП
+  let bpSection='';
+  if(bpProjects.length){
+    let bpRows='';
+    bpProjects.forEach(p=>{const pl=calcPnl(p);bpRows+='<tr><td><b>'+(p.name||'')+'</b>'+(p.client?'<br><span style="color:#6b7280;font-size:10px">'+p.client+'</span>':'')+'</td><td>'+(p.deadline||'—')+'</td><td class="num">'+fmt(pl.rev)+'</td><td class="num">'+fmt(pl.totalCosts)+'</td></tr>';});
+    bpSection='<h3>Проекти БП (безоплатні)</h3><table><thead><tr><th>Проект / Замовник</th><th>Дедлайн</th><th class="num">Дохід</th><th class="num">Витрати</th></tr></thead><tbody>'+bpRows+'</tbody></table>';
+  }
+
+  // Таблиця адмінвитрат по місяцях
+  const MON=['Січ','Лют','Бер','Кві','Тра','Чер','Лип','Сер','Вер','Жов','Лис','Гру'];
+  let adminRows='',invRows='';
+  MON.forEach((mn,i)=>{
+    const k=curYear+'-'+String(i+1).padStart(2,'0');
+    const av=(+(state.adminCosts&&state.adminCosts[k])||0);
+    const iv=(+(state.partnerInvestments&&state.partnerInvestments[k])||0);
+    if(av||iv) adminRows+='<tr><td>'+mn+' '+curYear+'</td><td class="num">'+fmt(av)+'</td><td class="num">'+fmt(iv)+'</td></tr>';
+  });
+  adminRows+='<tr class="total"><td>Разом '+curYear+'</td><td class="num">'+fmt(totalAdmin)+'</td><td class="num">'+fmt(totalInv)+'</td></tr>';
+  const adminTable='<h3>Адмінвитрати та Інвестиції '+curYear+' (по місяцях)</h3><table><thead><tr><th>Місяць</th><th class="num">Адмінвитрати</th><th class="num">Інвестиції</th></tr></thead><tbody>'+adminRows+'</tbody></table>';
+
+  // Річний підсумок
+  const yearCards='<div class="rep-cards" style="grid-template-columns:repeat(3,1fr);margin-top:22px">'+
+    pdfCard('Річний дохід '+curYear,fmt(yearTotalIncome),'#2563eb')+
+    pdfCard('Річні витрати '+curYear,fmt(yearTotalExpenses),'#d97706')+
+    pdfCard('Річний баланс '+curYear,fmt(yearBalance),yearBalance>=0?'#16a34a':'#dc2626')+
+    '</div>';
+  const yearBreakdown='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">'+
+    '<div><b style="font-size:11px;color:#6b7280;text-transform:uppercase">Дохід: від проектів '+fmt(yearProjectRev)+' · інвестиції '+fmt(yearInv)+'</b></div>'+
+    '<div><b style="font-size:11px;color:#6b7280;text-transform:uppercase">Витрати: проекти '+fmt(yearProjectCosts)+' · адмін '+fmt(yearAdminTotal)+' · податки '+fmt(yearTax)+' · поверн. інвест. '+fmt(yearInv)+'</b></div>'+
+    '</div>';
+
+  const inner=pdfHead('Економіка · '+curYear)+
+    '<div class="rep-title">Економічний звіт</div>'+
+    '<div class="rep-cards" style="grid-template-columns:repeat(4,1fr)">'+cards+'</div>'+
+    yearCards+yearBreakdown+table+bpSection+adminTable+
+    '<div class="rep-foot">Сформовано в системі АрмаБуд Проджект</div>';
+  openPrint('АрмаБуд — Економіка '+curYear,inner);
 }
 
 // ── ПРОТОКОЛ НАРАДИ (PDF) ──
