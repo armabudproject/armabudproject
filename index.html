@@ -2609,15 +2609,8 @@ function animateMetricCounts(){
 // Категорії та правила маппінгу з Excel
 const MON_UA={1:'Січень',2:'Лютий',3:'Березень',4:'Квітень',5:'Травень',6:'Червень',7:'Липень',8:'Серпень',9:'Вересень',10:'Жовтень',11:'Листопад',12:'Грудень'};
 
-// Палітра кольорів для категорій з Excel
-const CAT_PALETTE=['#4a9eff','#EAB94C','#A974E6','#f87171','#34d399','#38bdf8','#fb923c','#a78bfa','#e879f9','#4ade80'];
-const _catColorMap={};
-let _catColorIdx=0;
-function catColor(name){
-  const key=(name||'').trim().toLowerCase();
-  if(!_catColorMap[key])_catColorMap[key]=CAT_PALETTE[_catColorIdx++%CAT_PALETTE.length];
-  return _catColorMap[key];
-}
+// Єдиний колір для всіх категорій
+function catColor(name){return'#4a9eff';}
 
 function renderAdminCosts(){
   const el=document.getElementById('admin-costs-content');if(!el)return;
@@ -2682,7 +2675,7 @@ function renderAdminCosts(){
         <div style="font-size:10px;color:var(--text3)">${rows.length} записів</div>
         <div style="display:flex;gap:2px;height:4px;border-radius:2px;overflow:hidden;background:var(--bg3)">${miniBar}</div>
         <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">
-          ${mCatList.slice(0,4).map(([cat,s])=>`<span style="font-size:9px;color:${catColor(cat)};font-weight:600">${cat}: ${fmt(s)}</span>`).join('')}
+          ${mCatList.slice(0,4).map(([cat,s])=>`<span style="font-size:9px;color:var(--text2);font-weight:600">${cat}: ${fmt(s)}</span>`).join('')}
         </div>
         <div style="display:flex;gap:6px;margin-top:4px">
           <button class="btn" style="flex:1;font-size:11px;padding:5px 8px" onclick="showAdminMonth('${mKey}')">📋 Деталі</button>
@@ -2705,22 +2698,17 @@ function renderAdminCosts(){
   if(filledMonths.length){
     const tbody=filledMonths.map(m=>{
       const [,mo]=m.split('-');
-      const mCats2={};
-      (imports[m]||[]).forEach(r=>{const c=(r.category||'Інше').trim();mCats2[c]=(mCats2[c]||0)+r.amount;});
-      const catStr=Object.entries(mCats2).sort((a,b)=>b[1]-a[1]).map(([cat,s])=>`<span style="color:${catColor(cat)};font-size:10px">${cat}: <b>${fmt(s)}</b></span>`).join(' &nbsp;');
       return`<tr style="cursor:pointer" onclick="showAdminMonth('${m}')">
         <td><b>${MON_UA[+mo]}</b></td>
-        <td>${catStr}</td>
         <td class="mono" style="text-align:right;font-weight:700">${fmt(monthTotals[m])}</td>
       </tr>`;
     }).join('');
-    const totalRow=Object.entries(catTotalsYear).sort((a,b)=>b[1]-a[1]).map(([cat,s])=>`<span style="color:${catColor(cat)};font-size:10px">${cat}: <b>${fmt(s)}</b></span>`).join(' &nbsp;');
     tableSection=`<div class="card" style="margin-top:16px">
       <div class="card-head"><span class="card-title">📊 Зведена таблиця ${curYear}</span><span style="font-size:11px;color:var(--text3)">натисніть на місяць для деталей</span></div>
       <div class="tbl-wrap"><table>
-        <thead><tr><th>Місяць</th><th>По категоріям</th><th style="text-align:right">Разом</th></tr></thead>
+        <thead><tr><th>Місяць</th><th style="text-align:right">Сума</th></tr></thead>
         <tbody>${tbody}</tbody>
-        <tfoot><tr style="background:var(--bg3)"><td style="font-weight:800">РАЗОМ</td><td>${totalRow}</td><td class="mono" style="text-align:right;font-weight:800;color:var(--accent)">${fmt(grandTotal)}</td></tr></tfoot>
+        <tfoot><tr style="background:var(--bg3)"><td style="font-weight:800">РАЗОМ</td><td class="mono" style="text-align:right;font-weight:800;color:var(--accent)">${fmt(grandTotal)}</td></tr></tfoot>
       </table></div>
     </div>`;
   }
