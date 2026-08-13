@@ -2749,7 +2749,7 @@ function importAdminExcel(event){
     try{
       const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
       const ws=wb.Sheets[wb.SheetNames[0]];
-      const raw=XLSX.utils.sheet_to_json(ws,{defval:null,raw:false});
+      const raw=XLSX.utils.sheet_to_json(ws,{defval:null,raw:true});
       if(!raw.length){alert('Файл порожній або формат не розпізнано');return;}
 
       // Detect columns (flexible matching)
@@ -2760,7 +2760,7 @@ function importAdminExcel(event){
       const colAmount  =find(['сум','amount','сума']);
       const colAccount =find(['рахун','account','вид']);
       const colCat     =find(['катег','category']);
-      const colContr   =find(['контраг','contr','постач']);
+      const colContr   =find(['контраг','contr','постач','одержувач','отримув','recipient','organiz','partner']);
       const colArticle =find(['статт','article','витрат']);
 
       if(!colAmount){alert('Не знайдено колонку з сумою. Перевірте формат файлу.');return;}
@@ -2781,7 +2781,23 @@ function importAdminExcel(event){
           }
         }
         const monthKey=dateStr?dateStr.slice(0,7):'unknown';
-        const amount=parseFloat(String(colAmount?row[colAmount]:0).replace(/[^\d.,\-]/g,'').replace(',','.'))||0;
+        const rawAmt=colAmount?row[colAmount]:0;
+        let amount=0;
+        if(typeof rawAmt==='number'){
+          amount=Math.abs(rawAmt);
+        }else if(rawAmt){
+          // Handle formatted strings: "2 142,09" / "2,142.09" / "2142.09"
+          const s=String(rawAmt).replace(/\s/g,'');
+          const lastComma=s.lastIndexOf(',');
+          const lastDot=s.lastIndexOf('.');
+          if(lastComma>lastDot){
+            // EU format: "2.142,09" → comma is decimal
+            amount=Math.abs(parseFloat(s.replace(/\./g,'').replace(',','.'))||0);
+          }else{
+            // US or plain: "2,142.09" or "2142.09"
+            amount=Math.abs(parseFloat(s.replace(/,/g,''))||0);
+          }
+        }
         if(!amount)return;
         if(!byMonth[monthKey])byMonth[monthKey]=[];
         byMonth[monthKey].push({
