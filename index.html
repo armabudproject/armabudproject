@@ -1960,23 +1960,14 @@ function calcCashflow(){
   fwdKeys.forEach(k=>{fwd[k]={income:0,expenses:0};});
 
   (state.projects||[]).forEach(p=>{
-    if(p.type==='БП')return; // БП не рахуємо в доходах
-    // Дохід: повна сума договору → на дату очікуваної оплати від замовника
-    const epKey=monthKey(p.expectedPaymentDate);
-    if(epKey&&fwd[epKey]!==undefined&&(+(p.revenue)||0)>0){
-      fwd[epKey].income+=+(p.revenue)||0;
-    }
-    (p.sections||[]).forEach(s=>{
-      const ppKey=monthKey(s.plannedPayDate);
-      if(ppKey&&fwd[ppKey]!==undefined){
-        const toPaySec=(+(s.cost)||0)-(+(s.paid)||0);
-        if(toPaySec>0) fwd[ppKey].expenses+=toPaySec;
-      }
-      (s.payments||[]).forEach(pay=>{
-        const payKey=monthKey(pay.date);
-        if(payKey&&fwd[payKey]!==undefined) fwd[payKey].expenses+=+(pay.amount)||0;
-      });
-    });
+    if(p.type==='БП')return; // БП виключаємо
+    const epKey=monthKey(p.expectedPaymentDate||p.deadline);
+    if(!epKey||fwd[epKey]===undefined)return;
+    // Дохід: вартість договору → на очікувану дату оплати
+    if((+(p.revenue)||0)>0) fwd[epKey].income+=+(p.revenue)||0;
+    // Витрати: сума вартостей всіх розділів → на той самий місяць
+    const totalSectionCosts=(p.sections||[]).reduce((a,s)=>a+(+(s.cost)||0),0);
+    if(totalSectionCosts>0) fwd[epKey].expenses+=totalSectionCosts;
   });
 
   // Add admin costs and partner investments to each forecast month
