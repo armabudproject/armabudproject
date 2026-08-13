@@ -2076,10 +2076,16 @@ function renderCashflowCharts(){
     // Адмін витрати за поточний рік
     const yearAdminTotal=Object.entries(state.adminCosts||{}).filter(([k])=>k.startsWith(curYear+'-')).reduce((a,[,v])=>a+(+(v)||0),0);
     const yearProjectCosts=yearExpenses-yearAdminTotal;
-    // Річні витрати з поверненням інвестицій
-    const yearExpensesTotal=yearExpenses+yearInv;
-    // Баланс: дохід від проектів мінус витрати (інвестиції взаємно скасовуються)
-    const yearBalance=yearProjectRev-yearExpenses;
+    // Податки: сума по проектах з expectedPaymentDate в поточному році
+    const yearTax=(state.projects||[]).filter(p=>p.type!=='БП').reduce((a,p)=>{
+      const ep=p.expectedPaymentDate||p.deadline||'';
+      if(!ep.startsWith(curYear+'-')&&!ep.startsWith(curYear+'/'))return a;
+      return a+(calcPnl(p).tax||0);
+    },0);
+    // Річні витрати з поверненням інвестицій та податками
+    const yearExpensesTotal=yearExpenses+yearInv+yearTax;
+    // Баланс: дохід від проектів мінус витрати мінус податки (інвестиції взаємно скасовуються)
+    const yearBalance=yearProjectRev-yearExpenses-yearTax;
     const negMonths=yearRows.filter(r=>r['Баланс місяця']<0);
     const balColor=yearBalance>=0?GREEN:RED;
 
@@ -2108,6 +2114,7 @@ function renderCashflowCharts(){
             <div style="color:${YELLOW};font-size:16px;font-weight:800">${fmt(yearExpensesTotal)} грн</div>
             ${subLine('витрати по проектах',yearProjectCosts,YELLOW)}
             ${subLine('адмінвитрати',yearAdminTotal,YELLOW)}
+            ${subLine('податки',yearTax,YELLOW)}
             ${subLine('повернення інвестицій',yearInv,YELLOW)}
           </div>
           <div style="flex:1;min-width:150px;padding:10px 14px;border-radius:7px;background:${yearBalance>=0?'rgba(74,222,128,0.10)':'rgba(248,113,113,0.10)'};border:1px solid ${yearBalance>=0?'rgba(74,222,128,0.28)':'rgba(248,113,113,0.28)'}">
