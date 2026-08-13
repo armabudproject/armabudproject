@@ -2136,7 +2136,10 @@ function renderCashflowCharts(){
           :'');
     }
 
-    // Plugin: великі цифри балансу над/під кожним місяцем
+    // Витрати — позитивні (обидва стовпці вгору)
+    const expensesPos=cf.forecast.map(r=>r['Виплати']);
+
+    // Plugin: баланс над стовпцями + вертикальні розділювачі між місяцями
     const balanceLabelPlugin={
       id:'balanceLabels',
       afterDatasetsDraw(chart){
@@ -2144,28 +2147,45 @@ function renderCashflowCharts(){
         const incIdx=ds.findIndex(d=>d._isIncome);
         const expIdx=ds.findIndex(d=>d._isExpenses);
         if(incIdx<0||expIdx<0)return;
-        const ctx=chart.ctx;
+        const ctx2=chart.ctx;
         const incMeta=chart.getDatasetMeta(incIdx);
         const expMeta=chart.getDatasetMeta(expIdx);
+        // Вертикальні лінії між місяцями
+        if(labels.length>1){
+          ctx2.save();
+          ctx2.strokeStyle='rgba(255,255,255,0.08)';
+          ctx2.lineWidth=1;
+          ctx2.setLineDash([4,3]);
+          for(let i=0;i<labels.length-1;i++){
+            const p1=incMeta.data[i];
+            const p2=incMeta.data[i+1];
+            if(!p1||!p2)continue;
+            const xLine=(p1.x+p2.x)/2;
+            ctx2.beginPath();
+            ctx2.moveTo(xLine,chart.chartArea.top);
+            ctx2.lineTo(xLine,chart.chartArea.bottom);
+            ctx2.stroke();
+          }
+          ctx2.restore();
+        }
+        // Підписи балансу над вищим стовпцем
         balance.forEach((val,i)=>{
           const incPt=incMeta.data[i];
           const expPt=expMeta.data[i];
           if(!incPt||!expPt)return;
-          const x=(incPt.x+expPt.x)/2; // між двома стовпцями
+          const x=(incPt.x+expPt.x)/2;
+          const topY=Math.min(incPt.y,expPt.y)-8;
           const color=val>=0?GREEN:RED;
           const sign=val>=0?'+':'';
           const label=sign+Math.round(val/1000)+' т';
-          // Позиція: вгорі якщо плюс, знизу якщо мінус
-          const baseY=chart.scales.y.getPixelForValue(0);
-          const y=val>=0?Math.min(incPt.y,expPt.y)-6:baseY+18;
-          ctx.save();
-          ctx.font='bold 12px sans-serif';
-          ctx.fillStyle=color;
-          ctx.textAlign='center';
-          ctx.shadowColor=color;
-          ctx.shadowBlur=3;
-          ctx.fillText(label,x,y);
-          ctx.restore();
+          ctx2.save();
+          ctx2.font='bold 12px sans-serif';
+          ctx2.fillStyle=color;
+          ctx2.textAlign='center';
+          ctx2.shadowColor=color;
+          ctx2.shadowBlur=4;
+          ctx2.fillText(label,x,topY);
+          ctx2.restore();
         });
       }
     };
@@ -2176,31 +2196,23 @@ function renderCashflowCharts(){
         datasets:[
           {type:'bar',label:'Дохід (договори + інвестиції)',data:income,_isIncome:true,
            backgroundColor:'rgba(56,189,248,0.55)',borderColor:BLUE,borderWidth:1.5,
-           borderRadius:5,categoryPercentage:0.7,barPercentage:0.48,order:1},
-          {type:'bar',label:'Витрати (проекти + адмін)',data:expenses,_isExpenses:true,
+           borderRadius:5,categoryPercentage:0.55,barPercentage:0.48,order:1},
+          {type:'bar',label:'Витрати (проекти + адмін)',data:expensesPos,_isExpenses:true,
            backgroundColor:'rgba(234,185,76,0.50)',borderColor:YELLOW,borderWidth:1.5,
-           borderRadius:5,categoryPercentage:0.7,barPercentage:0.48,order:1},
+           borderRadius:5,categoryPercentage:0.55,barPercentage:0.48,order:1},
         ]
       },
       options:{
         responsive:true,maintainAspectRatio:false,
-        interaction:{mode:'index',intersect:false},
+        interaction:{mode:'nearest',intersect:true},
         plugins:{
           legend:{labels:{color:TICK,boxWidth:12,padding:16,font:{size:12}}},
-          tooltip:{callbacks:{
-            afterBody:items=>{
-              const i=items[0].dataIndex;
-              const v=balance[i];
-              return['','Баланс: '+(v>=0?'+':'')+fmt(v)+' грн'];
-            },
-            label:ctx=>ctx.dataset.label+': '+fmt(Math.abs(ctx.parsed.y))+' грн'
-          }}
+          tooltip:{enabled:false}
         },
         scales:{
           x:{grid:{color:GRID},ticks:{color:TICK,font:{size:11}}},
-          y:{grid:{color:ctx=>ctx.tick.value===0?'rgba(255,255,255,0.35)':GRID,
-                   lineWidth:ctx=>ctx.tick.value===0?2:1},
-             ticks:{color:TICK,callback:v=>(Math.abs(v)/1000).toFixed(0)+' тис.'},
+          y:{grid:{color:GRID},
+             ticks:{color:TICK,callback:v=>(v/1000).toFixed(0)+' тис.'},
              title:{display:true,text:'тис. грн',color:TICK,font:{size:11}}}
         }
       },
