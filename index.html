@@ -2066,21 +2066,30 @@ function renderCashflowCharts(){
     // Баланс місяця
     const balance=cf.forecast.map(r=>r['Баланс місяця']);
 
-    // ── Річний підсумок ──────────────────────────────────────────────────
-    const yearProjectRev=cf.forecast.reduce((a,r)=>a+r['Прихід'],0);
-    const yearInv=cf.forecast.reduce((a,r)=>a+r['Інвестиції'],0);
-    const yearIncome=yearProjectRev+yearInv;
-    const yearExpenses=cf.forecast.reduce((a,r)=>a+r['Виплати'],0);
-    // Адмін витрати за поточний рік
+    // ── Річний підсумок (тільки поточний календарний рік) ────────────────
     const curYear=new Date().getFullYear();
+    const yearRows=cf.forecast.filter(r=>r['Місяць']&&r['Місяць'].startsWith(curYear+'-'));
+    const yearProjectRev=yearRows.reduce((a,r)=>a+r['Прихід'],0);
+    const yearInv=yearRows.reduce((a,r)=>a+r['Інвестиції'],0);
+    const yearIncome=yearProjectRev+yearInv;
+    const yearExpenses=yearRows.reduce((a,r)=>a+r['Виплати'],0);
+    // Адмін витрати за поточний рік
     const yearAdminTotal=Object.entries(state.adminCosts||{}).filter(([k])=>k.startsWith(curYear+'-')).reduce((a,[,v])=>a+(+(v)||0),0);
     const yearProjectCosts=yearExpenses-yearAdminTotal;
     // Річні витрати з поверненням інвестицій
     const yearExpensesTotal=yearExpenses+yearInv;
     // Баланс: дохід від проектів мінус витрати (інвестиції взаємно скасовуються)
     const yearBalance=yearProjectRev-yearExpenses;
-    const negMonths=cf.forecast.filter(r=>r['Баланс місяця']<0);
+    const negMonths=yearRows.filter(r=>r['Баланс місяця']<0);
     const balColor=yearBalance>=0?GREEN:RED;
+
+    // ── Проекти з датою поза поточним роком ──────────────────────────────
+    const wrongDateProjects=(state.projects||[]).filter(p=>{
+      if(p.type==='БП')return false;
+      const ep=p.expectedPaymentDate||p.deadline;
+      if(!ep)return false;
+      return !ep.startsWith(curYear+'-')&&!ep.startsWith(curYear+'/');
+    });
 
     const subLine=(label,val,color)=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;padding-top:4px;border-top:1px solid rgba(128,128,128,0.15)"><span style="font-size:10px;color:var(--text3)">${label}</span><span style="font-size:10px;font-weight:600;color:${color||'var(--text2)'}">${fmt(val)} грн</span></div>`;
 
@@ -2111,7 +2120,13 @@ function renderCashflowCharts(){
               <span style="color:${RED};font-weight:700;font-size:12px;margin-right:10px">⚠️ Дефіцитні місяці:</span>`
               +negMonths.map(r=>`<span style="font-size:12px;color:var(--text2);margin-right:14px">${monLabel(r['Місяць'])}: <b style="color:${RED}">${fmt(r['Баланс місяця'])} грн</b></span>`).join('')
             +'</div>'
-          :`<div style="margin-top:10px;font-size:12px;color:var(--text3);padding:0 2px">✅ Щомісяця баланс позитивний — касових розривів не виявлено</div>`);
+          :`<div style="margin-top:10px;font-size:12px;color:var(--text3);padding:0 2px">✅ Щомісяця баланс позитивний — касових розривів не виявлено</div>`)
+        +(wrongDateProjects.length
+          ?`<div style="margin-top:10px;padding:10px 14px;border-radius:7px;background:rgba(251,146,60,0.08);border:1px solid rgba(251,146,60,0.35)">
+              <div style="color:#FB923C;font-weight:700;font-size:12px;margin-bottom:6px">⚠️ Проекти з датою оплати поза ${curYear} роком — не враховані в річному балансі:</div>`
+              +wrongDateProjects.map(p=>`<div style="font-size:12px;color:var(--text2);margin-top:3px">• <b>${p.name||p.id}</b>${p.client?' ('+p.client+')':''} — очікувана дата: <b style="color:#FB923C">${p.expectedPaymentDate||p.deadline||'не вказана'}</b></div>`).join('')
+            +'</div>'
+          :'');
     }
 
     // Plugin: великі цифри балансу над/під кожним місяцем
