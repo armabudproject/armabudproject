@@ -2504,7 +2504,11 @@ function renderDashboard(){
       </div>
     </div>`,false,'var(--green)');
   const cDohid=card('#4a9eff','Загальний дохід',fmt(tR),ic.rev,bd(x=>x.rev,x=>fmt(x.rev)),false,'#4a9eff');
-  const cVytraty=card('var(--text2)','Витрати (план)',fmt(tCosts),ic.cost);
+  const costBase=tR-tTax;
+  const costPct=costBase>0?Math.round(tCosts/costBase*100):0;
+  const costPctColor=costPct>=100?'var(--red)':costPct>=80?'var(--amber)':'var(--green)';
+  const cVytraty=card('var(--text2)','Витрати (план)',fmt(tCosts),ic.cost,
+    `<div style="margin-top:5px;font-size:11px;color:${costPctColor};font-weight:600">${costPct}% від доходу після податків</div>`);
   const cOtrymano=card('var(--purple)','Отримано від замовників',fmt(tAdv),ic.inbox,'',false,'var(--purple)');
   const cZalZam=card('#38bdf8','Залишок від замовника',fmt(tRemain),ic.wallet,'',false,'#38bdf8');
   const cOplacheno=card('var(--amber)','Оплачено виконавцям',fmt(tPaid),ic.paid,'',false,'var(--amber)');
