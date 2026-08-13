@@ -2301,6 +2301,15 @@ function renderEconomics(){
   const pls=state.projects.filter(p=>p.type!=='БП').map(p=>({p,pl:calcPnl(p)}));
   const totalAdmin=Object.values(state.adminCosts||{}).reduce((a,v)=>a+(+v||0),0);
   const totalInv=Object.values(state.partnerInvestments||{}).reduce((a,v)=>a+(+v||0),0);
+  const bpRev=bpProjects.reduce((a,p)=>a+calcPnl(p).rev,0);
+  const bpCosts=bpProjects.reduce((a,p)=>a+calcPnl(p).totalCosts,0);
+  const bpCardInline=bpProjects.length?`<div class="metric" style="--mc:#9aa3b2">`
+    +`<div class="metric-label">\u041F\u0440\u043E\u0435\u043A\u0442\u0438 \u0411\u041F</div>`
+    +`<div class="metric-value" style="color:#9aa3b2">${bpProjects.length}</div>`
+    +`<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(154,163,178,0.2);display:flex;flex-direction:column;gap:3px">`
+    +`<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:#9aa3b2;opacity:.8">\u0414\u043E\u0445\u0456\u0434</span><span style="color:#4a9eff;font-weight:700">${fmt(bpRev)}</span></div>`
+    +`<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:#9aa3b2;opacity:.8">\u0412\u0438\u0442\u0440\u0430\u0442\u0438</span><span style="color:var(--amber);font-weight:700">${fmt(bpCosts)}</span></div>`
+    +`</div></div>`:'';;
   let cards='';
   metrics.forEach(m=>{
     const total=pls.reduce((a,x)=>a+(m.fn(x.pl)||0),0);
@@ -2308,6 +2317,7 @@ function renderEconomics(){
     cards+=`<div class="metric metric-clickable${active?' econ-active':''}" style="--mc:${m.color};cursor:pointer" onclick="econSelect('${m.k}')">`
       +`<div class="metric-label">${m.label} <span style="opacity:.5;font-size:9px">${active?'\u25B2':'\u25BC'}</span></div>`
       +`<div class="metric-value" style="color:${m.color}">${fmt(total)}</div></div>`;
+    if(m.k==='rev')cards+=bpCardInline;
   });
   cards+=`<div class="metric" style="--mc:#A974E6">`
     +`<div class="metric-label">\u0410\u0434\u043C\u0456\u043D\u0432\u0438\u0442\u0440\u0430\u0442\u0438 ${new Date().getFullYear()}</div>`
@@ -2320,16 +2330,6 @@ function renderEconomics(){
   cards+=`<div class="metric" style="--mc:${nacColor}" title="\u0414\u043E\u0445\u0456\u0434 \u0432\u0456\u0434 \u043F\u0440\u043E\u0435\u043A\u0442\u0456\u0432 + \u0406\u043D\u0432\u0435\u0441\u0442\u0438\u0446\u0456\u0457 \u2212 \u041F\u043E\u0434\u0430\u0442\u043A\u0438 \u2212 \u0412\u0438\u0442\u0440\u0430\u0442\u0438 \u2212 \u0410\u0434\u043C\u0456\u043D\u0432\u0438\u0442\u0440\u0430\u0442\u0438 \u2212 \u0406\u043D\u0432\u0435\u0441\u0442\u0438\u0446\u0456\u0457">`
     +`<div class="metric-label">\u0411\u0430\u043B\u0430\u043D\u0441</div>`
     +`<div class="metric-value" style="color:${nacColor}">${fmt(netAfterAdmin)}</div></div>`;
-  // \u0411\u041F block
-  const bpRev=bpProjects.reduce((a,p)=>a+calcPnl(p).rev,0);
-  const bpCosts=bpProjects.reduce((a,p)=>a+calcPnl(p).totalCosts,0);
-  const bpCard=`<div class="metric wide" style="--mc:#9aa3b2">`
-    +`<div class="metric-top"><div class="metric-label">\u041F\u0440\u043E\u0435\u043A\u0442\u0438 \u0411\u041F</div><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span></div>`
-    +`<div class="metric-value" style="color:#9aa3b2">${bpProjects.length}</div>`
-    +`<div class="metric-bd">`
-    +`<span class="bd-item"><span class="bd-dot" style="background:#4a9eff"></span>\u0414\u043E\u0445\u0456\u0434<b>${fmt(bpRev)}</b></span>`
-    +`<span class="bd-item"><span class="bd-dot" style="background:var(--amber)"></span>\u0412\u0438\u0442\u0440\u0430\u0442\u0438<b>${fmt(bpCosts)}</b></span>`
-    +`</div></div>`;
   let panel='';
   if(econActiveMetric){
     const m=metrics.find(x=>x.k===econActiveMetric);
@@ -2411,7 +2411,7 @@ function renderEconomics(){
       </div>
       <div class="card-body" id="gantt-panel" style="padding-top:8px"></div>
     </div>`;
-  el.innerHTML='<div class="metrics">'+cards+'</div>'+(bpProjects.length?'<div class="metrics" style="margin-top:0">'+bpCard+'</div>':'')+panel+chartPanels;
+  el.innerHTML='<div class="metrics">'+cards+'</div>'+panel+chartPanels;
   requestAnimationFrame(renderCashflowCharts);
   requestAnimationFrame(renderGantt);
 }
