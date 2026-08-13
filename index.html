@@ -2303,8 +2303,9 @@ function renderEconomics(){
   const totalInv=Object.values(state.partnerInvestments||{}).reduce((a,v)=>a+(+v||0),0);
   const bpRev=bpProjects.reduce((a,p)=>a+calcPnl(p).rev,0);
   const bpCosts=bpProjects.reduce((a,p)=>a+calcPnl(p).totalCosts,0);
-  const bpCardInline=bpProjects.length?`<div class="metric" style="--mc:#9aa3b2">`
-    +`<div class="metric-label">\u041F\u0440\u043E\u0435\u043A\u0442\u0438 \u0411\u041F</div>`
+  const bpActive=econActiveMetric==='bp';
+  const bpCardInline=bpProjects.length?`<div class="metric metric-clickable${bpActive?' econ-active':''}" style="--mc:#9aa3b2;cursor:pointer" onclick="econSelect('bp')">`
+    +`<div class="metric-label">\u041F\u0440\u043E\u0435\u043A\u0442\u0438 \u0411\u041F <span style="opacity:.5;font-size:9px">${bpActive?'\u25B2':'\u25BC'}</span></div>`
     +`<div class="metric-value" style="color:#9aa3b2">${bpProjects.length}</div>`
     +`<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(154,163,178,0.2);display:flex;flex-direction:column;gap:3px">`
     +`<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:#9aa3b2;opacity:.8">\u0414\u043E\u0445\u0456\u0434</span><span style="color:#4a9eff;font-weight:700">${fmt(bpRev)}</span></div>`
@@ -2331,7 +2332,13 @@ function renderEconomics(){
     +`<div class="metric-label">\u0411\u0430\u043B\u0430\u043D\u0441</div>`
     +`<div class="metric-value" style="color:${nacColor}">${fmt(netAfterAdmin)}</div></div>`;
   let panel='';
-  if(econActiveMetric){
+  if(econActiveMetric==='bp'){
+    const bpRows=bpProjects.map(p=>{const pl=calcPnl(p);return{id:p.id,name:p.name,client:p.client,rev:pl.rev,costs:pl.totalCosts};}).sort((a,b)=>b.rev-a.rev);
+    const bpBodyRows=bpRows.map(r=>`<tr style="cursor:pointer" onclick="navigate('detail','${r.id}')"><td><div style="font-weight:600">${r.name}</div>${r.client?`<div style="font-size:11px;color:var(--text2);margin-top:2px">${r.client}</div>`:''}</td><td class="mono" style="text-align:right;color:#4a9eff">${fmt(r.rev)}</td><td class="mono" style="text-align:right;color:var(--amber)">${fmt(r.costs)}</td></tr>`).join('')
+      +`<tr style="border-top:2px solid var(--border)"><td style="font-weight:700">Разом</td><td class="mono" style="text-align:right;font-weight:800;color:#4a9eff">${fmt(bpRev)}</td><td class="mono" style="text-align:right;font-weight:800;color:var(--amber)">${fmt(bpCosts)}</td></tr>`;
+    panel=`<div class="card" style="margin-top:14px"><div class="card-head"><span class="card-title">Розшифровка: Проекти БП</span><span style="font-size:12px;color:var(--text3)">${bpProjects.length} проєкт${bpProjects.length===1?'':(bpProjects.length<5?'и':'ів')}</span></div>`
+      +`<div class="tbl-wrap"><table><thead><tr><th>Проект</th><th style="text-align:right">Дохід</th><th style="text-align:right">Витрати</th></tr></thead><tbody>${bpBodyRows}</tbody></table></div></div>`;
+  }else if(econActiveMetric){
     const m=metrics.find(x=>x.k===econActiveMetric);
     const rows=pls.map(x=>({id:x.p.id,name:x.p.name,client:x.p.client,type:x.p.type,val:m.fn(x.pl)||0})).filter(r=>r.val!==0).sort((a,b)=>b.val-a.val);
     const total=rows.reduce((a,r)=>a+r.val,0);
