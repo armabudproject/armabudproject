@@ -2653,65 +2653,29 @@ function renderAdminCosts(){
     const now=new Date();
     const isFuture=(curYear>now.getFullYear())||(curYear===now.getFullYear()&&mo>now.getMonth()+1);
     const isCurrentMonth=curYear===now.getFullYear()&&mo===now.getMonth()+1;
+    const borderColor=isCurrentMonth?'var(--accent)':hasData?'color-mix(in srgb,#A974E6 25%,var(--border))':'var(--border)';
 
-    // Топ категорій місяця
-    const mCats={};
-    rows.forEach(r=>{const c=(r.category||'Інше').trim();mCats[c]=(mCats[c]||0)+r.amount;});
-    const mCatList=Object.entries(mCats).sort((a,b)=>b[1]-a[1]);
-
-    // Міні-бар
-    const miniBar=hasData?mCatList.map(([cat,s])=>{
-      const pct=mTotal>0?s/mTotal*100:0;
-      return`<div title="${cat}: ${fmt(s)}" style="flex:${pct};background:${catColor(cat)};height:4px;border-radius:2px;min-width:3px"></div>`;
-    }).join(''):'';
-
-    const borderColor=isCurrentMonth?'var(--accent)':hasData?'color-mix(in srgb,#4a9eff 25%,var(--border))':'var(--border)';
-
-    return`<div style="border:1px solid ${borderColor};border-radius:10px;background:${hasData?'var(--bg2)':'var(--bg1)'};padding:14px;display:flex;flex-direction:column;gap:8px;position:relative;${isFuture&&!hasData?'opacity:0.55':''}">
-      ${isCurrentMonth?`<div style="position:absolute;top:8px;right:10px;font-size:9px;font-weight:700;color:var(--accent);text-transform:uppercase">Поточний</div>`:''}
-      <div style="font-size:13px;font-weight:700;color:var(--text1)">${MON_UA[mo]}</div>
+    return`<div style="border:1px solid ${borderColor};border-radius:8px;background:${hasData?'var(--bg2)':'var(--bg1)'};padding:8px 10px;display:flex;flex-direction:column;gap:5px;position:relative;${isFuture&&!hasData?'opacity:0.45':''}">
+      ${isCurrentMonth?`<div style="position:absolute;top:5px;right:7px;font-size:8px;font-weight:700;color:var(--accent);text-transform:uppercase">Поточний</div>`:''}
+      <div style="font-size:11px;font-weight:700;color:var(--text2)">${MON_UA[mo]}</div>
       ${hasData?`
-        <div style="font-size:17px;font-weight:800;color:#4a9eff">${fmt(mTotal)} <span style="font-size:11px;font-weight:400;color:var(--text3)">грн</span></div>
-        <div style="font-size:10px;color:var(--text3)">${rows.length} записів</div>
-        <div style="display:flex;gap:2px;height:4px;border-radius:2px;overflow:hidden;background:var(--bg3)">${miniBar}</div>
-        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">
-          ${mCatList.slice(0,4).map(([cat,s])=>`<span style="font-size:9px;color:var(--text2);font-weight:600">${cat}: ${fmt(s)}</span>`).join('')}
-        </div>
-        <div style="display:flex;gap:6px;margin-top:4px">
-          <button class="btn" style="flex:1;font-size:11px;padding:5px 8px" onclick="showAdminMonth('${mKey}')">📋 Деталі</button>
-          <label class="btn" style="flex:1;font-size:11px;padding:5px 8px;cursor:pointer;text-align:center">
-            🔄 Замінити<input type="file" accept=".xlsx,.xls" style="display:none" onchange="importAdminExcel(event,'${mKey}')">
+        <div style="font-size:14px;font-weight:800;color:#A974E6;cursor:pointer" onclick="showAdminMonth('${mKey}')">${fmt(mTotal)} <span style="font-size:10px;font-weight:400;color:var(--text3)">грн</span></div>
+        <div style="font-size:9px;color:var(--text3)">${rows.length} записів</div>
+        <div style="display:flex;gap:5px;margin-top:2px">
+          <button class="btn" style="flex:1;font-size:10px;padding:4px 6px" onclick="showAdminMonth('${mKey}')">📋 Деталі</button>
+          <label class="btn" style="flex:1;font-size:10px;padding:4px 6px;cursor:pointer;text-align:center">
+            🔄<input type="file" accept=".xlsx,.xls" style="display:none" onchange="importAdminExcel(event,'${mKey}')">
           </label>
         </div>
       `:`
-        <div style="font-size:12px;color:var(--text3);flex:1">Немає даних</div>
-        <label class="btn primary" style="font-size:11px;padding:6px 8px;cursor:pointer;text-align:center;display:block">
+        <div style="font-size:11px;color:var(--text3);flex:1">Немає даних</div>
+        <label class="btn primary" style="font-size:10px;padding:4px 6px;cursor:pointer;text-align:center;display:block">
           📥 Завантажити<input type="file" accept=".xlsx,.xls" style="display:none" onchange="importAdminExcel(event,'${mKey}')">
         </label>
       `}
     </div>`;
   }).join('');
 
-  // ── Зведена таблиця по місяцях ──
-  const filledMonths=Array.from({length:12},(_,i)=>`${curYear}-${String(i+1).padStart(2,'0')}`).filter(m=>monthTotals[m]>0);
-  let tableSection='';
-  if(filledMonths.length){
-    const tbody=filledMonths.map(m=>{
-      const [,mo]=m.split('-');
-      return`<tr style="cursor:pointer" onclick="showAdminMonth('${m}')">
-        <td><b>${MON_UA[+mo]}</b></td>
-        <td class="mono" style="text-align:right;font-weight:700">${fmt(monthTotals[m])}</td>
-      </tr>`;
-    }).join('');
-    tableSection=`<div class="card" style="margin-top:16px">
-      <div class="card-head"><span class="card-title">📊 Зведена таблиця ${curYear}</span><span style="font-size:11px;color:var(--text3)">натисніть на місяць для деталей</span></div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Місяць</th><th style="text-align:right">Сума</th></tr></thead>
-        <tbody>${tbody}</tbody>
-        <tfoot><tr style="background:var(--bg3)"><td style="font-weight:800">РАЗОМ</td><td class="mono" style="text-align:right;font-weight:800;color:var(--accent)">${fmt(grandTotal)}</td></tr></tfoot>
-      </table></div>
-    </div>`;
-  }
 
   el.innerHTML=`
     ${grandTotal>0?`<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px">
@@ -2725,7 +2689,6 @@ function renderAdminCosts(){
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:4px">
       ${monthCards}
     </div>
-    ${tableSection}
     <div id="admin-month-detail" style="margin-top:14px"></div>`;
 }
 
@@ -2760,6 +2723,7 @@ function showAdminMonth(monthKey){
       <tbody>${tbody}</tbody>
     </table></div>
   </div>`;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 
