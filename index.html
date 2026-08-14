@@ -2859,91 +2859,68 @@ function importAdminExcel(event, targetMonth){
 
 function renderAdminBudget(){
   const el=document.getElementById('admin-budget-content');if(!el)return;
-  const budgets=state.adminBudgets||{};
-  const curYear=new Date().getFullYear();
+  const rows=state.adminBudgets||[];
+  const hasData=Array.isArray(rows)&&rows.length>0;
+  const total=hasData?rows.reduce((a,r)=>a+(r.monthlyAmount||0),0):0;
 
-  // Підрахунок місячних бюджетів
-  const monthTotals={};
-  for(let mo=1;mo<=12;mo++){
-    const m=`${curYear}-${String(mo).padStart(2,'0')}`;
-    monthTotals[m]=(budgets[m]||[]).reduce((a,r)=>a+(r.monthlyAmount||0),0);
-  }
-  const grandTotal=Object.values(monthTotals).reduce((a,v)=>a+v,0);
-
-  // ── 12 місячних карток ──
-  const monthCards=Array.from({length:12},(_,i)=>{
-    const mo=i+1;
-    const mKey=`${curYear}-${String(mo).padStart(2,'0')}`;
-    const mTotal=monthTotals[mKey]||0;
-    const rows=budgets[mKey]||[];
-    const hasData=mTotal>0;
-    const now=new Date();
-    const isFuture=(curYear>now.getFullYear())||(curYear===now.getFullYear()&&mo>now.getMonth()+1);
-    const isCurrentMonth=curYear===now.getFullYear()&&mo===now.getMonth()+1;
-    const borderColor=isCurrentMonth?'var(--accent)':hasData?'color-mix(in srgb,#4a9eff 25%,var(--border))':'var(--border)';
-
-    return`<div style="border:1px solid ${borderColor};border-radius:8px;background:${hasData?'var(--bg2)':'var(--bg1)'};padding:8px 10px;display:flex;flex-direction:column;gap:5px;position:relative;${isFuture&&!hasData?'opacity:0.45':''}">
-      ${isCurrentMonth?`<div style="position:absolute;top:5px;right:7px;font-size:8px;font-weight:700;color:var(--accent);text-transform:uppercase">Поточний</div>`:''}
-      <div style="font-size:11px;font-weight:700;color:var(--text2)">${MON_UA[mo]}</div>
+  el.innerHTML=`
+    <div style="margin-bottom:8px;font-size:15px;font-weight:800;color:#EAB94C;letter-spacing:.03em">💰 Бюджет на місяць</div>
+    <div style="display:inline-block;border:1px solid color-mix(in srgb,#4a9eff 30%,var(--border));border-radius:8px;background:var(--bg2);padding:10px 14px;min-width:160px">
       ${hasData?`
-        <div style="font-size:14px;font-weight:800;color:#4a9eff;cursor:pointer" onclick="showBudgetMonth('${mKey}')">${fmt(mTotal)} <span style="font-size:10px;font-weight:400;color:var(--text3)">грн</span></div>
-        <div style="font-size:9px;color:var(--text3)">${rows.length} позицій</div>
-        <div style="display:flex;gap:5px;margin-top:2px">
-          <button class="btn" style="flex:1;font-size:10px;padding:4px 6px" onclick="showBudgetMonth('${mKey}')">📋 Деталі</button>
-          <label class="btn" style="flex:1;font-size:10px;padding:4px 6px;cursor:pointer;text-align:center">
-            🔄<input type="file" accept=".xlsx,.xls" style="display:none" onchange="importBudgetExcel(event,'${mKey}')">
+        <div style="font-size:14px;font-weight:800;color:#4a9eff;cursor:pointer;margin-bottom:4px" onclick="showBudgetDetail()">${fmt(total)} <span style="font-size:10px;font-weight:400;color:var(--text3)">грн</span></div>
+        <div style="font-size:9px;color:var(--text3);margin-bottom:8px">${rows.length} позицій</div>
+        <div style="display:flex;gap:5px">
+          <button class="btn" style="flex:1;font-size:10px;padding:4px 8px" onclick="showBudgetDetail()">📋 Деталі</button>
+          <label class="btn" style="font-size:10px;padding:4px 8px;cursor:pointer;text-align:center">
+            🔄<input type="file" accept=".xlsx,.xls" style="display:none" onchange="importBudgetExcel(event)">
           </label>
         </div>
       `:`
-        <div style="font-size:11px;color:var(--text3);flex:1">Немає даних</div>
-        <label class="btn primary" style="font-size:10px;padding:4px 6px;cursor:pointer;text-align:center;display:block">
-          📥 Завантажити<input type="file" accept=".xlsx,.xls" style="display:none" onchange="importBudgetExcel(event,'${mKey}')">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Немає даних</div>
+        <label class="btn primary" style="font-size:10px;padding:5px 10px;cursor:pointer;text-align:center;display:block">
+          📥 Завантажити<input type="file" accept=".xlsx,.xls" style="display:none" onchange="importBudgetExcel(event)">
         </label>
       `}
-    </div>`;
-  }).join('');
-
-  el.innerHTML=`
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-      <div style="font-size:15px;font-weight:800;color:#EAB94C;letter-spacing:.03em">💰 Бюджет на місяць</div>
-      ${grandTotal>0?`<div style="font-size:13px;color:#4a9eff;font-weight:700">${fmt(grandTotal)} грн / міс</div>`:''}
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:4px">
-      ${monthCards}
     </div>
     <div id="admin-budget-detail" style="margin-top:14px"></div>`;
 }
 
-let _budgetDetailMonth=null;
-function showBudgetMonth(monthKey){
+let _budgetDetailOpen=false;
+function showBudgetDetail(){
   const el=document.getElementById('admin-budget-detail');if(!el)return;
-  if(_budgetDetailMonth===monthKey){_budgetDetailMonth=null;el.innerHTML='';return;}
-  _budgetDetailMonth=monthKey;
-  const rows=(state.adminBudgets&&state.adminBudgets[monthKey])||[];
-  if(!rows.length){el.innerHTML='';return;}
-  const [y,mo]=monthKey.split('-');
+  if(_budgetDetailOpen){_budgetDetailOpen=false;el.innerHTML='';return;}
+  _budgetDetailOpen=true;
+  const rows=state.adminBudgets||[];
+  if(!Array.isArray(rows)||!rows.length){el.innerHTML='';return;}
   const total=rows.reduce((a,r)=>a+(r.monthlyAmount||0),0);
   const tbody=rows.map(r=>`<tr>
     <td>${r.role||'—'}</td>
     <td>${r.name||'—'}</td>
     <td class="mono" style="text-align:right;font-weight:700;color:#4a9eff">${fmt(r.monthlyAmount||0)}</td>
-    ${r.months?`<td class="mono" style="text-align:right">${r.months}</td><td class="mono" style="text-align:right">${fmt((r.monthlyAmount||0)*r.months)}</td>`:'<td>—</td><td>—</td>'}
+    <td class="mono" style="text-align:right">${r.months||'—'}</td>
+    <td class="mono" style="text-align:right">${r.months?fmt((r.monthlyAmount||0)*r.months):'—'}</td>
   </tr>`).join('');
-  el.innerHTML=`<div class="card">
+  el.innerHTML=`<div class="card" style="max-width:700px">
     <div class="card-head">
-      <span class="card-title" style="color:#EAB94C">💰 Бюджет: ${MON_UA[+mo]||monthKey} ${y}</span>
-      <span style="font-size:11px;color:var(--text3)">${rows.length} позицій · <b style="color:#4a9eff">${fmt(total)} грн/міс</b> · <span style="cursor:pointer;color:var(--accent)" onclick="showBudgetMonth('${monthKey}')">✕ закрити</span></span>
+      <span class="card-title" style="color:#EAB94C">💰 Бюджет на місяць</span>
+      <span style="font-size:11px;color:var(--text3)"><b style="color:#4a9eff">${fmt(total)} грн/міс</b> · <span style="cursor:pointer;color:var(--accent)" onclick="showBudgetDetail()">✕ закрити</span></span>
     </div>
     <div class="tbl-wrap"><table>
       <thead><tr><th>Посада</th><th>Ім'я / Назва</th><th style="text-align:right">Витрати/міс</th><th style="text-align:right">Міс.</th><th style="text-align:right">Разом</th></tr></thead>
       <tbody>${tbody}</tbody>
-      <tfoot><tr style="background:var(--bg3)"><td colspan="2" style="font-weight:800">РАЗОМ</td><td class="mono" style="text-align:right;font-weight:800;color:#4a9eff">${fmt(total)}</td><td></td><td class="mono" style="text-align:right;font-weight:800">${fmt(rows.reduce((a,r)=>a+(r.months?(r.monthlyAmount||0)*r.months:0),0))}</td></tr></tfoot>
+      <tfoot><tr style="background:var(--bg3)">
+        <td colspan="2" style="font-weight:800">РАЗОМ</td>
+        <td class="mono" style="text-align:right;font-weight:800;color:#4a9eff">${fmt(total)}</td>
+        <td></td>
+        <td class="mono" style="text-align:right;font-weight:800">${fmt(rows.reduce((a,r)=>a+(r.months?(r.monthlyAmount||0)*r.months:0),0))}</td>
+      </tr></tfoot>
     </table></div>
   </div>`;
   el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function importBudgetExcel(event, targetMonth){
+
+function importBudgetExcel(event){
   const file=event.target.files[0];
   if(!file)return;
   if(typeof XLSX==='undefined'){alert('Бібліотека XLSX ще завантажується. Зачекайте секунду і спробуйте знову.');return;}
@@ -2996,10 +2973,10 @@ function importBudgetExcel(event, targetMonth){
 
       if(!parsedRows.length){alert('Не знайдено рядків з даними. Перевірте формат файлу.');return;}
 
-      if(!state.adminBudgets)state.adminBudgets={};
-      state.adminBudgets[targetMonth]=parsedRows;
+      state.adminBudgets=parsedRows;
       save();
       event.target.value='';
+      _budgetDetailOpen=false;
       renderAdminBudget();
       const total=parsedRows.reduce((a,r)=>a+r.monthlyAmount,0);
       alert(`✅ Бюджет імпортовано!
