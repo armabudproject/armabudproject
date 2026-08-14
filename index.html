@@ -2682,7 +2682,7 @@ function renderAdminCosts(){
       <div style="flex:1;min-width:130px;padding:12px 14px;border-radius:8px;background:color-mix(in srgb,#A974E6 10%,var(--bg2));border:1px solid color-mix(in srgb,#A974E6 30%,transparent)">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#A974E6;margin-bottom:6px">Всього за рік</div>
         <div style="font-size:22px;font-weight:800;color:#A974E6">${fmt(grandTotal)}</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:3px">${filledMonths.length} міс.</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:3px">${Object.values(monthTotals).filter(v=>v>0).length} міс.</div>
       </div>
       ${summaryTiles}
     </div>`:''}
