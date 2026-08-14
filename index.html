@@ -2923,55 +2923,49 @@ function showBudgetDetail(){
 function importBudgetExcel(event){
   const file=event.target.files[0];
   if(!file)return;
-  if(typeof XLSX==='undefined'){alert('Бібліотека XLSX ще завантажується. Зачекайте секунду і спробуйте знову.');return;}
+  if(typeof XLSX==='undefined'){alert('Бібліотека XLSX ще завантажується.');return;}
   const reader=new FileReader();
   reader.onload=function(e){
     try{
       const wb=XLSX.read(e.target.result,{type:'array',raw:true});
       const ws=wb.Sheets[wb.SheetNames[0]];
       const rawArr=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});
-      if(!rawArr.length){alert('Файл порожній');return;}
 
-      // Нормалізація заголовків (Latin→Cyrillic)
-      const latinToCyr={'a':'а','e':'е','o':'о','p':'р','c':'с','x':'х','y':'у','k':'к','i':'і',
-        'A':'А','B':'В','C':'С','E':'Е','H':'Н','I':'І','K':'К','M':'М','O':'О','P':'Р','T':'Т','X':'Х','Y':'У'};
-      const normH=h=>String(h||'').split('').map(ch=>latinToCyr[ch]||ch).join('').toLowerCase().replace(/\s+/g,'');
-
-      // Знаходимо рядок-заголовок (перший де є хоча б одна числова колонка)
-      let hIdx=0;
-      for(let i=0;i<Math.min(8,rawArr.length);i++){
-        const row=rawArr[i]||[];
-        const hasNum=row.some(v=>typeof v==='number'&&v>0);
-        const hasText=row.filter(v=>v!=null&&String(v).trim()!='').length>=2;
-        if(hasText&&(hasNum||i>0)){hIdx=i;break;}
-      }
-
-      // Визначаємо індекси колонок
-      const headers=(rawArr[hIdx]||[]);
-      const findC=pats=>{
-        let idx=headers.findIndex(h=>pats.some(p=>normH(h).includes(p)));
-        return idx>=0?idx:null;
-      };
-      const iRole   =findC(['посад','роль','категор','статт','role','type'])||1;
-      const iName   =findC(['ім','прізв','назв','name','опис'])||2;
-      const iMonAmt =findC(['витрат','міс','month','сум','amount'])||3;
-      const iMonths =findC(['кількіс','к-сть','к_сть','months','кол'])||4;
-
-      // Парсимо рядки даних
+      // Скануємо ВСІ рядки: беремо рядки де є число >=50 (місячна сума)
+      // Не покладаємось на заголовки — файл може починатись з будь-якого рядка
       const parsedRows=[];
-      rawArr.slice(hIdx+1).forEach(row=>{
-        if(!row||row.every(v=>v==null))return;
-        const rawAmt=row[iMonAmt];
-        if(typeof rawAmt!=='number'||rawAmt<=0)return;
+      rawArr.forEach(row=>{
+        if(!row||!Array.isArray(row))return;
+        // Знаходимо перше число >= 50 в рядку — це місячна витрата
+        let amtIdx=-1;
+        for(let i=0;i<row.length;i++){
+          if(typeof row[i]==='number'&&row[i]>=50&&row[i]<500000){amtIdx=i;break;}
+        }
+        if(amtIdx<0)return;
+        const monthlyAmount=row[amtIdx];
+
+        // Текстові значення ДО числа = посада і ім'я
+        const texts=[];
+        for(let j=0;j<amtIdx;j++){
+          const v=row[j];
+          if(v!=null&&typeof v==='string'&&v.trim()!==''&&v.trim()!=='-')texts.push(v.trim());
+        }
+
+        // Число після суми (і <=60) = кількість місяців
+        let months=null;
+        if(amtIdx+1<row.length&&typeof row[amtIdx+1]==='number'&&row[amtIdx+1]>0&&row[amtIdx+1]<=60){
+          months=row[amtIdx+1];
+        }
+
         parsedRows.push({
-          role:String(row[iRole]||'').trim(),
-          name:String(row[iName]||'').trim(),
-          monthlyAmount:rawAmt,
-          months:typeof row[iMonths]==='number'?row[iMonths]:null,
+          role:texts[0]||'—',
+          name:texts[1]||'—',
+          monthlyAmount,
+          months
         });
       });
 
-      if(!parsedRows.length){alert('Не знайдено рядків з даними. Перевірте формат файлу.');return;}
+      if(!parsedRows.length){alert('Не знайдено рядків з даними.\nПеревірте що у файлі є числові значення витрат.');return;}
 
       state.adminBudgets=parsedRows;
       save();
@@ -2979,10 +2973,7 @@ function importBudgetExcel(event){
       _budgetDetailOpen=false;
       renderAdminBudget();
       const total=parsedRows.reduce((a,r)=>a+r.monthlyAmount,0);
-      alert(`✅ Бюджет імпортовано!
-
-Позицій: ${parsedRows.length}
-Бюджет/міс: ${fmt(total)} грн`);
+      alert(`✅ Бюджет імпортовано!\n\nПозицій: ${parsedRows.length}\nБюджет/міс: ${fmt(total)} грн`);
     }catch(err){
       console.error('Budget import error:',err);
       alert('Помилка читання файлу: '+err.message);
@@ -2990,7 +2981,6 @@ function importBudgetExcel(event){
   };
   reader.readAsArrayBuffer(file);
 }
-
 
 function renderDashExtra(){
   const el=document.getElementById('dash-extra');if(!el)return;
