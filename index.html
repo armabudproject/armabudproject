@@ -4199,6 +4199,12 @@ function saveProject(){
   if(id){const p=state.projects.find(x=>x.id===id);Object.assign(p,data);}
   else{data.id=uid();data.advances=[];data.sections=[];state.projects.push(data);curPid=data.id;}
   save();closeModal();
+  // Оновлюємо економіку та дашборд в фоні після зміни проекту
+  setTimeout(()=>{
+    if(document.getElementById('page-economics').classList.contains('active'))renderEconomics();
+    if(document.getElementById('page-dashboard').classList.contains('active'))renderDashboard();
+    renderDashExtra();
+  },0);
   if(id)renderDetail();else navigate('detail',curPid);
 }
 
